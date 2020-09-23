@@ -79,6 +79,15 @@
 %% the next command will enable that style.
 %%\citestyle{acmauthoryear}
 
+
+\DeclareMathOperator{\Div}{div}
+\DeclareMathOperator{\curl}{curl}
+
+\newcommand{\R}{\mathbb{R}}
+
+\newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calS}{\mathcal{S}}
+
 %%
 %% end of the preamble, start of the body of the document source.
 \begin{document}
@@ -86,7 +95,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Insert Title About Firedrake and Many Elements Here}
+\title{Bringing Serendipity Methods to Computational Practice in Firedrake}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -112,10 +121,10 @@
 
 \author{Andrew Gillette}
 \affiliation{%
-  \institution{Lawrence Livermore National Laboratory}
-  \city{Livermore}
-  \state{California}}
-\email{gillette7@llnl.gov}
+  \institution{University of Arizona}
+  \city{Tucson}
+  \state{Arizona}}
+\email{agillette@math.arizona.edu}
 
 \author{David Ham}
 \affiliation{%
@@ -137,7 +146,7 @@
 \affiliation{%
   \institution{University of Arizona}
 }
-\email{jsoh@email.arizona.edu}
+\email{josh@email.arizona.edu}
 
 \author{Lawrence Mitchell}
 \affiliation{%
@@ -163,29 +172,55 @@
 
 \maketitle
 
-\section{Introduction to Serendipity and Trimmed Serendipity Elements}
+\section{Introduction}
 
-\subsection{Intro: 2-D Elements}
+\section{Background on serendipity and trimmed serendipity elements}
 
-\subsection{Intro: 3-D Elements}
+\subsection{2D Elements}
+\begin{enumerate}
+\item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
+\item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
+\item Vector Trimmed Serendipity (Arbogast-Correa = Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^2)$)
+\item Direct (Arbogast-Tao / Arbogast-Correa)
+\end{enumerate}
 
-\section{Timing requirements and Tests}
+\subsection{3D Elements}
+\begin{enumerate}
+\item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^3)$)
+\item Vector serendipity (Arnold-Awanou = $\calS_r\Lambda^1(\R^3)$ and $\calS_r\Lambda^2(\R^3)$
+\item Vector trimmed serendipity (Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^3)$ and $\calS_r^-\Lambda^2(\R^3)$)
 
-\subsection{Timing Requirements: 2-D Elements}
+\end{enumerate}
 
-\subsection{Timing Requirements: 3-D Elements}
+\section{Building capacity for serendipity element types in Firedrake}
 
-\section{DOFs and Memory Requirements}
+Description of which elements are now available in Firedrake and how to call them.
 
-\subsection{Memory: 2-D Elements}
+\section{Timing experiments}
 
-\subsection{Memory: 3-D Elements}
+Compare tensor product to serendipity and direct serendipity as applicable
+\begin{enumerate}
+\item Wall clock time
+\item Static condensation time
+\item matvec time
+\item KSP / solver time
+\end{enumerate}
 
-\section{Error Results}
+\subsection{Timing: 2D Elements}
 
-\subsection{Error: 2-D Elements}
+\subsection{Timing: 3D Elements}
 
-\subsection{Error: 3-D Elements}
+\section{Degrees of freedom and memory experiments}
+
+\subsection{DOFs and Memory: 2D Elements}
+
+\subsection{DOFs and Memory: 3D Elements}
+
+\section{Accuracy and convergence rate experiments}
+
+\subsection{Error: 2D Elements}
+
+\subsection{Error: 3D Elements}
 
 \end{document}
 
