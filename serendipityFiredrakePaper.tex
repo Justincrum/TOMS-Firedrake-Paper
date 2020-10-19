@@ -233,14 +233,28 @@ Compare tensor product to serendipity and direct serendipity as applicable
 
 \subsection{Error: 2D Elements}
 
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
+  \includegraphics[width=0.75\textwidth]{EnergyErrorSerendipityLagrange.png}
+\end{figure}
 
 \begin{figure}[h!]
-  \caption{Degrees of Freedom vs Error analysis of Trimmed Serendipity elements and RTC elements. !}
+  \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
   \includegraphics[width=0.75\textwidth]{Iterative_Mixed_Poisson_RTCF_vs_Sminus.png}
+\end{figure}
+
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
+  \includegraphics[width=0.75\textwidth]{2d-curl-Projection.png}
 \end{figure}
 
 
 \subsection{Error: 3D Elements}
+
+\begin{figure}[h!]
+  \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
+  \includegraphics[width=0.75\textwidth]{3d_Mixed_Poisson.png}
+\end{figure}
 
 \end{document}
 
