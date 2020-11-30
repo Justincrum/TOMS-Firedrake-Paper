@@ -238,24 +238,34 @@ Compare tensor product to serendipity and direct serendipity as applicable
 
 \subsection{Error: 2D Elements}
 
-\begin{figure}[h!]
-  \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
-  \includegraphics[width=0.75\textwidth]{EnergyErrorSerendipityLagrange.png}
-\end{figure}
-
-\begin{figure}[h!]
-  \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
-  \includegraphics[width=0.75\textwidth]{Iterative_Mixed_Poisson_RTCF_vs_Sminus.png}
-\end{figure}
+The 2D elements are tested using a few test problems.  The first is a basic projection check to make sure that the elements are behaving with the expected convergence rate.  Then for checking $0$-forms, we use the Primal Poisson problem, while for $1$-forms, we use the mixed Poisson problem.  The results of these experiments are shown below in the various figures.  
 
 \begin{figure}[h!]
   \caption{Degrees of Freedom vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
-  \includegraphics[width=0.75\textwidth]{2d-curl-Projection.png}
+  \includegraphics[width=0.75\textwidth]{2dProjection.png}
+  \label{fig:2dProjection}
 \end{figure}
+
+First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in \ref{fig:2dProjection}.  This confirms that for a basic projection, we are getting the convergence rates for the trimmed Serendipity elements that we expect.  
+
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
+  \includegraphics[width=0.75\textwidth]{2dPrimalPoisson.png}
+  \label{fig:2dPrimalPoisson}
+\end{figure}
+
+The \ref{fig:2dPrimalPoisson} illustrates how $0$-form Serendipity and Lagrange elements work for solving the Primal Poisson problem in 2D.  The error is measured in the Energy norm for the problem.
+
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
+  \includegraphics[width=0.75\textwidth]{MixedPoisson-2d-SminusDiv_RTCF.png}
+  \label{fig:2dMixedPoisson}
+\end{figure}
+
+In \ref{fig:2dMixedPoisson}, we see a comparison of $1$-forms for solving the mixed Poisson problem in 2D.  
 
 
 \subsection{Error: 3D Elements}
-
 
 When testing out H$($curl$)$ elements, we choose to use the Maxwell Eigenvalue problem.  The results are summarized in the following table:
 
@@ -271,14 +281,14 @@ Actual & N = 4 & N = 8 & N = 16 & N = 32 \\
 2 & 2.0010243 & 2.0000655 (3.97) & 2.0000041 (3.99) & 2.0000003 (4.00)\\
 3 & 3.0015364 & 3.0000983 (3.97) & 3.0000062 (3.99) & 3.0000004 (4.00) \\
 3 & 3.0015364 & 3.0000983 (3.97) & 3.0000062 (3.99) & 3.0000004 (4.00) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
+$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
+$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
 5 & 5.0306014 & 5.0020813 (3.88)& 5.0001331 (3.97) & 5.0000084 (3.99) \\
 5 & 5.0306014 & 5.0020813 (3.88)& 5.0001331 (3.97) & 5.0000084 (3.99) \\
 5 & 5.0306014 & 5.0020813 (3.88) & 5.0001331 (3.97) & 5.0000084 (3.99) \\
-5 &  &  & 5.0001331 & 5.0000084 (3.99) \\
-6 & & 6.0021141 & 6.0001352 (3.97) &   \\
-6 & & 6.0021141 & 6.0001352 (3.97) &  \\
+5 & - & - & 5.0001331 & 5.0000084 (3.99) \\
+6 & - & 6.0021141 & 6.0001352 (3.97) & -  \\
+6 & - & 6.0021141 & 6.0001352 (3.97) & - \\
 \hline
 DOF  & 1944 & 13872 & 104544 & 811200 \\
 \hline
@@ -295,13 +305,13 @@ Actual & N = 4 & N = 8 & N = 16 & N = 32 \\
 2 & 2.0059537 & 2.0003900 (3.93) & 2.0000247 (3.98) & 2.0000015 (4.00)\\
 3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
 3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
+$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
+$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
 5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
 5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
 5 & 5.0736899 & 5.0052310 (3.82) & 5.0001333 (5.29) & 5.0000212 (2.65) \\
 5 & 5.0736899 & 5.0052310 (3.82) & 5.0003371 (3.96) & 5.0000212 (3.99) \\
-6 & & 6.0049765 & 6.0003192 (3.96) & 6.0000201 (3.99) \\
+6 & - & 6.0049765 & 6.0003192 (3.96) & 6.0000201 (3.99) \\
 \hline
 DOF  & 1080 & 7344 & 53856 & 411840 \\
 \hline
@@ -311,42 +321,27 @@ Wallclock Time & 0:01:40 & 0:01:20 & 0:01:15 & 0:02:10 \\
 \hline
 
 \end{tabular}
+\caption{A comparison of how NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. }  
 \end{table}
+\label{tab:Eigenvalue}
 \end{center}
 
-\begin{center}
-\begin{tabular}{ c c c c c }
-\multicolumn{5}{c}{$S^-$ H$($curl$)$ Elements} \\
-\hline
-Actual & N = 4 & N = 8 & N = 16 & N = 32 \\ 
-\hline
-2 &2.0010919 & 2.0000664 (4.04) & 2.0000041 (4.01) & 2.0000003 (4.00) \\  
-2 & 2.0010919 & 2.0000664 (4.04) & 2.0000041 (4.01) & 2.0000003 (4.00)  \\
-2 & 2.0059537 & 2.0003900 (3.93) & 2.0000247 (3.98) & 2.0000015 (4.00)\\
-3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
-3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-? 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
-5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
-5 & 5.0736899 & 5.0052310 (3.82) & 5.0001333 (5.29) & 5.0000212 (2.65) \\
-5 & 5.0736899 & 5.0052310 (3.82) & 5.0003371 (3.96) & 5.0000212 (3.99) \\
-6 & & 6.0049765 & 6.0003192 (3.96) & 6.0000201 (3.99) \\
-\hline
-DOF  & 1080 & 7344 & 53856 & 411840 \\
-\hline
-Compute Time & 1:25:09 & 1:31:02 & 1:19:39 & 2:46:42 \\
-\hline
-Wallclock Time & 0:01:40 & 0:01:20 & 0:01:15 & 0:02:10 \\
-\hline
+In \ref{tab:Eigenvalue}, we look at the convergence rates of difference eigenvalues based off meshes built with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3-d.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3-d.  Based off earlier eigenvalue works (Boffi, FIND ANOTHER REFERENCE PROBABLY), we expect that the rate of convergence be double the order of the finite element used to solve the problem.  In most of the table, this is exactly what we see.  The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue, eigenvector pairs.  We ignored the eigenvalues of $1$, as they correspond only to the boundary conditions, whereas the actual eigenvalues that we expect to see follow the formula:
 
-\end{tabular}
-\end{center}
+\[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
+
+where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time.  Another note is that $4$ should never be an eigenvalue in 3-d, however, we see it consistently found by both the NCE and $S^-$ elements.  Finally, any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the 15 requested eigenvalue-eigenvector pairs.  
+
+
 
 \begin{figure}[h]
   \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
-  \includegraphics[width=0.75\textwidth]{3d_Mixed_Poisson.png}
+  \includegraphics[width=0.75\textwidth]{MixedPoisson3d_TrimmedSerendipityNCF.png}
+\caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in 3D using H$($div$)$ elements.}
+\label{fig:3dTrimmedDiv}
 \end{figure}
+
+The results found in \ref{fig:3dTrimmedDiv} refer to solving the mixed Poisson problem using tensor product and trimmed Serendipity H$($div$)$ elements in 3D.  We expect that the rates of convergence should track closely at each order.  Trimmed Serendipity elements in general use many less degrees of freedom, especially on the interior of the cubes forming the mesh.   The results that we get are consistent with that fact, illustrating that trimmed Serendipity elements do in fact require less computation time. Any data points that are illustrated required less than 3TB of memory and less than 48 hours from an HPC job starting to ending.  Data points that are missing would have required more than 48 hours to run.  
 
 
 \end{document}
