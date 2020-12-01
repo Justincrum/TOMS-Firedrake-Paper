@@ -229,14 +229,6 @@ Compare tensor product to serendipity and direct serendipity as applicable
 
 \subsection{DOFs and Memory: 2D Elements}
 
-\subsection{DOFs and Memory: 3D Elements}
-
-\red{Tables for eigenvalue comparison for Maxwell resonator problem go in this section}
-
-\newpage
-\section{Accuracy and convergence rate experiments}
-
-\subsection{Error: 2D Elements}
 
 The 2D elements are tested using a few test problems.  The first is a basic projection check to make sure that the elements are behaving with the expected convergence rate.  Then for checking $0$-forms, we use the Primal Poisson problem, while for $1$-forms, we use the mixed Poisson problem.  The results of these experiments are shown below in the various figures.  
 
@@ -264,10 +256,58 @@ The \ref{fig:2dPrimalPoisson} illustrates how $0$-form Serendipity and Lagrange 
 
 In \ref{fig:2dMixedPoisson}, we see a comparison of $1$-forms for solving the mixed Poisson problem in 2D.  
 
+\subsection{DOFs and Memory: 3D Elements}
 
+\begin{figure}[h]
+  \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
+  \includegraphics[width=0.75\textwidth]{MixedPoisson3d_TrimmedSerendipityNCF.png}
+\caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in 3D using H$($div$)$ elements.}
+\label{fig:3dTrimmedDiv}
+\end{figure}
+
+The results found in \ref{fig:3dTrimmedDiv} refer to solving the mixed Poisson problem using tensor product and trimmed Serendipity H$($div$)$ elements in 3D.  We expect that the rates of convergence should track closely at each order.  Trimmed Serendipity elements in general use many less degrees of freedom, especially on the interior of the cubes forming the mesh.   The results that we get are consistent with that fact, illustrating that trimmed Serendipity elements do in fact require less computation time. Any data points that are illustrated required less than 3TB of memory and less than 48 hours from an HPC job starting to ending.  Data points that are missing would have required more than 48 hours to run.  
+
+
+\newpage
+\section{Accuracy and convergence rate experiments}
+
+In this section, we will explore the affect that mesh size has on the error and convergence rates of the trimmed Serendipity and tensor product elements. 
+
+\subsection{Error: 2D Elements}
+
+As in the previous sections, we give results for the same test problems (projection, primal Poisson, mixed Poisson) to give a uniform idea of the benefits and costs to using trimmed Serendipity vs tensor product elements. 
+
+\begin{figure}[h!]
+  \caption{Mesh size N vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
+  \includegraphics[width=0.75\textwidth]{2dProjectionN.png}
+  \label{fig:2dProjectionN}
+\end{figure}
+
+
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
+  \includegraphics[width=0.75\textwidth]{2dPrimalPoissonN.png}
+  \label{fig:2dPrimalPoissonN}
+\end{figure}
+
+\begin{figure}[h!]
+  \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
+  \includegraphics[width=0.75\textwidth]{2dMixedPoissonN.png}
+  \label{fig:2dMixedPoissonN}
+\end{figure}
+
+
+\newpage
 \subsection{Error: 3D Elements}
+We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the Maxwell equations give us the eigenvalue problem 
 
-When testing out H$($curl$)$ elements, we choose to use the Maxwell Eigenvalue problem.  The results are summarized in the following table:
+\[ \langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle,\]
+
+\noindent where we want to find resonances $\omega$ and eigenfunctions $E$ such that $\omega \in \mathbb{R}$ and $E \in \text{H}(\text{curl})$.  The exact eigenvalues should follow the formula
+
+\[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
+
+\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time.
 
 \begin{center}
 \begin{table}
@@ -292,9 +332,7 @@ $! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 
 \hline
 DOF  & 1944 & 13872 & 104544 & 811200 \\
 \hline
-Compute Time & 3:25:09 & 3:40:53 & 7:29:12 & 9:58:35 \\
-\hline
-Wallclock Time & 2:37 & 2:48 & 8:07 & 6:49 \\
+EPS Solve Time (seconds) & 0.0514 & 0.2811 & 3.2795 & 29.2620 \\
 \hline
 \multicolumn{5}{c}{$S^-$ H$($curl$)$ Elements} \\
 \hline
@@ -312,37 +350,49 @@ $! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 
 5 & 5.0736899 & 5.0052310 (3.82) & 5.0001333 (5.29) & 5.0000212 (2.65) \\
 5 & 5.0736899 & 5.0052310 (3.82) & 5.0003371 (3.96) & 5.0000212 (3.99) \\
 6 & - & 6.0049765 & 6.0003192 (3.96) & 6.0000201 (3.99) \\
+6 & - & - & - & - \\
 \hline
 DOF  & 1080 & 7344 & 53856 & 411840 \\
 \hline
-Compute Time & 1:25:09 & 1:31:02 & 1:19:39 & 2:46:42 \\
-\hline
-Wallclock Time & 0:01:40 & 0:01:20 & 0:01:15 & 0:02:10 \\
+EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 \hline
 
 \end{tabular}
-\caption{A comparison of how NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. }  
+\caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. }  
 \end{table}
 \label{tab:Eigenvalue}
 \end{center}
 
-In \ref{tab:Eigenvalue}, we look at the convergence rates of difference eigenvalues based off meshes built with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3-d.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3-d.  Based off earlier eigenvalue works (Boffi, FIND ANOTHER REFERENCE PROBABLY), we expect that the rate of convergence be double the order of the finite element used to solve the problem.  In most of the table, this is exactly what we see.  The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue, eigenvector pairs.  We ignored the eigenvalues of $1$, as they correspond only to the boundary conditions, whereas the actual eigenvalues that we expect to see follow the formula:
+\noindent In \ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D. Note that the convergence rates are computed by doing
 
-\[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
+\[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
 
-where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time.  Another note is that $4$ should never be an eigenvalue in 3-d, however, we see it consistently found by both the NCE and $S^-$ elements.  Finally, any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the 15 requested eigenvalue-eigenvector pairs.  
+\noindent and are indicated in the chart by using parentheses.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3D.  Based off earlier eigenvalue works (Boffi, FIND ANOTHER REFERENCE PROBABLY), we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table in most spots, except for one of the eigenvalues of $5$, where it tends to oscillate a bit.  This specific eigenvalue overall converges at a rate near $4.00$ if we instead using the values at $N=8$ and $N=32$, ignoring the intermediate value at $N=16$.  \\
 
+\noindent Based off the closed form formula, note that $4$ should never be an eigenvalue in 3D. However, we see it consistently found by both the NCE and $S^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.\\
+
+\noindent Knowing that both elements are solving this problem in a fashion that is expected theoretically, we can analyze the rest of the results shown in this table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that NCE elements are able to get results that are up to a magnitude better, though not for every eigenvalue.  However, this loss of accuracy from the trimmed Serendipity elements is made up for by the comparison of the DOFs and solve time required.  At every mesh refinement level, trimmed Serendipity elements have nearly half the DOFs of NCE elements, and correspondingly, require about half the time to solve for the eigenvalues.  At higher orders, we expect that this will be even more exaggerated.  \\
+
+\noindent The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and then a couple of specific mumps parameters (icntl 14 set to 200 and icntl 13 set to 1).  We ignored the eigenvalues of $1$, as they correspond only to the boundary conditions. 
+  
 
 
 \begin{figure}[h]
   \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
-  \includegraphics[width=0.75\textwidth]{MixedPoisson3d_TrimmedSerendipityNCF.png}
+  \includegraphics[width=0.75\textwidth]{3dMixedPoissonN.png}
 \caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in 3D using H$($div$)$ elements.}
-\label{fig:3dTrimmedDiv}
+\label{fig:3dTrimmedDivN}
 \end{figure}
 
-The results found in \ref{fig:3dTrimmedDiv} refer to solving the mixed Poisson problem using tensor product and trimmed Serendipity H$($div$)$ elements in 3D.  We expect that the rates of convergence should track closely at each order.  Trimmed Serendipity elements in general use many less degrees of freedom, especially on the interior of the cubes forming the mesh.   The results that we get are consistent with that fact, illustrating that trimmed Serendipity elements do in fact require less computation time. Any data points that are illustrated required less than 3TB of memory and less than 48 hours from an HPC job starting to ending.  Data points that are missing would have required more than 48 hours to run.  
+\section{Conclusion}
 
+Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using less degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
+
+\noindent Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly less degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
+
+\noindent Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
+
+\noindent In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
 
 \end{document}
 
