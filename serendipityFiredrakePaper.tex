@@ -218,8 +218,6 @@ Compare tensor product to serendipity and direct serendipity as applicable
 \item KSP / solver time
 \end{enumerate}
 
-\red{Justin is generating these results}
-
 \subsection{Timing: 2D Elements}
 
 \subsection{Timing: 3D Elements}
@@ -238,15 +236,35 @@ The 2D elements are tested using a few test problems.  The first is a basic proj
   \label{fig:2dProjection}
 \end{figure}
 
-First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in \ref{fig:2dProjection}.  This confirms that for a basic projection, we are getting the convergence rates for the trimmed Serendipity elements that we expect.  
+\noindent First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in \ref{fig:2dProjection}.  This confirms that for a basic projection, we are getting the convergence rates for the trimmed Serendipity elements that we expect.  Next we wanted to work on the primal Poisson and mixed Poisson problems.
+
+\noindent We solve the primal Poisson problem described below on a unit square domain $\Omega$
+
+\begin{equation}
+    -\nabla^2 u = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) \in \Omega
+\end{equation}
+\begin{equation*}
+    u\vert_{\partial \Omega} = 0
+\end{equation*}
+
+\noindent which yields the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$.  The corresponding mixed Poisson problem that we solve is then
+
+\begin{equation}
+    \sigma - \nabla u = 0
+\end{equation}
+\begin{equation*}
+    \nabla \cdot \sigma = -f
+\end{equation*}
+\begin{equation*}
+    u\vert_{\partial \Omega} = 0
+\end{equation*}
+\noindent which has the same solution as the primal problem above.  The results for the primal problem can be seen in \ref{fig:2dPrimalPoisson}, and the results for the mixed problem are shown in \ref{fig:2dMixedPoisson}.  Error for the primal problem is measured in the energy norm, while the mixed problem error is computed using the $L^2$ norm on $u$.
 
 \begin{figure}[h!]
   \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
   \includegraphics[width=0.75\textwidth]{2dPrimalPoisson.png}
   \label{fig:2dPrimalPoisson}
 \end{figure}
-
-The \ref{fig:2dPrimalPoisson} illustrates how $0$-form Serendipity and Lagrange elements work for solving the Primal Poisson problem in 2D.  The error is measured in the Energy norm for the problem.
 
 \begin{figure}[h!]
   \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
@@ -258,24 +276,26 @@ In \ref{fig:2dMixedPoisson}, we see a comparison of $1$-forms for solving the mi
 
 \subsection{DOFs and Memory: 3D Elements}
 
-\begin{figure}[h]
+In the 3D case, we extend the primal and mixed problems to have $u = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ as the solution.  The results found in \ref{fig:3dTrimmedDiv} refer to solving the mixed Poisson problem using tensor product and trimmed Serendipity H$($div$)$ elements in 3D.
+
+\begin{figure}[h!]
   \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
   \includegraphics[width=0.75\textwidth]{MixedPoisson3d_TrimmedSerendipityNCF.png}
 \caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in 3D using H$($div$)$ elements.}
 \label{fig:3dTrimmedDiv}
 \end{figure}
 
-The results found in \ref{fig:3dTrimmedDiv} refer to solving the mixed Poisson problem using tensor product and trimmed Serendipity H$($div$)$ elements in 3D.  We expect that the rates of convergence should track closely at each order.  Trimmed Serendipity elements in general use many less degrees of freedom, especially on the interior of the cubes forming the mesh.   The results that we get are consistent with that fact, illustrating that trimmed Serendipity elements do in fact require less computation time. Any data points that are illustrated required less than 3TB of memory and less than 48 hours from an HPC job starting to ending.  Data points that are missing would have required more than 48 hours to run.  
+\noindent We expect that the rates of convergence should track closely at each order.  Trimmed Serendipity elements in general use less degrees of freedom, especially on the interior of the cubes forming the mesh.   The results that we get are consistent with that fact, illustrating that trimmed Serendipity elements do in fact require less computation time. Any data points that are illustrated required less than 3TB of memory and less than 48 hours from an HPC job starting to ending.  Data points that are missing would have required more than 48 hours to run.  
 
 
 \newpage
 \section{Accuracy and convergence rate experiments}
 
-In this section, we will explore the affect that mesh size has on the error and convergence rates of the trimmed Serendipity and tensor product elements. 
+In this section, we will explore the affect that mesh size has on the error and convergence rates of the trimmed Serendipity and tensor product elements. The test problems, as before, are projection, primal Poisson, and mixed Poisson, allowing us to illustrate the effectiveness of scalar elements as well as H$($div$)$ and H$($curl$)$ elements.
 
 \subsection{Error: 2D Elements}
 
-As in the previous sections, we give results for the same test problems (projection, primal Poisson, mixed Poisson) to give a uniform idea of the benefits and costs to using trimmed Serendipity vs tensor product elements. 
+As in the previous sections, we give results for the same test problems (projection, primal Poisson, mixed Poisson) to give a uniform idea of the benefits and costs to using trimmed Serendipity.  
 
 \begin{figure}[h!]
   \caption{Mesh size N vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
@@ -367,7 +387,7 @@ EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
 
-\noindent and are indicated in the chart by using parentheses.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3D.  Based off earlier eigenvalue works (Boffi, FIND ANOTHER REFERENCE PROBABLY), we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table in most spots, except for one of the eigenvalues of $5$, where it tends to oscillate a bit.  This specific eigenvalue overall converges at a rate near $4.00$ if we instead using the values at $N=8$ and $N=32$, ignoring the intermediate value at $N=16$.  \\
+\noindent and are indicated in the chart by using parentheses.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3D.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table in most spots, except for one of the eigenvalues of $5$, where it tends to oscillate a bit.  This specific eigenvalue overall converges at a rate near $4.00$ if we instead using the values at $N=8$ and $N=32$, ignoring the intermediate value at $N=16$.  \\
 
 \noindent Based off the closed form formula, note that $4$ should never be an eigenvalue in 3D. However, we see it consistently found by both the NCE and $S^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.\\
 
@@ -393,6 +413,9 @@ Each finite element has a time and place where it could be considered beneficial
 \noindent Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
 \noindent In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
+
+\bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
+\bibliography{serendipityFiredrakePaper}  %Change this to the bib file
 
 \end{document}
 
