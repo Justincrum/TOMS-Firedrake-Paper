@@ -85,6 +85,7 @@
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\akg}[1]{\textcolor{blue}{\textbf{AG:} #1}}
 
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calS}{\mathcal{S}}
@@ -320,14 +321,16 @@ As in the previous sections, we give results for the same test problems (project
 \newpage
 \subsection{Error: 3D Elements}
 We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the Maxwell equations give us the eigenvalue problem 
-
+\akg{(1) The wording is a little ambiguous - are you about the state the resonator problem or Maxwell's equations?  Or are these the same?  (2) I prefer to see the statement of the variables prior to the PDE i.e. move the part after the equation to before it. (3) You need to state the domain - I think it's $[0,1]^3\subset\R^3$ - and the boundary conditions (periodic?) (4) Give the eigenvalue equation a label so you can reference it later.}
 \[ \langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle,\]
 
 \noindent where we want to find resonances $\omega$ and eigenfunctions $E$ such that $\omega \in \mathbb{R}$ and $E \in \text{H}(\text{curl})$.  The exact eigenvalues should follow the formula
 
 \[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
 
-\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time.
+\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time. \akg{Cite a reference for this - probably Boffi?}
+
+\akg{Put discretized version of eigenvalue problem here (see comment below)}
 
 \begin{center}
 \begin{table}
@@ -379,11 +382,16 @@ EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 
 \end{tabular}
 \caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. }  
-\end{table}
 \label{tab:Eigenvalue}
+\end{table}
 \end{center}
 
-\noindent In \ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D. Note that the convergence rates are computed by doing
+\akg{(1) For this second paragraph, the first (topic) sentence is good - you are going to discuss the table.  The next few sentences need to be *what* the table is.   What are the columns?  What are the rows?  What is the top vs the bottom of the table?  What does each entry in the table represent?  What is in the parentheses?  *Then* give the formula for convergence rate, and explain what the !-4 notation means, and the specifics about SLEPc. Imagine you are teaching this to a first year graduate student - you have to explain everything.  That should be the entire content of this paragraph.  Then have a new paragraph with topic sentence something like ``Table~\ref{tab:Eigenvalue} highlights a number of revealing differences between computing with NCE and serendipity elements.''  Then launch into what those differences are.
+(2) FYI: I added `Table' before the ref command.  Also I had to move the label command before the end table command as it was picking up the section number instead of the table number.  
+(3) You're not *really* solving the eigenvalue problem - you're solving a discretization of it.   I think we need to state the discretized version formally.  We can discuss this when we talk if  you're not sure how / where to find the formulation.   }
+
+\noindent In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D. 
+Note that the convergence rates are computed by doing
 
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
 
@@ -406,9 +414,9 @@ EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 
 \section{Conclusion}
 
-Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using less degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
+Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using fewer degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
 
-\noindent Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly less degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
+\noindent Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
 
 \noindent Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
