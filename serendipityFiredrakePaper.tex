@@ -323,15 +323,20 @@ As in the previous sections, we give results for the same test problems (project
 
 \newpage
 \subsection{Error: 3D Elements}
-We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the Maxwell equations give us the eigenvalue problem 
-\akg{(1) The wording is a little ambiguous - are you about the state the resonator problem or Maxwell's equations?  Or are these the same?  (2) I prefer to see the statement of the variables prior to the PDE i.e. move the part after the equation to before it. (3) You need to state the domain - I think it's $[0,1]^3\subset\R^3$ - and the boundary conditions (periodic?) (4) Give the eigenvalue equation a label so you can reference it later.}
-\[ \langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle,\]
+For testing the H$($curl$)$ elements in 3D, we chose to use the Cavity resonator problem, where the time-harmonic Maxwell equations applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions yields an eigenvalue problem where $\omega$ represents the (eigenvalues) resonances and $E$ represents the (eigenfunctions) electric field:
 
-\noindent where we want to find resonances $\omega$ and eigenfunctions $E$ such that $\omega \in \mathbb{R}$ and $E \in \text{H}(\text{curl})$.  The exact eigenvalues should follow the formula
+\begin{equation}
+    \langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle \text{ for all } F \in H_0(\text{curl}).
+\end{equation}
+
+We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the time-harmonic Maxwell equations applied to a 
+\akg{(1) The wording is a little ambiguous - are you about the state the resonator problem or Maxwell's equations?  Or are these the same?  (2) I prefer to see the statement of the variables prior to the PDE i.e. move the part after the equation to before it. (3) You need to state the domain - I think it's $[0,1]^3\subset\R^3$ - and the boundary conditions (periodic?) (4) Give the eigenvalue equation a label so you can reference it later.}
+
+\noindent The exact eigenvalues should follow the formula
 
 \[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
 
-\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time. \akg{Cite a reference for this - probably Boffi?}
+\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time \cite{rognes2010efficient}.
 
 \akg{Put discretized version of eigenvalue problem here (see comment below)}
 
@@ -393,8 +398,10 @@ EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 (2) FYI: I added `Table' before the ref command.  Also I had to move the label command before the end table command as it was picking up the section number instead of the table number.  
 (3) You're not *really* solving the eigenvalue problem - you're solving a discretization of it.   I think we need to state the discretized version formally.  We can discuss this when we talk if  you're not sure how / where to find the formulation.   }
 
-\noindent In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D. 
-Note that the convergence rates are computed by doing
+\noindent In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D.  The table is split into two mirrored halves, the top half giving values from using NCE elements while the bottom half gives values from using $S^-$ elements.  The column labeled "Actual" represents the theoretical eigenvalue that eigenvalues in that row are converging towards.  Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall degrees of freedom in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+
+
+\noindent Note that the convergence rates are computed by doing
 
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
 
