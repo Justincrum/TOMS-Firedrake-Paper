@@ -247,6 +247,9 @@ The 2D elements are tested using a few test problems.  The first is a basic proj
 \begin{equation*}
     u\vert_{\partial \Omega} = 0
 \end{equation*}
+\begin{equation*}
+   \nabla u \cdot n = 0 \text{ on } \partial \Omega
+\end{equation*}
 
 \noindent which yields the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$.  The corresponding mixed Poisson problem that we solve is then
 
@@ -299,22 +302,22 @@ In this section, we will explore the affect that mesh size has on the error and 
 As in the previous sections, we give results for the same test problems (projection, primal Poisson, mixed Poisson) to give a uniform idea of the benefits and costs to using trimmed Serendipity.  
 
 \begin{figure}[h!]
-  \caption{Mesh size N vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
-  \includegraphics[width=0.75\textwidth]{2dProjectionN.png}
-  \label{fig:2dProjectionN}
+  \caption{Analysis of projection using $S^-(\text{Curl})$ and RTCE.}
+  \includegraphics[width=0.75\textwidth]{2dProjectionH.pdf}
+  \label{fig:2dProjectionH}
 \end{figure}
 
 
 \begin{figure}[h!]
-  \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ elements.}
-  \includegraphics[width=0.75\textwidth]{2dPrimalPoissonN.png}
-  \label{fig:2dPrimalPoissonN}
+  \caption{Primal Poisson analysis of h vs error.}
+  \includegraphics[width=0.75\textwidth]{2dPrimalH.pdf}
+  \label{fig:2dPrimalH}
 \end{figure}
 
 \begin{figure}[h!]
-  \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
-  \includegraphics[width=0.75\textwidth]{2dMixedPoissonN.png}
-  \label{fig:2dMixedPoissonN}
+  \caption{Degrees of Freedom vs h analysis of $S^-(\text{Div})$ and RTCE elements for a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
+  \includegraphics[width=0.75\textwidth]{2dMixedPoissonH.pdf}
+  \label{fig:2dMixedPoissonH}
 \end{figure}
 
 
@@ -407,7 +410,7 @@ Note that the convergence rates are computed by doing
 
 \begin{figure}[h]
   \caption{Preliminary results for testing a mixed Poisson problem in 3D, using $S^-(\text{Div})$ and NCF elements.}
-  \includegraphics[width=0.75\textwidth]{3dMixedPoissonN.png}
+  \includegraphics[width=0.75\textwidth]{3dMixedPoissonH.pdf}
 \caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in 3D using H$($div$)$ elements.}
 \label{fig:3dTrimmedDivN}
 \end{figure}
