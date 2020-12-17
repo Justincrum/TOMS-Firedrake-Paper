@@ -209,6 +209,13 @@
   \end{enumerate}
   
   \section{Building capacity for serendipity element types in Firedrake}
+  
+  Firedrake is a python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC.  
+  
+  \noindent First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
+  
+  \noindent Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
+  
 
   \section{Experiments}
     
@@ -250,16 +257,16 @@
 \end{align}
 where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  
 
-\begin{figure}[t!]
+\begin{figure}[h!]
   \centering
-  \begin{subfigure}[t]{0.5\textwidth}
+  \begin{subfigure}[h]{0.5\textwidth}
     \centering
     \includegraphics[height=2.2in]{2dPrimalH.pdf}
     \caption{2D}
     \label{fig:2dPrimalH}
   \end{subfigure}
   ~
-  \begin{subfigure}[t]{0.5\textwidth}
+  \begin{subfigure}[h]{0.5\textwidth}
     \centering
     \includegraphics[height=2.2in]{3dPrimalH.pdf}
     \caption{3D}
@@ -301,13 +308,14 @@ where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solutio
 %    \label{fig:3dPrimalDofs}
 %  \end{figure}
 
-\noindent Finally, we look at the timing requirements for the primal Poisson problem using the Lagrange and Serendipity elements in 3D.  In \ref{fig:3dPrimalTime}, we can see that the amount of time required for Serendipity elements tends to start off higher, but scales better as the problem grows in size.  
-
-  \begin{figure}[h!]
+  \begin{figure}[h]
+    \includegraphics[width=0.55\textwidth]{3dPrimalTime.pdf}
     \caption{Timing data for the 3D primal Poisson problem, where each sequence of data represents using the respective element for a mesh of size $N x N x N$ for $N = 8, 16, 32, 64$.}
-    \includegraphics[width=0.75\textwidth]{3dPrimalTime.pdf}
     \label{fig:3dPrimalTime}
   \end{figure}
+\newpage 
+
+\noindent Finally, we look at the timing requirements for the primal Poisson problem using the Lagrange and Serendipity elements in 3D.  In \ref{fig:3dPrimalTime}, we can see that the amount of time required for Serendipity elements tends to start off higher, but scales better as the problem grows in size.  
 
 
 \newpage
@@ -358,6 +366,8 @@ The mixed Poisson problem that we focus on is derived from the primal Poisson eq
 %    \includegraphics[width=0.75\textwidth]{2dMixedPoissonH.pdf}
 %    \label{fig:2dMixedPoissonH}
 %  \end{figure}
+
+\newpage
 
 \noindent After the comparison based off edge length, we also want to focus on the error based on the degrees of freedom.  In Figures \ref{fig:2dMixedDofs} and \ref{fig:3dMixedDofs}, we see similar trends to our previous figures.
 
