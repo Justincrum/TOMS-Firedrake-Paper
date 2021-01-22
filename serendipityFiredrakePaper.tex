@@ -100,7 +100,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Bringing Serendipity Methods to Computational Practice in Firedrake}
+\title{Bringing Trimmed Serendipity Methods to Computational Practice in Firedrake}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -212,9 +212,9 @@
   
   Firedrake is a python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC.  
   
-  \noindent First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
+  First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
   
-  \noindent Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
+   Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
   
 
   \section{Experiments}
@@ -225,31 +225,44 @@
   \subsection{Projection}
   
   We solve the projection problem to give a baseline of expectations for the elements.  
-  
-  GET THE EXACT PROBLEM THAT THE PROJECTION PROBLEM IS SOLVING.
 
-  \begin{figure}[h!]
-    \caption{Analysis of projection using $S^-(\text{Curl})$ and RTCE.}
-    \includegraphics[width=0.55\textwidth]{2dProjectionH.pdf}
+\begin{figure}[h!]
+  \begin{subfigure}[h]{0.5\textwidth}
+    \includegraphics[height=2.2in]{2dProjectionH.pdf}
+    \caption{2D edge length vs error}
     \label{fig:2dProjectionH}
-  \end{figure}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+     \includegraphics[height=2.2in]{2dProjection.png}
+     \caption{2D degrees of freedom vs error}
+     \label{fig:2dProjection}
+  \end{subfigure} \\
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+    \includegraphics[height=2.2in]{3dProjectionHError.pdf}
+    \caption{3D edge length vs error}
+    \label{fig:3dProjectionH}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+    \includegraphics[height=2.2in]{3dProjectionDofsError.pdf}
+    \caption{3D degrees of freedom vs error}
+    \label{fig:3dProjectionDofs}
+  \end{subfigure}
+  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.}
+\end{figure}
   
-  \noindent First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in Figure \ref{fig:2dProjection}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed Serendipity and tensor product elements at a given order to be parallel.
-
-  \begin{figure}[h!]
-    \caption{Degrees of Freedom vs Error analysis of projection using $S^-(\text{Curl})$ and RTCE.}
-    \includegraphics[width=0.55\textwidth]{2dProjection.png}
-    \label{fig:2dProjection}
-  \end{figure}
+First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in Figure \ref{fig:2dProjectionH}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed Serendipity and tensor product elements at a given order to be parallel.
   
-  \noindent After checking that it is converging at the right rate, we then want to analyze the data from a standpoint of memory usage.  To do this, we plot degrees of freedom vs error, as seen in Figure \ref{fig:2dProjection}.  Overall, the error given by trimmed Serendipity elements is higher than the error from using tensor product elements of the same order.  However, the degrees of freedom comparison allows us to instead compare error per degree of freedom, which tends to favor trimmed Serendipity elements at higher degrees.  To see this in a few more practical (but still relatively simple problems), we move on to the next few experiments.
+After checking that it is converging at the right rate, we then want to analyze the data from a standpoint of memory usage.  To do this, we plot degrees of freedom vs error, as seen in Figure \ref{fig:2dProjection}.  Overall, the error given by trimmed Serendipity elements is higher than the error from using tensor product elements of the same order.   We see similar results in Figures \ref{fig:3dProjectionDofs} and \ref{fig:3dProjectionH}.
   
 
 
 \newpage
-  \subsection{Primal Poisson}
-  
-\noindent We solve the primal Poisson problem described below on a unit square domain $\Omega$
+ 
+\subsection{The Poisson Problem}
+In this section we discuss results for both the primal Poisson problem as well as the mixed Poisson problem.  We solve the primal Poisson problem described below on a unit square domain $\Omega$:
 \begin{align}
     -\nabla^2 u &= f \\
     u\vert_{\partial \Omega} &= 0 \\
@@ -257,72 +270,7 @@
 \end{align}
 where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  
 
-\begin{figure}[h!]
-  \centering
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \includegraphics[height=2.2in]{2dPrimalH.pdf}
-    \caption{2D}
-    \label{fig:2dPrimalH}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \includegraphics[height=2.2in]{3dPrimalH.pdf}
-    \caption{3D}
-    \label{fig:3dPrimalH}
-  \end{subfigure}
-  \caption{Analysing the error based off the mesh refinements for the primal Poisson problem in 2 and 3D.}
-\end{figure}  
-\noindent  As in the projection problem, we first give Figures \ref{fig:3dPrimalH} and \ref{fig:2dPrimalH} to illustrate the behavior of these elements with respect to mesh refinement.  In general, Lagrange elements again give better error with respect to mesh refinement (ignoring order 6 in 2D when getting close to machine precision).  In 3D, we focus on orders 2 and 3, as even in this case, we hit approximately 1TB of memory used and require nearly 12 hours of computation time on 24 processors.
-
-\noindent Though the Lagrange elements tend to give a better error approximation at each mesh refinement level, we also wish to investigate the cases of how much error can we get if we instead wish to limit the amount of memory or time that the machine uses.  In Figures \ref{fig:2dPrimalDofs} and \ref{fig:3dPrimalDofs}, we have trendlines illustrating the degrees of freedom in the mesh vs the error.  What we find is that at the lower orders (order 2 for 2D and both orders 2 and 3 for 3D), the Serendipity curves show a better error  at the same degrees of freedom, while the Lagrange elements overtake them at higher orders.  
-
-\begin{figure}[h!]
-  \centering
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \includegraphics[height=2.2in]{2dPrimalPoisson.png}
-    \caption{2D}
-    \label{fig:2dPrimalDofs}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \includegraphics[height=2.2in]{3dPrimalDofs.pdf}
-    \caption{3D}
-    \label{fig:3dPrimalDofs}
-  \end{subfigure}
-  \caption{Analyzing the primal Poisson problem in 2 and 3D based off degrees of freedom vs error.}
-\end{figure}  
-
-%  \begin{figure}[h!]
-%    \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ %elements.}
-%    \includegraphics[width=0.75\textwidth]{2dPrimalPoisson.png}
-%    \label{fig:2dPrimalPoisson}
-%  \end{figure}
-
-%  \begin{figure}[h!]
-%    \caption{Degrees of Freedom vs Energy Error analysis of Serendipity and Lagrange $L^2$ %elements.}
-%    \includegraphics[width=0.75\textwidth]{3dPrimalDofs.pdf}
-%    \label{fig:3dPrimalDofs}
-%  \end{figure}
-
-  \begin{figure}[h]
-    \includegraphics[width=0.55\textwidth]{3dPrimalTime.pdf}
-    \caption{Timing data for the 3D primal Poisson problem, where each sequence of data represents using the respective element for a mesh of size $N x N x N$ for $N = 8, 16, 32, 64$.}
-    \label{fig:3dPrimalTime}
-  \end{figure}
-\newpage 
-
-\noindent Finally, we look at the timing requirements for the primal Poisson problem using the Lagrange and Serendipity elements in 3D.  In \ref{fig:3dPrimalTime}, we can see that the amount of time required for Serendipity elements tends to start off higher, but scales better as the problem grows in size.  
-
-
-\newpage
-\subsection{Mixed Poisson}
-
-  
-The mixed Poisson problem that we focus on is derived from the primal Poisson equation above.  Specifically, we solve a discretization of 
+The primal Poisson problem allows us to test scalar Serendipity elements against Lagrange elements.  Then we wish to also test H(div) elements.  To do this, we solve a discretization of the mixed Poisson problem:
 
 \begin{align}
      \sigma - \nabla u &= 0 \\
@@ -330,90 +278,93 @@ The mixed Poisson problem that we focus on is derived from the primal Poisson eq
      u\vert_{\partial \Omega} &= 0 \notag
 \end{align}
 
- 
-%\begin{equation}
-%%    \sigma - \nabla u = 0
-%\end{equation}
-%\begin{equation*}
-%    \nabla \cdot \sigma = -f
-%\end{equation*}
-%\begin{equation*}
-%    u\vert_{\partial \Omega} = 0
-%\end{equation*}
-
-\noindent which has the same analytic 2 and 3D solutions as the primal Poisson problem when using $f$ as defined in section 4.2.  The error results based off mesh refinements can be seen in Figures \ref{fig:2dMixedPoissonH} and \ref{fig:3dMixedPoissonH}.  The 2D mixed Poisson graph is similar to the 2D primal Poisson graph.  The 3D mixed Poisson graph again illustrates the proper rates of convergence for trimmed Serendipity elements, but also illustrates the computational difficulty of scaling the tensor product elements to larger problems in 3D.
 
 \begin{figure}[h!]
   \centering
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{2dMixedPoissonH.pdf}
-    \caption{2D}
-    \label{fig:2dMixedPoissonH}
+    \includegraphics[height=2.2in]{2dPrimalPoisson.png}
+    \caption{2D Primal}
+    \label{fig:2dPrimalDofs}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dMixedPoissonH.pdf}
-    \caption{3D}
-    \label{fig:3dMixedPoissonH}
-  \end{subfigure}
-  \caption{Analyzing the mixed Poisson problem in 2 and 3D based off edge length $h$ vs error.}
-\end{figure} 
-
-%  \begin{figure}[h!]
-%    \caption{Degrees of Freedom vs h analysis of $S^-(\text{Div})$ and RTCE elements for a %mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
-%    \includegraphics[width=0.75\textwidth]{2dMixedPoissonH.pdf}
-%    \label{fig:2dMixedPoissonH}
-%  \end{figure}
-
-\newpage
-
-\noindent After the comparison based off edge length, we also want to focus on the error based on the degrees of freedom.  In Figures \ref{fig:2dMixedDofs} and \ref{fig:3dMixedDofs}, we see similar trends to our previous figures.
-
-\begin{figure}[h!]
-  \centering
-  \begin{subfigure}[h]{0.45\textwidth}
+    \includegraphics[height=2.2in]{2dMixedPoissonDofs.pdf}
+    \caption{2D Mixed}
+    \label{fig:2dMixedDofsError}
+  \end{subfigure} \\
+  \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.1in]{MixedPoisson-2d-SminusDiv_RTCF.png}
-    \caption{2D}
-    \label{fig:2dMixedDofs}
+    \includegraphics[height=2.2in]{3dPrimalDofsError.pdf}
+    \caption{3D Primal}
+    \label{fig:3dPrimalDofsError}
   \end{subfigure}
   ~
-  \begin{subfigure}[h]{0.45\textwidth}
+  \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.1in]{MixedPoisson3d_TrimmedSerendipityNCF.png}
-    \caption{3D}
-    \label{fig:3dMixedDofs}
+    \includegraphics[height=2.2in]{3dMixedPoissonDofsError.pdf}
+    \caption{3D Mixed}
+    \label{fig:3dMixedDofsError}
   \end{subfigure}
-  \caption{Analyzing the mixed Poisson problem in 2 and 3D based off degrees of freedom vs error.}
-\end{figure} 
+  \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.}
+\label{fig:PrimalMixedErrorAnalysis}
+\end{figure}
+
+
+Figures \ref{fig:2dPrimalDofs}, \ref{fig:2dMixedDofsError}, \ref{fig:3dPrimalDofsError}, and \ref{fig:3dMixedDofsError} give us some interesting data points to focus on.  Before analyzing the results, note again that Serendipity and trimmed Serendipity elements are the same in the primal Poisson case.  While these elements differ in the H(div) and H(curl) cases, our results here indicate that we likely will not see Serendiptiy elements outperforming trimmed Serendipity elements in 3D, so their implementation has been left for a future work.
+
+In each of the figures in \ref{fig:PrimalMixedErrorAnalysis}, we see that regardless of which element is better, they follow similar trajectories again, indicating that they have the same overall convergence rate.  The primal Poisson problem shows us that there are scenarios where using Serendipity elements can be beneficial in terms of error depending on the number of degrees of freedom.  However, in the mixed Poisson problem, we don't immediately see this benefit in either the 2D case or the 3D case.
+
+However, we would also like to analyze timing for tensor product elements and trimmed Serendipity elements.  We do this in the subfigures of \ref{fig:PrimalMixedTimeAnalysis}.  In \ref{fig:3dPrimalDofsTime} and \ref{fig:3dPrimalTimeError}, we see good evidence that Serendipity elements are able to to produce better results at a faster rate.  Specifically, in \ref{fig:3dPrimalDofsTime}, we can see that Serendipity elements are able to do a larger number of degrees of freedom in the same amount of time.  In fig \ref{fig:3dPrimalTimeError} we see that for a given error level, Serendipity elements require less time.
+
+However the picture that is painted in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} is much less clear.  Overall, trimmed Serendipity elements seem to do a bit worse than the corresponding tensor product elements for the mixed Poisson problem, but it is promising that in \ref{fig:3dMixedDofsTime}, the points tend to stay in an overall linear fashion bunched together. 
 
 \newpage
 
-%  \begin{figure}[h!]
-%    \caption{Degrees of Freedom vs Error analysis of $S^-(\text{Div})$ and RTCE elements for %a mixed Poisson PDE, with exact solution $sin(\pi x)sin(\pi y)$ !}
-%    \includegraphics[width=0.75\textwidth]{MixedPoisson-2d-SminusDiv_RTCF.png}
-%    \label{fig:2dMixedPoisson}
-%  \end{figure}
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h]{0.5\textwidth}
+    \centering
+    \includegraphics[height=2.2in]{3dPrimalDofsTime.pdf}
+    \caption{3D Primal Degrees of freedom vs Time}
+    \label{fig:3dPrimalDofsTime}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+    \centering
+    \includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
+    \caption{3D Primal Time vs Error}
+    \label{fig:3dPrimalTimeError}
+  \end{subfigure}\\
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+    \centering
+    \includegraphics[height=2.2in]{3dMixedPoissonDofsTime.pdf}
+    \caption{3D Mixed Degrees of freedom vs Time}
+    \label{fig:3dMixedDofsTime}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[h]{0.5\textwidth}
+    \centering
+    \includegraphics[height=2.2in]{3dMixedPoissonTimeError.pdf}
+    \caption{3D Mixed Time vs Error}
+    \label{fig:3dMixedTimeError}
+  \end{subfigure}
+  \caption{Analyzing timing data for primal and mixed Poisson problems using trimmed Serendipity and tensor product elements.}
+\label{fig:PrimalMixedTimeAnalysis}
+\end{figure}
 
-%  \begin{figure}[h]
-%    \caption{Preliminary results for testing a mixed Poisson problem in 3D, using %$S^-(\text{Div})$ and NCF elements.}
-%    \includegraphics[width=0.75\textwidth]{3dMixedPoissonH.pdf}
-%  \caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in %3D using H$($div$)$ elements.}
-%  \label{fig:3dTrimmedDivN}
-%  \end{figure}
 
-%  \begin{figure}[h!]
-%    \caption{Preliminary results for testing a mixed Poisson problem in 3D, using %$S^-(\text{Div})$ and NCF elements.}
-%    \includegraphics[width=0.75\textwidth]{MixedPoisson3d_TrimmedSerendipityNCF.png}
-%  \caption{Analyzing convergence rates of trimmed Serendipity vs tensor product elements in %3D using H$($div$)$ elements.}
-%  \label{fig:3dTrimmedDiv}
-%  \end{figure}
+\newpage  
+  
+\newpage 
 
-  \subsection{Cavity Resonator}
 
-\noindent For testing the H$($curl$)$ elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\omega$ represents the resonances (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
+
+\subsection{Cavity Resonator}
+
+For testing the H$($curl$)$ elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\omega$ represents the resonances (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
 
 
 \begin{equation}
@@ -423,7 +374,7 @@ The mixed Poisson problem that we focus on is derived from the primal Poisson eq
 %\noindent We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the time-harmonic Maxwell equations applied to a 
 %\akg{(1) The wording is a little ambiguous - are you about the state the resonator problem or Maxwell's equations?  Or are these the same?  (2) I prefer to see the statement of the variables prior to the PDE i.e. move the part after the equation to before it. (3) You need to state the domain - I think it's $[0,1]^3\subset\R^3$ - and the boundary conditions (periodic?) (4) Give the eigenvalue equation a label so you can reference it later.}
 
-\noindent The exact eigenvalues should follow the formula
+The exact eigenvalues should follow the formula
 
 \[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
 
@@ -438,45 +389,49 @@ The mixed Poisson problem that we focus on is derived from the primal Poisson eq
 \hline
 Actual & N = 4 & N = 8 & N = 16 & N = 32 \\ 
 \hline
-2 &2.0010243 & 2.0000655 (3.97) & 2.0000041 (3.99) & 2.0000003 (4.00) \\  
-2 & 2.0010243 & 2.0000655 (3.97) & 2.0000041 (3.99) & 2.0000003 (4.00)  \\
-2 & 2.0010243 & 2.0000655 (3.97) & 2.0000041 (3.99) & 2.0000003 (4.00)\\
-3 & 3.0015364 & 3.0000983 (3.97) & 3.0000062 (3.99) & 3.0000004 (4.00) \\
-3 & 3.0015364 & 3.0000983 (3.97) & 3.0000062 (3.99) & 3.0000004 (4.00) \\
-$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-5 & 5.0306014 & 5.0020813 (3.88)& 5.0001331 (3.97) & 5.0000084 (3.99) \\
-5 & 5.0306014 & 5.0020813 (3.88)& 5.0001331 (3.97) & 5.0000084 (3.99) \\
-5 & 5.0306014 & 5.0020813 (3.88) & 5.0001331 (3.97) & 5.0000084 (3.99) \\
-5 & - & - & 5.0001331 & 5.0000084 (3.99) \\
-6 & - & 6.0021141 & 6.0001352 (3.97) & -  \\
-6 & - & 6.0021141 & 6.0001352 (3.97) & - \\
+2 &2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00) \\  
+2 & 2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00)  \\
+2 & 2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00)\\
+3 & 3.001536 & 3.000098 (3.97) & 3.000006 (4.03) & 3.0000004 (4.02) \\
+3 & 3.001536 & 3.000098 (3.97) & 3.000006 (4.03) & 3.0000004 (4.02) \\
+5 & 5.030601 & 5.002081 (3.88)& 5.000133 (3.97) & 5.000008 (4.06) \\
+5 & 5.030601 & 5.002081 (3.88)& 5.000133 (3.97) & 5.000008 (4.06) \\
+5 & 5.030601 & 5.002081 (3.88) & 5.000133 (3.97) & 5.000008 (4.06) \\
+5 & 5.030601 & 5.0002081 (3.88) & 5.000133 (3.97) & 5.000008 (4.06) \\
+6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) &  6.000008 (4.08) \\
+6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) & 6.000008 (4.08) \\
+6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) & 6.000008 (4.08) \\
+8 & - & -& - & - \\
+\hline
+Iterations & 4 & 4 & 3 & 5 \\
 \hline
 DOF  & 1944 & 13872 & 104544 & 811200 \\
 \hline
-EPS Solve Time (seconds) & 0.0514 & 0.2811 & 3.2795 & 29.2620 \\
+EPS Solve Time (seconds) & 0.062609 & 0.297538 & 3.145271 & 38.093263 \\
 \hline
 \multicolumn{5}{c}{$S^-$ H$($curl$)$ Elements} \\
 \hline
 Actual & N = 4 & N = 8 & N = 16 & N = 32 \\ 
 \hline
-2 &2.0010919 & 2.0000664 (4.04) & 2.0000041 (4.01) & 2.0000003 (4.00) \\  
-2 & 2.0010919 & 2.0000664 (4.04) & 2.0000041 (4.01) & 2.0000003 (4.00)  \\
-2 & 2.0059537 & 2.0003900 (3.93) & 2.0000247 (3.98) & 2.0000015 (4.00)\\
-3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
-3 & 3.0090182 & 3.0005863 (3.94) & 3.0000370 (3.98) & 3.0000023 (4.00) \\
-$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-$! \rightarrow$ 4 & 4.0300893 & 4.0020486 (3.88) & 4.0001311 (3.97) & 4.0000082 (3.99) \\
-5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
-5 & 5.0320266 & 5.0020970 (3.93)& 5.0001333 (3.98) & 5.0000084 (3.99) \\
-5 & 5.0736899 & 5.0052310 (3.82) & 5.0001333 (5.29) & 5.0000212 (2.65) \\
-5 & 5.0736899 & 5.0052310 (3.82) & 5.0003371 (3.96) & 5.0000212 (3.99) \\
-6 & - & 6.0049765 & 6.0003192 (3.96) & 6.0000201 (3.99) \\
-6 & - & - & - & - \\
+2 &2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00) \\  
+2 & 2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00)  \\
+2 & 2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00)\\
+3 & 3.009018 & 3.000586 (3.94) & 3.000037 (3.99) & 3.000002 (4.21) \\
+3 & 3.009018 & 3.000586 (3.94) & 3.000037 (3.99) & 3.000002 (4.21) \\
+5 & 5.032027 & 5.002097 (3.93)& 5.000133 (3.98) & 5.000008 (4.06) \\
+5 & 5.032027 & 5.002097 (3.93)& 5.000133 (3.98) & 5.000008 (4.06) \\
+5 & 5.032027 & 5.002097 (3.93) & 5.000133 (3.98) & 5.000008 (4.06) \\
+5 & 5.032027 & 5.002097 (3.93) & 5.000133 (3.98) & - \\
+6 & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000020 (4.00) \\
+6 & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000024 (3.73)\\
+6 & - & - & 6.00038 & 6.000024 (3.98)\\
+8 & - & - & - & 8.000017 \\
+\hline
+Iterations & 4 & 5 & 4 & 3 \\
 \hline
 DOF  & 1080 & 7344 & 53856 & 411840 \\
 \hline
-EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
+EPS Solve Time (seconds) & 0.051549 & 0.154884 & 1.606652 & 12.599062 \\
 \hline
 
 \end{tabular}
@@ -485,24 +440,20 @@ EPS Solve Time (seconds) & 0.0367 & 0.1339 & 1.5125 & 17.6765 \\
 \end{table}
 \end{center}
 
-%\akg{(1) For this second paragraph, the first (topic) sentence is good - you are going to discuss the table.  The next few sentences need to be *what* the table is.   What are the columns?  What are the rows?  What is the top vs the bottom of the table?  What does each entry in the table represent?  What is in the parentheses?  *Then* give the formula for convergence rate, and explain what the !-4 notation means, and the specifics about SLEPc. Imagine you are teaching this to a first year graduate student - you have to explain everything.  That should be the entire content of this paragraph.  Then have a new paragraph with topic sentence something like ``Table~\ref{tab:Eigenvalue} highlights a number of revealing differences between computing with NCE and serendipity elements.''  Then launch into what those differences are.
-%(2) FYI: I added `Table' before the ref command.  Also I had to move the label command before the end table command as it was picking up the section number instead of the table number.  
-%(3) You're not *really* solving the eigenvalue problem - you're solving a discretization of it.   I think we need to state the discretized version formally.  We can discuss this when we talk if  you're not sure how / where to find the formulation.   }
-
-\noindent In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D.  The table is split into two mirrored halves, the top half giving values from using NCE elements while the bottom half gives values from using $S^-$ elements.  The column labeled "Actual" represents the theoretical eigenvalue that eigenvalues in that row are converging towards.  Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall degrees of freedom in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D.  The table is split into two mirrored halves, the top half giving values from using NCE elements while the bottom half gives values from using $S^-$ elements.  The column labeled "Actual" represents the theoretical eigenvalue that eigenvalues in that row are converging towards.  Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall degrees of freedom in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
 
 
-\noindent Note that the convergence rates are computed by doing
+Note that the convergence rates are computed by doing
 
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
 
-\noindent and are indicated in the chart by using parentheses.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3D.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table in most spots, except for one of the eigenvalues of $5$, where it tends to oscillate a bit.  This specific eigenvalue overall converges at a rate near $4.00$ if we instead using the values at $N=8$ and $N=32$, ignoring the intermediate value at $N=16$.  \\
+\noindent and are indicated in the chart by using parentheses.  We use H$($curl$)$ to solve the problems, corresponding with edge elements in 3D.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table relatively well for both $S^-$ and NCE elements.\\
 
-\noindent Based off the closed form formula, note that $4$ should never be an eigenvalue in 3D. However, we see it consistently found by both the NCE and $S^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.\\
+Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.\\
 
-\noindent Knowing that both elements are solving this problem in a fashion that is expected theoretically, we can analyze the rest of the results shown in this table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that NCE elements are able to get results that are up to a magnitude better, though not for every eigenvalue.  However, this loss of accuracy from the trimmed Serendipity elements is made up for by the comparison of the DOFs and solve time required.  At every mesh refinement level, trimmed Serendipity elements have nearly half the DOFs of NCE elements, and correspondingly, require about half the time to solve for the eigenvalues.  At higher orders, we expect that this will be even more exaggerated.  \\
+The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters (icntl 14 set to 200 and icntl 13 set to 1).  We ignored the eigenvalues of $1$, as they correspond only to the boundary conditions. 
 
-\noindent The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and then a couple of specific mumps parameters (icntl 14 set to 200 and icntl 13 set to 1).  We ignored the eigenvalues of $1$, as they correspond only to the boundary conditions. 
+Knowing that both elements are solving this problem in a fashion that is expected theoretically, we can analyze the rest of the results shown in this table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that NCE elements are able to get results that are up to a magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed Serendipity elements results in a significant reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed Serendipity elements have nearly half the DOFs of NCE elements, and correspondingly, require about half the time to solve for the eigenvalues.  At higher orders, we expect that this will be even more exaggerated.  \\
 
 \section{Conclusion}
 
