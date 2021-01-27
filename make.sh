@@ -1,4 +1,4 @@
 export TEXINPUTS="$TEXINPUTS:csvs"
 
-latexmk -pdflatex=lualatex --pdf -interaction=nonstopmode serendipityFiredrakePaper.tex
+latexmk --pdf -interaction=nonstopmode serendipityFiredrakePaper.tex
 
