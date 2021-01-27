@@ -81,7 +81,8 @@
 %%\citestyle{acmauthoryear}
 
 \usepackage{subcaption}
-
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
 
 \DeclareMathOperator{\Div}{div}
 \DeclareMathOperator{\curl}{curl}
@@ -212,9 +213,9 @@
   
   Firedrake is a python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC.  
   
-  First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
+  \noindent First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
   
-   Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
+  \noindent Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
   
 
   \section{Experiments}
@@ -225,28 +226,162 @@
   \subsection{Projection}
   
   We solve the projection problem to give a baseline of expectations for the elements.  
+  
+  GET THE EXACT PROBLEM THAT THE PROJECTION PROBLEM IS SOLVING.
 
 \begin{figure}[h!]
   \begin{subfigure}[h]{0.5\textwidth}
-    \includegraphics[height=2.2in]{2dProjectionH.pdf}
+    %\includegraphics[height=2.2in]{2dProjectionH.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={h}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=0.3, xmin=0.5e-2,
+             legend pos=south east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Projection Error Analysis in 2D}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus2dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus2dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus2dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=h,y=Error, col sep=comma]{ProjectionRTCE2dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=h,y=Error, col sep=comma]{ProjectionRTCE2dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=h,y=Error, col sep=comma]{ProjectionRTCE2dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=h,y=Error,col sep=comma]{ProjectionSminus2dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionRTCE2dO2.csv};
+        \addplot+[only marks, blue] table [x=h,y=Error,col sep=comma]{ProjectionSminus2dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionRTCE2dO3.csv};
+        \addplot+[only marks, orange] table [x=h,y=Error,col sep=comma]{ProjectionSminus2dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionRTCE2dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
     \caption{2D edge length vs error}
     \label{fig:2dProjectionH}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
-     \includegraphics[height=2.2in]{2dProjection.png}
+     %\includegraphics[height=2.2in]{2dProjection.png}
+     \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=3e6, xmin=0.5e2,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Projection Error Analysis in 2D}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus2dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus2dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus2dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionRTCE2dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionRTCE2dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionRTCE2dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus2dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionRTCE2dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus2dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionRTCE2dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus2dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionRTCE2dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
      \caption{2D degrees of freedom vs error}
      \label{fig:2dProjection}
   \end{subfigure} \\
   ~
   \begin{subfigure}[h]{0.5\textwidth}
-    \includegraphics[height=2.2in]{3dProjectionHError.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={h}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=2e-10, xmax=0.2, xmin=0.5e-2,
+             legend pos=south east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Projection Error Analysis in 3D}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=h,y=Error, col sep=comma]{ProjectionSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=h,y=Error, col sep=comma]{ProjectionNCE3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=h,y=Error, col sep=comma]{ProjectionNCE3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=h,y=Error, col sep=comma]{ProjectionNCE3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=h,y=Error,col sep=comma]{ProjectionSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionNCE3dO2.csv};
+        \addplot+[only marks, blue] table [x=h,y=Error,col sep=comma]{ProjectionSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionNCE3dO3.csv};
+        \addplot+[only marks, orange] table [x=h,y=Error,col sep=comma]{ProjectionSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=h,y=Error,col sep=comma]{ProjectionNCE3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dProjectionHError.pdf}
     \caption{3D edge length vs error}
     \label{fig:3dProjectionH}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
-    \includegraphics[height=2.2in]{3dProjectionDofsError.pdf}
+  \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=3e-2, ymin=0.5e-9, xmax=4e8, xmin=0.25e4,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Projection Error Analysis in 3D}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionNCE3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionNCE3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{ProjectionNCE3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionNCE3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionNCE3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{ProjectionSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{ProjectionNCE3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dProjectionDofsError.pdf}
     \caption{3D degrees of freedom vs error}
     \label{fig:3dProjectionDofs}
   \end{subfigure}
@@ -283,27 +418,159 @@ The primal Poisson problem allows us to test scalar Serendipity elements against
   \centering
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{2dPrimalPoisson.png}
+      \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-4, ymin=1e-16, xmax=2e6, xmin=2e3,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity2dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity2dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity2dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange2dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange2dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange2dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity2dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange2dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity2dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange2dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity2dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange2dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{2dPrimalPoisson.png}
     \caption{2D Primal}
     \label{fig:2dPrimalDofs}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{2dMixedPoissonDofs.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=2e6, xmin=3e2,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus2dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus2dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus2dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonRTCF2dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonRTCF2dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonRTCF2dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus2dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonRTCF2dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus2dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonRTCF2dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus2dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonRTCF2dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{2dMixedPoissonDofs.pdf}
     \caption{2D Mixed}
     \label{fig:2dMixedDofsError}
   \end{subfigure} \\
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dPrimalDofsError.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=2e8, xmin=1e3,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dPrimalDofsError.pdf}
     \caption{3D Primal}
     \label{fig:3dPrimalDofsError}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dMixedPoissonDofsError.pdf}
+    %\includegraphics[height=2.2in]{3dMixedPoissonDofsError.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1.2e-2, ymin=0.8e-7, xmax=2e7, xmin=5e3,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
     \caption{3D Mixed}
     \label{fig:3dMixedDofsError}
   \end{subfigure}
@@ -326,28 +593,160 @@ However the picture that is painted in \ref{fig:3dMixedDofsTime} and \ref{fig:3d
   \centering
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dPrimalDofsTime.pdf}
+          \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Time},
+             ylabel near ticks, ymax=1.e+4, ymin=0.5e-1, xmax=2.e8, xmin=1.e+3,
+             legend pos=north west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dPrimalDofsTime.pdf}
     \caption{3D Primal Degrees of freedom vs Time}
     \label{fig:3dPrimalDofsTime}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error, col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
     \caption{3D Primal Time vs Error}
     \label{fig:3dPrimalTimeError}
   \end{subfigure}\\
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dMixedPoissonDofsTime.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Time},
+             ylabel near ticks, ymax=2e4, ymin=1e-1, xmax=2e7, xmin=0.5e4,
+             legend pos=north west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Time, col sep=comma]{MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dMixedPoissonDofsTime.pdf}
     \caption{3D Mixed Degrees of freedom vs Time}
     \label{fig:3dMixedDofsTime}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
-    \includegraphics[height=2.2in]{3dMixedPoissonTimeError.pdf}
+    \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=5e-8, xmax=1e5, xmin=0.5e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error, col sep=comma]{MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+    %\includegraphics[height=2.2in]{3dMixedPoissonTimeError.pdf}
     \caption{3D Mixed Time vs Error}
     \label{fig:3dMixedTimeError}
   \end{subfigure}
@@ -457,13 +856,84 @@ Knowing that both elements are solving this problem in a fashion that is expecte
 
 \section{Conclusion}
 
-\noindent Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using fewer degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
+Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using fewer degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
 
-\noindent Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
+ Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
 
-\noindent Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
+ Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
-\noindent In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
+In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
+
+
+
+      \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Time},
+             ylabel near ticks, ymax=1.e+4, ymin=0.5e-1, xmax=2.e8, xmin=1.e+3,
+             legend pos=north west, legend style={font=\tiny} ,
+             cycle list name=color list]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Time, col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonLagrange3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+      
+      
+      \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=2e-8, xmax=2e7, xmin=0.5e4,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
 
 
 \bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
