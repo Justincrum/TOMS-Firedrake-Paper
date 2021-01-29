@@ -83,6 +83,7 @@
 \usepackage{subcaption}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
+\usepackage{listings}
 
 \DeclareMathOperator{\Div}{div}
 \DeclareMathOperator{\curl}{curl}
@@ -235,10 +236,67 @@
   
   Firedrake is a python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC.  
   
-  \noindent First, we use the UFL package.  This is a symbolic math package that implemented the Unified Form Language in Python.  Specifically, UFL allows Firedrake to specify a PDE in weak form that we then want to solve.  Next, FIAT (FInite element Automatic Tabulator) allows a simple Ciarlet implementation of finite elements that makes the process of adding in new types of elements a relatively simple task.  On the other hand, FInAT (FInAT Is not A Tabulator) is a way to pass symbolic for evaluation of finite elements.  What FInAT gives out can then be handled by a form compiler.  The form compiler that Firedrake uses is TSFC (Two Stage Form Compiler), and is used to take the high level, weak form PDE and turn it into low level code that can be solved.  
-  
-  \noindent Implementing a new element, like the trimmed Serendipity elements in 2 and 3D, then becomes a matter of adding in a new element code to FIAT, telling UFL what to expect when we call the new element (i.e., what type of shapes does it work on, what dimensions does it work in, what type of element it is), and connecting the dots in FInAT and TSFC.  Starting off in the FIAT portion of the code, we create a new element by making a call to the FiniteElement class.  In this class, we give the relevant information for describing a reference element of the type we're choosing.  For example, we need to give it the number of degrees of freedom on each edge and face, and then we need to build and assign basis functions to each of the degrees of freedom.   Once done, the rest of the code is designed for passing around the new element from library to library.  We import the fiat element to FInAT so that it knows of the existence of the new element.  Then we tell TSFC where to find the new element, and give it a name that a Firedrake user can give when calling the element.  Finally, we give UFL the directions of what sort of elements we are allowed to use the new finite element on.    
-  
+ The first step in implementing the trimmed serendipity elements was to focus on using FIAT.  Inside FIAT (FInite element Automatic Tabulator), we can create classes that provide the basis functions for the trimmed serendipity elements and tabulate them.  Taking the basis functions from \cite{gillette2019computational}, we implement each of the basis functions as broken down into functions on the vertices, edges, faces, and interior (in 3D).  
+ 
+ For example, the $H($curl$)$ elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3d, require using two sets of functions, one set on the edges of the reference and one set on the faces of the reference element.  A snippet of how this is done for the edge functions is given the code \ref{lst:edge_basis_functions}.
+ 
+ \lstset{language=Python}
+ \begin{lstlisting}[frame=single, caption={Portion of edge basis function implementation.}, label={lst:edge_basis_functions}, numbers=left]]
+ def e_lambda_1_3d(deg, dx, dy, dz, x_mid, y_mid, z_mid):
+    EL = ()
+    for j in range(0, deg):
+        EL += tuple([(0, 0, leg(j, z_mid) * dx[0] * dy[0])])
+    for j in range(0, deg):
+        EL += tuple([(0, 0, leg(j, z_mid) * dx[0] * dy[1])])
+    for j in range(0, deg):
+        EL += tuple([(0, 0, leg(j, z_mid) * dx[1] * dy[0])])
+    for j in range(0, deg):
+        EL += tuple([(0, 0, leg(j, z_mid) * dx[1] * dy[1])])
+    ...
+ \end{lstlisting}
+ 
+ Then we can take each of the relevant basis functions, and feed those into the FIAT class we have defined for the trimmed serendipity $H($curl$)$ elements, as seen in the code \ref{lst:basis_functions}.
+ 
+\lstset{language=Python}
+ \begin{lstlisting}[frame=single, caption={Collecting the basis functions for the trimmed serendipity class inside FIAT.}, label={lst:basis_functions}, numbers=left]] 
+ ...
+ if dim == 3:
+            ...
+            EL = e_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
+            if (degree > 1):
+                FL = f_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
+            else:
+                FL = ()
+            if (degree > 3):
+                IL = I_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
+            else:
+                IL = ()
+
+            Sminus_list = EL + FL + IL
+            self.basis = {(0, 0, 0): Array(Sminus_list)}
+            super(TrimmedSerendipityCurl, self).__init__(ref_el=ref_el,
+                  degree=degree, mapping=contravariant piola)
+\end{lstlisting}
+
+After defining the FIAT element, it does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.    
+
+After this, there are small adjustments made to Firedrake's versions of UFL and TSFC so that each of the packages know to look for the trimmed serendipity elements that have been implemented.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see code \ref{lst:pde_using_trimmed_serendipity}).
+
+\lstset{language=Python}
+\begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3d.}, label={lst:pde_using_trimmed_serendipity}, numbers=left]] 
+
+...
+        PolyDegree = n
+        Cells = 2**j
+        msh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
+        mesh = ExtrudedMesh(msh, layers=Cells, layer_height=1/(Cells))
+
+        Sminus = FunctionSpace(mesh, "SminusDiv", PolyDegree)
+        DPC = FunctionSpace(mesh, "DPC", PolyDegree - 1)
+        W = Sminus * DPC
+...
+
+\end{lstlisting}
 
   \section{Experiments}
     
@@ -885,7 +943,6 @@ Each finite element has a time and place where it could be considered beneficial
  Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
 In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
-
 
       
      
