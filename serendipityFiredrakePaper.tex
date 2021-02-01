@@ -183,7 +183,57 @@
   
   \section{Introduction}
   
-  Solving partial differential equations on cubical meshes is a task that is normally done using tensor product elements. In 3D, this includes the $H($curl$)$ and $H($div$)$ Nedelec elements. However, this ignores the other two families of finite element differential forms for cubical meshes, the serendipity and trimmed serendipity elements.
+  In addition to the four elements present on the Periodic Table of Finite Elements, much research has been put into trimmed serendipity finite elements.  Trimmed serendipity elements give another method for solving partial differential equations on cubical meshes using finite elements.  However, as a relatively newer element in comparison to tensor product elements and serendipity elements, the implementation of trimmed serendipity elements has fallen behind.  We present an implementation in Firedrake for $H($curl$)$ and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
+  
+  Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for solving partial differential equations (PDEs) through finite elements.  For a mathematician familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
+  
+  \lstset{language=Python}
+  \begin{lstlisting}[frame=single, caption={Basic Firedrake implementation of the mixed Poisson problem.}, label={lst:mixedPoissonCode}, numbers=left]]
+        PolyDegree = 2
+        Cells = 2**8
+        mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
+        DQ = FunctionSpace(mesh, "DQ", PolyDegree - 1)
+        RTCF = FunctionSpace(mesh, "RTCF", PolyDegree)
+        W = RTCF * DQ
+
+        sigma, u = TrialFunctions(W)
+        tau, v = TestFunctions(W)
+
+        x, y, z = SpatialCoordinate(mesh)
+        uex = sin(pi*x)*sin(pi*y)*sin(pi*z)
+        sigmaex = grad(uex)
+        
+        f = -div(grad(uex))
+        a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
+        L = -f*v*dx
+        w = Function(W)
+        ...
+        solve(a == L, w, solver_parameters=params)
+  \end{lstlisting}
+  
+   For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as swapping lines 4-5 in code \ref{lst:mixedPoissonCode} to the appropriate identifiers, "DPC" and "SminusDiv" inside the "FunctionSpace" call.  While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.  
+   
+   Firedrake makes it easy to take a given computational basis for a reference element and implement the new element.  We do this by taking the basis functions from \cite{gillette2019computational} that are defined using the sets $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and implementing them inside of FIAT codes that Firedrake will then make use of for determining what the user means when they call for "SminusDiv".  
+   
+   Combinations of these sets of basis functions are what will create the basis functions for the trimmed serendipity reference element.  For example, the trimmed serendipity $H($curl$)$ conforming element, $S_r^- \Lambda^k$, has the basis created by doing
+   
+   \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
+       \bigoplus_{i=0}^{r-1} E_i \Lambda^1 \bigoplus_{i=2}^{r-1}F_i \Lambda^1 \oplus \tilde{F}_r \Lambda^1 \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \oplus \tilde{I}_r \Lambda^1.
+   \end{equation}
+   
+  Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. Finally, as an example of what these sort of computational bases might look like, we give the definition of each of the sets of functions used to create equation \ref{eq:HCurlTrimmedSerendipityBasis}.
+  
+  \vspace{2in}
+    
+  PUT IN EQUATIONS HERE, DECIDE HOW TO DO THAT BEST
+  
+  \vspace{2in}
+  
+  In the second section, we will give more background on the trimmed serendipity elements, followed by an explanation of what Firedrake is and how it makes implementing new finite elements easy to do and easy to use in the third section.  Then in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
+  
+  \section{Background on serendipity and trimmed serendipity elements}
+  
+  Solving partial differential equations on cubical meshes has been a topic of many different finite element studies. In 3D, this includes the $H($curl$)$ and $H($div$)$ Nedelec elements. However, this ignores the other two families of finite element differential forms for cubical meshes, the serendipity and trimmed serendipity elements.
   
   In \cite{arnold2011serendipity}, Arnold and Awanou described the shape functions for Serendipity elements $\mathcal{S}_r$ in $n$ dimensions as the space of polynomials with superlinear degree in at most $n$ variables, denoted as $deg_2 p$, such that $deg_2 p \leq r$. This gave serendipity elements a concrete definition in $n$ dimensions. Moreover, they showed that serendipity elements defined in such a way can be assigned a set of unisolvent degrees of freedom and that there is a nice way to give a geometric decomposition of the serendipity elements.
   
@@ -201,18 +251,18 @@
       P_r \Lambda^k \subset P^-_{r+1} \Lambda^k \subset P_{r+1} \Lambda^k.
   \end{equation*}
   
-  From a computational perspective, the serendipity and trimmed serendipity elements are interesting because they should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  In \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders give a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods.
-  
-  In the second section, we will give more background on the trimmed serendipity elements, followed by an explanation of what Firedrake is and how it makes implementing new finite elements easy to do and easy to use in the third section.  Then in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
-  
-  \section{Background on serendipity and trimmed serendipity elements}
+  From a computational perspective, the serendipity and trimmed serendipity elements are interesting because they should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  In \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders give a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
   
   \subsection{2D Elements}
   \begin{enumerate}
   \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
-  \item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
+  %\item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
   \item Vector Trimmed Serendipity (Arbogast-Correa = Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^2)$)
   \item Direct (Arbogast-Tao / Arbogast-Correa)
+  
+  
+  
+  
   \end{enumerate}
   
   
@@ -944,6 +994,77 @@ Each finite element has a time and place where it could be considered beneficial
 
 In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
 
+
+      
+      
+      
+     \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-9, xmax=2e4, xmin=1e-1,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO2Serendipity.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO3Serendipity.csv};
+        \addlegendentry{$S^-_3$ }
+        %\addplot[orange]
+        %table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        %\addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO2Lagrange.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO3Lagrange.csv};
+        \addlegendentry{$Q^-_3$}
+        %\addplot[densely dotted, orange]
+        %table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+        %\addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO2Serendipity.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO2Lagrange.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO3Serendipity.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO3Lagrange.csv};
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        %\addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}      
+      
+      \begin{tikzpicture}[scale=0.88]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=1e1, xmin=1e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
       
      
 
