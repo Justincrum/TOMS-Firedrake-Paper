@@ -186,7 +186,7 @@
   
   \section{Introduction}
   
-  In addition to the four \akg{families of finite} elements present on the Periodic Table of Finite Elements, \akg{\cancel{much} recent} research has \akg{\cancel{been put} examined a fifth family, called the} trimmed serendipity finite elements.  \akg{Similar to their tensor product and ``regular'' serendipity counterparts,}  trimmed serendipity elements \akg{\cancel{give} provide} another \akg{finite element} method for  \akg{\cancel{solving} approximating the solution to} partial differential equations on \akg{square or} cubical meshes \akg{\cancel{using finite elements}}.  \akg{\cancel{However, as a relatively newer element in comparison to tensor product elements and serendipity elements, the implementation of trimmed serendipity elements has fallen behind.}} \akg{While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  To remedy this, we will present} \akg{\cancel{We present}} an implementation in Firedrake for \akg{$H^1$-,} $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
+  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
   
   Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for solving partial differential equations (PDEs) through finite elements.  For a mathematician familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
   
@@ -257,6 +257,25 @@
   From a computational perspective, the serendipity and trimmed serendipity elements are interesting because they should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  In \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders give a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
   
   \subsection{2D Elements}
+  \subsubsection{Scalar Serendipity Elements}
+  
+  The scalar serendipity elements are the classical elements that Arnold and Awanou devised in \cite{arnold2011serendipity}, which are denoted as $\calS_r\Lambda^0(\mathcal{I}^n))$.  The scalar serendipity and trimmed serendipity elements are the same, so we do not give a separate definition for scalar trimmed serendipity elements.  They described these elements as the space of all polynomials in $n$ variables with superlinear degree at most $r$, before proving that the degrees of freedom given by 
+  
+  \begin{equation*}
+      u \mapsto \int_f uq, \text{   } q \in P_{r-2d}(f)
+  \end{equation*}
+  
+  \noindent are unisolvent, where $f$ is a face of $\mathcal{I}^n$ of dimension $d \geq 0$.
+  
+  \subsubsection{Vector Serendipity Elements}
+  
+  The vector serendipity elements are not a large focus of this paper, but we do briefly mention them here to aid in the construction of the trimmed serendipity vector elements to follow.  The vector serendipity elements were again first defined in generality by Arnold and Awanou in \cite{arnold2014finite}.  
+  
+  
+  \subsubsection{Vector Trimmed Serendipity Elements}
+  
+  The vector trimmed serendipity elements, $\calS_r^-\Lambda^1(\R^2)$, have been defined in a vector calculus context by Arbogast-Correa \cite{arbogast2018direct} and a FEEC context by Gillette-Kloefkorn \cite{gillette2019trimmed}.  In FEEC, these elements 
+  
   \begin{enumerate}
   \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
   %\item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
@@ -267,13 +286,6 @@
   
   
   \end{enumerate}
-  
-  
-  \subsubsection{Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)}
-  
-  \subsubsection{Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)}
-  
-  \subsubsection{Vector Trimmed Serendipity (Arbogast-Correa = Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^2)$)}
   
   \subsubsection{Direct (Arbogast-Tao / Arbogast-Correa)}
   
@@ -996,7 +1008,7 @@ Each finite element has a time and place where it could be considered beneficial
  Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
 In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
-
+    
 
 \bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
 \bibliography{serendipityFiredrakePaper}  %Change this to the bib file
