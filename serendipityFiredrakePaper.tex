@@ -188,7 +188,6 @@
   
   In addition to the four \akg{families of finite} elements present on the Periodic Table of Finite Elements, \akg{\cancel{much} recent} research has \akg{\cancel{been put} examined a fifth family, called the} trimmed serendipity finite elements.  \akg{Similar to their tensor product and ``regular'' serendipity counterparts,}  trimmed serendipity elements \akg{\cancel{give} provide} another \akg{finite element} method for  \akg{\cancel{solving} approximating the solution to} partial differential equations on \akg{square or} cubical meshes \akg{\cancel{using finite elements}}.  \akg{\cancel{However, as a relatively newer element in comparison to tensor product elements and serendipity elements, the implementation of trimmed serendipity elements has fallen behind.}} \akg{While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  To remedy this, we will present} \akg{\cancel{We present}} an implementation in Firedrake for \akg{$H^1$-,} $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
   
-\end{document}
   Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for solving partial differential equations (PDEs) through finite elements.  For a mathematician familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
   
   \lstset{language=Python}
@@ -998,79 +997,6 @@ Each finite element has a time and place where it could be considered beneficial
 
 In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
 
-
-      
-\end{document}
-      
-     \begin{tikzpicture}[scale=0.88]
-      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
-             ylabel near ticks, ymax=1e-3, ymin=1e-9, xmax=2e4, xmin=1e-1,
-             legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO2Serendipity.csv};
-        \addlegendentry{$S^-_2$}
-        \addplot[blue] 
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO3Serendipity.csv};
-        \addlegendentry{$S^-_3$ }
-        %\addplot[orange]
-        %table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
-        %\addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO2Lagrange.csv};
-        \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalTestO3Lagrange.csv};
-        \addlegendentry{$Q^-_3$}
-        %\addplot[densely dotted, orange]
-        %table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
-        %\addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO2Serendipity.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO2Lagrange.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO3Serendipity.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalTestO3Lagrange.csv};
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
-        %\addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
-      \end{loglogaxis}
-      \end{tikzpicture}      
-      
-      \begin{tikzpicture}[scale=0.88]
-      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
-             ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=1e1, xmin=1e-1,
-             legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Mixed Poisson Error Analysis}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
-        \addlegendentry{$S^-_2$}
-        \addplot[blue] 
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
-        \addlegendentry{$S^-_3$ }
-        \addplot[orange]
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
-        \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
-        \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
-        \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
-        table [x=Time,y=Error2, col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
-        \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
-        \addplot+[only marks, orange] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error2,col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
-      \end{loglogaxis}
-      \end{tikzpicture}
-      
-     
 
 \bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
 \bibliography{serendipityFiredrakePaper}  %Change this to the bib file
