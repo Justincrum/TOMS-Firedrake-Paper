@@ -85,6 +85,7 @@
 \usepackage{pgfplotstable}
 \usepackage{listings}
 
+
 \DeclareMathOperator{\Div}{div}
 \DeclareMathOperator{\curl}{curl}
 
@@ -94,6 +95,8 @@
 
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calS}{\mathcal{S}}
+
+\newcommand{\cancel}[1]{}
 
 %%
 %% end of the preamble, start of the body of the document source.
@@ -183,8 +186,9 @@
   
   \section{Introduction}
   
-  In addition to the four elements present on the Periodic Table of Finite Elements, much research has been put into trimmed serendipity finite elements.  Trimmed serendipity elements give another method for solving partial differential equations on cubical meshes using finite elements.  However, as a relatively newer element in comparison to tensor product elements and serendipity elements, the implementation of trimmed serendipity elements has fallen behind.  We present an implementation in Firedrake for $H($curl$)$ and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
+  In addition to the four \akg{families of finite} elements present on the Periodic Table of Finite Elements, \akg{\cancel{much} recent} research has \akg{\cancel{been put} examined a fifth family, called the} trimmed serendipity finite elements.  \akg{Similar to their tensor product and ``regular'' serendipity counterparts,}  trimmed serendipity elements \akg{\cancel{give} provide} another \akg{finite element} method for  \akg{\cancel{solving} approximating the solution to} partial differential equations on \akg{square or} cubical meshes \akg{\cancel{using finite elements}}.  \akg{\cancel{However, as a relatively newer element in comparison to tensor product elements and serendipity elements, the implementation of trimmed serendipity elements has fallen behind.}} \akg{While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  To remedy this, we will present} \akg{\cancel{We present}} an implementation in Firedrake for \akg{$H^1$-,} $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.  
   
+\end{document}
   Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for solving partial differential equations (PDEs) through finite elements.  For a mathematician familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
   
   \lstset{language=Python}
@@ -996,7 +1000,7 @@ In general, it is clear from these results that trimmed Serendipity is not alway
 
 
       
-      
+\end{document}
       
      \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
