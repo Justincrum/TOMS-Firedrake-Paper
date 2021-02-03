@@ -189,17 +189,16 @@
   
   \section{Introduction}
   
-  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits to standard computational challenges. 
+  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we are able to assess their computational advantages in a fair and practical setting for the first time.
   
-  (The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
- 
+  %(The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
   
-  Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for approximating the solution to partial differential equations (PDEs) via finite elements.  For those familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
+  In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits to standard computational challenges.  Firedrake is a python package that brings together many useful mathematics packages to create a user friendly python library for approximating the solution to partial differential equations (PDEs) via finite elements.  For those familiar with finite element exterior calculus (FEEC), Firedrake makes solving PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
   
   \lstset{language=Python}
   \begin{lstlisting}[frame=single, caption={Basic Firedrake implementation of the mixed Poisson problem.}, label={lst:mixedPoissonCode}, numbers=left]]
         PolyDegree = 2
-        Cells = 2**8
+        Cells = 2**5
         mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
         DQ = FunctionSpace(mesh, "DQ", PolyDegree - 1)
         RTCF = FunctionSpace(mesh, "RTCF", PolyDegree)
@@ -222,27 +221,31 @@
   
    For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as swapping lines 4-5 in code \ref{lst:mixedPoissonCode} to the appropriate identifiers, ``DPC'' and ``SminusDiv'' inside the ``FunctionSpace'' call.  While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.  
    
-   Firedrake makes it easy to take a given computational basis for a reference element and implement the new element.  We do this by taking the basis functions from \cite{gillette2019computational} that are defined using the sets $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and implementing them inside of FIAT codes that Firedrake will then make use of for determining what the user means when they call for ``SminusDiv''.  
+   Firedrake makes it easy to take a given computational basis for a reference element and implement the new element.  We do this by taking the basis functions from \cite{gillette2019computational} that are defined using the sets $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and using them inside of FIAT codes that Firedrake will then call upon for determining what the user means when they call for ``SminusDiv''.  
    
-   Combinations of these sets of basis functions are what will create the basis functions for the trimmed serendipity reference element.  For instance, a basis for $\calS^-\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
+   Combinations of these sets of basis functions are what will create the basis functions for the trimmed serendipity reference element.  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
    
    \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
-   \calS^-\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
+   \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
    \end{equation}
    
-  Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. Finally, as an example of what these sort of computational bases might look like, we give the definition of each of the sets of functions used to create equation \ref{eq:HCurlTrimmedSerendipityBasis}.
+  Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. 
   
-  \vspace{2in}
-    
-  PUT IN EQUATIONS HERE, DECIDE HOW TO DO THAT BEST
+  \begin{example}\label{ex:UsingComputationalBasis}
+  To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
   
-  \vspace{2in}
+  \begin{equation*}
+      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
+  \end{equation*}
   
-  In the second section, we will give more background on the trimmed serendipity elements, followed by an explanation of what Firedrake is and how it makes implementing new finite elements easy to do and easy to use in the third section.  Then in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
+  Notice that, give a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
+  \end{example}
+  
+  In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
   
   \section{Background on serendipity and trimmed serendipity elements}
   
-  Solving partial differential equations on cubical meshes has been a topic of many different finite element studies. In 3D, this includes the $H($curl$)$ and $H($div$)$ Nedelec elements. However, this ignores the other two families of finite element differential forms for cubical meshes, the serendipity and trimmed serendipity elements.
+  Solving partial differential equations on cubical meshes has been a topic of many different finite element studies. In 3D, this includes the $H($curl$)$ and $H($div$)$ Nedelec elements. However, this ignores the other two families of finite element differential forms for square and cubical meshes, the serendipity and trimmed serendipity elements.
   
   In \cite{arnold2011serendipity}, Arnold and Awanou described the shape functions for Serendipity elements $\mathcal{S}_r$ in $n$ dimensions as the space of polynomials with superlinear degree in at most $n$ variables, denoted as $deg_2 p$, such that $deg_2 p \leq r$. This gave serendipity elements a concrete definition in $n$ dimensions. Moreover, they showed that serendipity elements defined in such a way can be assigned a set of unisolvent degrees of freedom and that there is a nice way to give a geometric decomposition of the serendipity elements.
   
@@ -251,40 +254,75 @@
   Following this, Gillette and Kloefkorn then introduced the trimmed Serendipity elements $S^-_r$ in \cite{gillette2019trimmed}.  The trimmed serendipity elements are the answer to the question ``Does there exist a minimal compatible finite element system on cubes containing $P_r \Lambda^k$?'', and contain the expected amount of interior degrees of freedom as described by Christiansen and Gillette in \cite{christiansen2016constructions}.  The trimmed serendipity spaces share the same subspace structure with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  That is, we get the containment 
   
   \begin{equation*}
-      S_r \Lambda^k \subset S^-_{r+1} \Lambda^k \subset S_{r+1} \Lambda^k
+      \calS_r \Lambda^k \subset \calS^-_{r+1} \Lambda^k \subset \calS_{r+1} \Lambda^k
   \end{equation*}
   
  \noindent and 
   
    \begin{equation*}
-      P_r \Lambda^k \subset P^-_{r+1} \Lambda^k \subset P_{r+1} \Lambda^k.
+      \calP_r \Lambda^k \subset \calP^-_{r+1} \Lambda^k \subset \calP_{r+1} \Lambda^k.
   \end{equation*}
   
-  From a computational perspective, the serendipity and trimmed serendipity elements are interesting because they should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  In \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders give a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
+  In \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders give a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
+  
+  
+  \subsection{Trimmed Serendipity Elements}
+  The trimmed serendipity elements in both 2D and 3D can be defined in terms of the $k$-forms used to represent them, or the type of space they conform to.
+  
+  \subsubsection{Scalar Trimmed Serendipity Elements}
+  The scalar trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$.  Therefore it is easy to describe the shape functions of these as the span of all monomials of superlinear degree less than or equal to $r$. In terms of the Periodic Table of Finite Elements, these are the $S_r$ spaces. 
+  
+  Then there are the scalar trimmed serendipity elements that are represented by $n$-forms and create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the dPc$_r$ spaces.  The shape functions for these spaces turn out to be simply the space of order $r$ polynomials.  That is, $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
+  
+  \subsubsection{Vector Trimmed Seredipity Elements}
+  
+  The vector trimmed serendipity elements can be split into two groups.  The first group normally discussed are the $2$-forms in 3D and $1$-forms in 2D, $S_r^-\Lambda^2(\square_n)$.  These form an \hdiv- conforming finite element space.  Unfortunately, the vector trimmed serendipity elements do not have a ``nice'' definition for their shape functions.  Instead, we have the definition that in general, 
+  \begin{equation*}
+      \calS_r^-\Lambda^k = \calS_{r-1}\Lambda^k + \kappa \calS_{r-1}\Lambda^{k+1}
+  \end{equation*}
+  where $\kappa$ is the Kozsul differential operator, and $k=2$ in 3D, $k=1$ in 2D.  This is a more difficult definition to work with, which emphasizes the importance of having the computational bases, such as the one shown in \ref{ex:UsingComputationalBasis}.  
+  
+  In 3D, the $1$-forms that are used to represent an \hcurl-conforming finite element space also are defined using the shape forms as described above, using $k=1$ instead of $k=2$.  In 2D, the \hcurl-conforming finite element space is simply a rotation of the \hdiv-space.  
+  
+  For each of these different types of elements, we present experiments in section 4 that detail how the trimmed serendipity elements compare to the corresponding tensor product elements.  The scalar $H^1$-conforming elements are used in the primal Poisson problem, while the scalar $L^2$-conforming elements are used in the mixed Poisson problem.  For the vector elements, the \hdiv-conforming elements are used in the mixed Poisson problem while the \hcurl-conforming elements are tasked with solving the Maxwell cavity eigenvalue problem.
+  
+  
+  
+  
+  
+  
+  
   
   \subsection{2D Elements}
+  
+  \vspace{0.5in}
+  
+  DO WE NEED THIS SECTION?  I think the goal of this section is to include a bit about the related/previous work, and if so, then I think I do need this but nothing in super great detail theoretically.  Or maybe I cover this more in the previous half of section 2?
+  
+  \vspace{0.5in}
+  
   \subsubsection{Scalar Serendipity Elements}
   
-  The scalar serendipity elements are the classical elements that Arnold and Awanou devised in \cite{arnold2011serendipity}, which are denoted as $\calS_r\Lambda^0(\mathcal{I}^n))$.  The scalar serendipity and trimmed serendipity elements are the same, so we do not give a separate definition for scalar trimmed serendipity elements.  They described these elements as the space of all polynomials in $n$ variables with superlinear degree at most $r$, before proving that the degrees of freedom given by 
+  The scalar serendipity elements are the classical elements that Arnold and Awanou devised in \cite{arnold2011serendipity}, which are denoted as $\calS_r\Lambda^0(\square_n))$.  The scalar serendipity and trimmed serendipity elements are the same, so we do not give a separate definition for scalar trimmed serendipity elements.  They described these elements as the space of all polynomials in $n$ variables with superlinear degree at most $r$, before proving that the degrees of freedom given by 
   
   \begin{equation*}
       u \mapsto \int_f uq, \text{   } q \in P_{r-2d}(f)
   \end{equation*}
   
-  \noindent are unisolvent, where $f$ is a face of $\mathcal{I}^n$ of dimension $d \geq 0$.
+  \noindent are unisolvent, where $f$ is a face of $\square_n$ of dimension $d \geq 0$.
+  
   
   \subsubsection{Vector Serendipity Elements}
+  The vector serendipity elements, both in 2d and 3d, are not the main focus of this paper.  However, for completeness, we include a small discussion of them here.  
   
-  The vector serendipity elements are not a large focus of this paper, but we do briefly mention them here to aid in the construction of the trimmed serendipity vector elements to follow.  The vector serendipity elements were again first defined in generality by Arnold and Awanou in \cite{arnold2014finite}.  
+  Vector serendipity elements, denoted with $S_r \Lambda^1 (\R^2)$, are the same as the rectangular BDM elements from \cite{brezzi1985two}.  
   
-  
-  \subsubsection{Vector Trimmed Serendipity Elements}
-  
-  The vector trimmed serendipity elements, $\calS_r^-\Lambda^1(\R^2)$, have been defined in a vector calculus context by Arbogast-Correa \cite{arbogast2018direct} and a FEEC context by Gillette-Kloefkorn \cite{gillette2019trimmed}.  In FEEC, these elements 
+  \subsubsection{Vecctor Trimmed Serendipity Elements}
+  The vector trimmed serendipity elements, $\calS_r^-\Lambda^1(\R^2)$, have been defined in a vector calculus context by Arbogast-Correa \cite{arbogast2018direct} and a FEEC context by Gillette-Kloefkorn \cite{gillette2019trimmed}.  The FEEC context allowed 
   
   \begin{enumerate}
-  \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
-  %\item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
+%  \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
+  \item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
   \item Vector Trimmed Serendipity (Arbogast-Correa = Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^2)$)
   \item Direct (Arbogast-Tao / Arbogast-Correa)
   
@@ -296,8 +334,54 @@
   \subsubsection{Direct (Arbogast-Tao / Arbogast-Correa)}
   
   \subsection{3D Elements}
+  
+  
+  \subsubsection{Vector Serendipity Elements}
+  
+  The vector serendipity elements are not a large focus of this paper, but we do briefly mention them here to aid in the construction of the trimmed serendipity vector elements to follow.  The vector serendipity elements were again first defined in generality by Arnold and Awanou in \cite{arnold2014finite}.  Using the foundation that they built previously, they were able to define the \hcurl-conforming space $\calS_r \Lambda^1$ and \hdiv-conforming space $\calS_r \Lambda^2$ in 3d.  
+  
+  The shape functions for $\calS_r \Lambda^1$ are given as 
+  
+  \begin{equation}
+      u = (v_1, v_2, v_3) +(x_2x_3(w_2 - w_3), x_3x_1(w_3 - w_1), x_1x_2(w_1 - w_2)) + \text{ grad } s
+  \end{equation}
+  
+  \noindent where $v_i \in \calP_r(\square_3)$, $w_i \in \calP_{r-1}(\square_3)$, and $s$ is a polynomial in $\square_3$ of superlinear degree at most $r+1$. The degrees of freedom for the $\calS_r \Lambda^1$ elements were defined as 
+  
+  \begin{equation*}
+      u \mapsto \int_e u \cdot tp, p \in \calP_r(e), \text{ } e \text{ an edge of } \square_3 \\
+  \end{equation*}
+  \begin{equation*}
+      u \mapsto \int_f u \times np, p \in [\calP_{r-2}(f)]^2, \text{ } f \text{ a face of } \square_3
+  \end{equation*}
+  \begin{equation*}
+      u \mapsto \int_{I^3} u \cdot p, \text{ } p \in [\calP_{r-4}(\square_3)]^3.
+  \end{equation*}
+  
+  Similarly, the shape functions for $\calS_r \Lambda^2$ are defined as
+  
+  \begin{equation}
+      u = (v_1, v_2, v_3) + \text{ curl}(x_2x_3(w_2 - w_3), x_3x_1(w_3 - w_1), x_1x_2(w_1-w_2))
+  \end{equation}
+  
+  \noindent with $v_i, w_i \in \calP_r (\square_3)$.  Then the degrees of freedom here are defined as
+  
+  \begin{equation*}
+      u \mapsto \int_f u \cdot np, p \in \calP_r(f), \text{ } f \text{ an edge of } I^3 \\
+  \end{equation*}
+  \begin{equation*}
+      u \mapsto \int_{I^3} u \cdot p, \text{ } p \in [\calP_{r-2}(I^3)]^3.
+  \end{equation*}
+  
+  In both scenarios, the degrees freedom were shown to be unisolvent. 
+  
+  \subsubsection{Vector Trimmed Serendipity Elements}
+  
+  
+  
+  
   \begin{enumerate}
-  \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^3)$)
+  %\item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^3)$)
   \item Vector serendipity (Arnold-Awanou = $\calS_r\Lambda^1(\R^3)$ and $\calS_r\Lambda^2(\R^3)$
   \item Vector trimmed serendipity (Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^3)$ and $\calS_r^-\Lambda^2(\R^3)$)
   
