@@ -117,13 +117,6 @@
 %% Of note is the shared affiliation of the first two authors, and the
 %% "authornote" and "authornotemark" commands
 %% used to denote shared contribution to the research.
-\author{Cyrus Cheng}
-\email{cyrus.cheng15@imperial.ac.uk}
-\affiliation{%
-  \institution{Imperial College}
-  \city{London}
-  \country{United Kingdom}
-}
 
 \author{Justin Crum}
 \email{jcrum@math.arizona.edu}
@@ -131,6 +124,14 @@
   \institution{University of Arizona}
   \city{Tucson}
   \state{Arizona}
+}
+
+\author{Cyrus Cheng}
+\email{cyrus.cheng15@imperial.ac.uk}
+\affiliation{%
+  \institution{Imperial College}
+  \city{London}
+  \country{United Kingdom}
 }
 
 \author{Andrew Gillette}
@@ -228,33 +229,43 @@ Firedrake is a python package that brings together many useful mathematics packa
   \end{lstlisting}
   
   
-	An important strength of Firedrake is its modular structure for both users and coders.
+	An important strength of Firedrake is its modular structure for both users and developers.
    For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4-5 in Listing~\ref{lst:mixedPoissonCode} to the appropriate identifiers, ``DPC'' and ``SminusDiv'' inside the ``FunctionSpace'' calls.  
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
-   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) to be utilized by the FIAT code for processing.
+   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT for processing.
+   
+   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have similar amounts of degrees of freedom to tensor product and serendipity elements.  However, as the degree of the elements are increased, trimmed serendipity elements can have significantly less degrees of freedom
   %   $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and using them inside of FIAT codes that Firedrake will then call upon for determining what the user means when they call for ``SminusDiv''.  
 %   in section~\ref{sec:buildcap}.
    
-   \akg{The rest of the intro goes into a detailed example as we discussed but I don't think this is the right place for it.  This fits more naturally into Section 3 where the notation will already have been defined and it makes sense to go into some detail.  Instead, I think the intro should have 1-2 more paragraphs highlighting the expected benefits of trimmed serendipity elements (huge reduction in DoFs in 3D, for higher order) and summarizing the major contributions.  We can discuss at our next meeting.}
-   Combinations of these sets of basis functions are what will create the basis functions for the trimmed serendipity reference element.  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
+   %\akg{The rest of the intro goes into a detailed example as we discussed but I don't think this is the right place for it.  This fits more naturally into Section 3 where the notation will already have been defined and it makes sense to go into some detail.  Instead, I think the intro should have 1-2 more paragraphs highlighting the expected benefits of trimmed serendipity elements (huge reduction in DoFs in 3D, for higher order) and summarizing the major contributions.  We can discuss at our next meeting.}
+   %Combinations of these sets of basis functions are what will create the basis functions for the trimmed serendipity reference element.  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
    
-   \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
-   \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
-   \end{equation}
+   %\begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
+   %\calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i %\Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus %\left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 %\right] \oplus \left[\tilde{I}_r \Lambda^1\right].
+   %\end{equation}
    
-  Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. 
+  %Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. 
   
-  \begin{example}\label{ex:UsingComputationalBasis}
-  To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
+  %\begin{example}\label{ex:UsingComputationalBasis}
+  %To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
   
-  \begin{equation*}
-      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
-  \end{equation*}
+  %\begin{equation*}
+  %    (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
+  %\end{equation*}
   
-  Notice that, give a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
-  \end{example}
+  %Notice that, give a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
+  %\end{example}
   
-  In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
+  The contributions of this paper are as follows:
+  \begin{enumerate}
+      \item Show how Firedrake creates a software environement that can be used to implement new elements as well as allow the user to call the new elements with only small changes to their existing codes. 
+      \item Illustrate trimmed serendipity finite elements hitting the theoretical bounds that are predicted in terms of convergence rates. 
+      \item Examine the costs and benefits of using trimmed serendipity elements within the confines of typical toy problems for numerical analysis by comparing them to results obtained using tensor product elements on the same problems.
+  \end{enumerate}
+  
+  
+  %In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
   
   \section{Background on serendipity and trimmed serendipity elements}
   
@@ -419,9 +430,25 @@ Firedrake is a python package that brings together many useful mathematics packa
   
   Firedrake is a python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC.  
   
- The first step in implementing the trimmed serendipity elements was to focus on using FIAT.  Inside FIAT (FInite element Automatic Tabulator), we can create classes that provide the basis functions for the trimmed serendipity elements and tabulate them.  Taking the basis functions from \cite{gillette2019computational}, we implement each of the basis functions as broken down into functions on the vertices, edges, faces, and interior (in 3D).  
+ The first step in implementing the trimmed serendipity elements was to focus on using FIAT.  Inside FIAT (FInite element Automatic Tabulator), we can create classes that provide the basis functions for the trimmed serendipity elements and tabulate them.  We break down the basis functions into distinct sets dependent upon what portion of the mesh they correspond with (vertices, edges, faces, or interior).  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
+   
+   \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
+   \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
+   \end{equation}
+   
+  Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cube in 3d.
+  
+  \begin{example}\label{ex:UsingComputationalBasis}
+  To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
+  
+  \begin{equation*}
+      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
+  \end{equation*}
+  
+  Notice that, give a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
+  \end{example}
  
- For example, the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3d, require using two sets of functions, one set on the edges of the reference and one set on the faces of the reference element.  A snippet of how this is done for the edge functions is given the code \ref{lst:edge_basis_functions}.
+ As an example of how this is done in Firedrake, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3d. According to equation \ref{eq:HCurlTrimmedSerendipityBasis}, these require using two sets of functions, one set on the edges of the reference element and one set on the faces of the reference element.  A snippet of how this is done for the edge functions is given the code \ref{lst:edge_basis_functions}.
  
  \lstset{language=Python}
  \begin{lstlisting}[frame=single, caption={Portion of edge basis function implementation.}, label={lst:edge_basis_functions}, numbers=left]]
@@ -438,7 +465,7 @@ Firedrake is a python package that brings together many useful mathematics packa
     ...
  \end{lstlisting}
  
- Then we can take each of the relevant basis functions, and feed those into the FIAT class we have defined for the trimmed serendipity $H($curl$)$ elements, as seen in the code \ref{lst:basis_functions}.
+ After we create the edge basis functions and face basis functions, we can feed those into the FIAT class we have defined for the trimmed serendipity $H($curl$)$ elements, as seen in the code \ref{lst:basis_functions}.  This is how we define the FIAT element that Firedrake is going to use when we call "SminusCurl".
  
 \lstset{language=Python}
  \begin{lstlisting}[frame=single, caption={Collecting the basis functions for the trimmed serendipity class inside FIAT.}, label={lst:basis_functions}, numbers=left]] 
@@ -461,9 +488,9 @@ Firedrake is a python package that brings together many useful mathematics packa
                   degree=degree, mapping=contravariant piola)
 \end{lstlisting}
 
-After defining the FIAT element, it does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.    
+Afterwards, FIAT does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.    
 
-After this, there are small adjustments made to Firedrake's versions of UFL and TSFC so that each of the packages know to look for the trimmed serendipity elements that have been implemented.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see code \ref{lst:pde_using_trimmed_serendipity}).
+After this, there are small adjustments made to Firedrake's versions of UFL and TSFC so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see code \ref{lst:pde_using_trimmed_serendipity}).
 
 \lstset{language=Python}
 \begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3d.}, label={lst:pde_using_trimmed_serendipity}, numbers=left]] 
@@ -488,9 +515,14 @@ After this, there are small adjustments made to Firedrake's versions of UFL and 
 \newpage
   \subsection{Projection}
   
-  We solve the projection problem to give a baseline of expectations for the elements.  
+  We solve the projection problem to give a baseline of expectations for the elements.  That is, we solve the equation 
   
-  GET THE EXACT PROBLEM THAT THE PROJECTION PROBLEM IS SOLVING.
+  \begin{equation}
+      \int (u, v) dx = \int (f, v) dx
+  \end{equation}
+
+ \noindent for $v$ a test function in the appropriate space.  
+
 
 \begin{figure}[h!]
   \begin{subfigure}[h]{0.5\textwidth}
@@ -1117,13 +1149,17 @@ The experiment was done by using SLEPc in Firedrake, computing an inverted shift
 
 Knowing that both elements are solving this problem in a fashion that is expected theoretically, we can analyze the rest of the results shown in this table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that NCE elements are able to get results that are up to a magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed Serendipity elements results in a significant reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed Serendipity elements have nearly half the DOFs of NCE elements, and correspondingly, require about half the time to solve for the eigenvalues.  At higher orders, we expect that this will be even more exaggerated.  \\
 
-\section{Conclusion}
+\section{Discussion}
 
-Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using fewer degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with what we expect at many orders for H$($curl$)$, H$($div$)$, and $L^2$ elements in both 2 and 3D.\\
+Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed Serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed Serendipity elements should be able to converge at the same rate as tensor product and Serendipity elements, while using fewer degrees of freedom overall.  The plots here demonstrate that the rate of convergence is consistent with that theory at orders $2, 3$ and $4$ for H$($curl$)$, H$($div$)$, and $H^1$ elements in both 2 and 3D.  These experiments also confirmed that as the degree of the elements increased, the number of degrees of freedom for trimmed serendipity elements were approximately half the degrees of freedom that the tensor product elements used.
 
- Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
+There are two scenarios where the use of trimmed serendipity elements might be beneficial.  The first is when the speed of the solve matters.  The second is when the memory that the solve requires is limited.  In both of these scenarios, the smaller amount of degrees of freedom required for trimmed serendipity elements is a benefit that users can take advantage of.  
 
- Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
+The trimmed serendipity elements are not perfect, and will not replace the tensor product elements entirely.  The results here show that while tensor product elements take longer, they are also more accurate the trimmed serendipity elements.  Therefore, if the goal of a user is to find the most accurate solution, regardless of the time required to do so, tensor product elements will do this better than trimmed serendipity elements.  
+
+%Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
+
+%Another example of this is the 3D mixed Poisson problem, where we see that the trimmed Serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
 In general, it is clear from these results that trimmed Serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed Serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed Serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
     
