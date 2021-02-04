@@ -191,14 +191,14 @@
   
   \section{Introduction}
   
-  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we are able to assess their computational advantages in a common and practical setting for the first time.
+  In addition to the four families of finite elements present on the Periodic Table of Finite Elements \josh{Cite?}, recent research has examined a fifth family, called the \emph{trimmed serendipity finite elements}.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we are able to assess their computational advantages in a common and practical setting for the first time.
   
   %(The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
   
-  In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
+  In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package \josh{cite?}, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
   % computational challenges.
   % which can be found in section 4.  
-Firedrake is a python package that brings together many useful mathematics packages to create a user-friendly python library for approximating the solution to partial differential equations (PDEs) via finite elements.  For those familiar with finite element exterior calculus (FEEC), Firedrake makes the approximation of solutions to PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in code \ref{lst:mixedPoissonCode}.  
+Firedrake is a python package that brings together many useful mathematics packages to create a user-friendly python library for approximating the solution to partial differential equations (PDEs) via finite elements.  For those familiar with finite element exterior calculus (FEEC), Firedrake makes the approximation of solutions to PDEs simple by using the unified form language (UFL) package, which has the capability to mimic mathematical notation.  An example of writing a PDE and solving it in Firedrake can be found in Listing~\ref{lst:mixedPoissonCode}.  
   
   %
   % AG NOTE: I added the lstset basic style command below to switch to a monospaced font 
@@ -206,33 +206,33 @@ Firedrake is a python package that brings together many useful mathematics packa
   \lstset{language=Python}
   \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
   \begin{lstlisting}[frame=single, caption={Basic Firedrake implementation of the mixed Poisson problem.}, label={lst:mixedPoissonCode}, numbers=left]]
-        PolyDegree = 2
-        Cells = 2**5
-        mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
-        DQ = FunctionSpace(mesh, "DQ", PolyDegree - 1)
-        RTCF = FunctionSpace(mesh, "RTCF", PolyDegree)
-        W = RTCF * DQ
+    PolyDegree = 2
+    Cells = 2**5
+    mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
+    DQ = FunctionSpace(mesh, "DQ", PolyDegree - 1)
+    RTCF = FunctionSpace(mesh, "RTCF", PolyDegree)
+    W = RTCF * DQ
 
-        sigma, u = TrialFunctions(W)
-        tau, v = TestFunctions(W)
+    sigma, u = TrialFunctions(W)
+    tau, v = TestFunctions(W)
 
-        x, y, z = SpatialCoordinate(mesh)
-        uex = sin(pi*x)*sin(pi*y)*sin(pi*z)
-        sigmaex = grad(uex)
-        
-        f = -div(grad(uex))
-        a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
-        L = -f*v*dx
-        w = Function(W)
-        ...
-        solve(a == L, w, solver_parameters=params)
+    x, y, z = SpatialCoordinate(mesh)
+    uex = sin(pi*x)*sin(pi*y)*sin(pi*z)
+    sigmaex = grad(uex)
+    
+    f = -div(grad(uex))
+    a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
+    L = -f*v*dx
+    w = Function(W)
+    ...
+    solve(a == L, w, solver_parameters=params)
   \end{lstlisting}
   
   
-	A great strength of Firedrake is its modular structure for both users and coders.
-   For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as swapping lines 4-5 in code \ref{lst:mixedPoissonCode} to the appropriate identifiers, ``DPC'' and ``SminusDiv'' inside the ``FunctionSpace'' call.  
+	An important strength of Firedrake is its modular structure for both users and developers.
+   For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4-5 in Listing~\ref{lst:mixedPoissonCode} to the appropriate identifiers, ``DPC'' and ``SminusDiv'' inside the ``FunctionSpace'' calls.  
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
-   For coders, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  Here, we code up the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and pass them to the FIAT code for processing.
+   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT for processing.
    
    Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have similar amounts of degrees of freedom to tensor product and serendipity elements.  However, as the degree of the elements are increased, trimmed serendipity elements can have significantly less degrees of freedom
   %   $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and using them inside of FIAT codes that Firedrake will then call upon for determining what the user means when they call for ``SminusDiv''.  
@@ -259,8 +259,8 @@ Firedrake is a python package that brings together many useful mathematics packa
   
   The contributions of this paper are as follows:
   \begin{enumerate}
-      \item Show how Firedrake creates a software environement that can be used to implement new elements as well as allow the user to call the new elements with only small changes to their existing codes. \\
-      \item Illustrate trimmed serendipity finite elements hitting the theoretical bounds that are predicted in terms of convergence rates. \\
+      \item Show how Firedrake creates a software environement that can be used to implement new elements as well as allow the user to call the new elements with only small changes to their existing codes. 
+      \item Illustrate trimmed serendipity finite elements hitting the theoretical bounds that are predicted in terms of convergence rates. 
       \item Examine the costs and benefits of using trimmed serendipity elements within the confines of typical toy problems for numerical analysis by comparing them to results obtained using tensor product elements on the same problems.
   \end{enumerate}
   
