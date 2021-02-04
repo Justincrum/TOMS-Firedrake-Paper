@@ -92,6 +92,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 \newcommand{\akg}[1]{{\textcolor{blue}{\textbf{AG:} #1}}}
+\newcommand\josh[1]{\textbf{\textcolor[rgb]{0,.5,1}{[Josh: #1]}}}
 
 \newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
@@ -190,7 +191,7 @@
   
   \section{Introduction}
   
-  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we are able to assess their computational advantages in a fair and practical setting for the first time.
+  In addition to the four families of finite elements present on the Periodic Table of Finite Elements, recent research has examined a fifth family, called the trimmed serendipity finite elements.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring less degrees of freedom to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we are able to assess their computational advantages in a common and practical setting for the first time.
   
   %(The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
   
@@ -268,21 +269,27 @@ Firedrake is a python package that brings together many useful mathematics packa
   
   \section{Background on serendipity and trimmed serendipity elements}
   
-    \akg{I will add citations to this paragraph later.} Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC).   FEEC gives an easy, unified way to create notation for elements.  For example, $P^-_r \Lambda^k$, $P_r \Lambda^k$, $Q^-_r \Lambda^k$, and $S_r \Lambda^k$ are respectively the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  In 2d, $1$-forms can represent both \hcurl~and \hdiv~elements, depending on the orientation of the degrees of freedom defined on the edges of a mesh.  In 3d, $1$-forms denote the \hcurl~elements while $2$-forms denote the \hdiv~elements.  
+    \akg{I will add citations to this paragraph later.} 
+    Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC)~\cite{AFW2006,AFW2010,ABB2012}.  Among its many advantages, FEEC gives an easy, unified way to notate different element types.  The four best known families of elements are denoted $\calP^-_r \Lambda^k$, $\calP_r \Lambda^k$, $\calQ^-_r \Lambda^k$, and $\calS_r \Lambda^k$, which are, respectively, the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  The $\calP$ and $\calP^-$ spaces are defined over meshes of simplices (triangles, tetrahedra, etc) while the $\calQ^-$ and $\calS$ spaces are defined over meshes of hypercubes (squares, cubes, etc).  
     
-    The trimmed serendipity family is a relatively new addition to this collection that attains a key optimality condition arising from the exterior calculus framework.
+    The mathematical results from FEEC regarding these four families families synthesize decades of research into what constitutes a stable finite element, i.e.\ a numerical method that can be proven to converge to the correct solution of certain PDEs in certain norms at a prescribed rate, indicated by the subscript $r$.  In any dimension, the $0$-form spaces provide scalar-valued, $H^1$-conforming elements.  In 2D, $1$-forms can represent both \hcurl~and \hdiv~elements, depending on the orientation of the degrees of freedom defined on the edges of a mesh.  In 3D, $1$-forms correspond to \hcurl~elements while $2$-forms correspond to \hdiv~elements.  
+        
+    
+  \subsection{Trimmed Serendipity Elements}
+    The trimmed serendipity family is a relatively new addition to this collection that attains a key optimality condition arising from the FEEC framework.
 	In~\cite{christiansen2016constructions}, Christiansen and Gillette computed the minimal possible dimensions for an exact sequence of finite element spaces on cubes that contained $\calP_r\Lambda^k$ for each $k$.
 	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoted them $S^-_r\Lambda^k$ for trimmed serendipity elements.  
-	The trimmed serendipity spaces share the same interleaving containment strucutre with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  For any fixed dimension $n$, that is:  \begin{equation*}
+	The trimmed serendipity spaces share the same interleaving containment structure with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  That is, for any fixed dimension $n$:
+\begin{equation*}
       \calS_r \Lambda^k \subset \calS^-_{r+1} \Lambda^k \subset \calS_{r+1} \Lambda^k
   \end{equation*}
-  
- \noindent and 
-  
+ \noindent and   
    \begin{equation*}
       \calP_r \Lambda^k \subset \calP^-_{r+1} \Lambda^k \subset \calP_{r+1} \Lambda^k.
   \end{equation*}
-	Many additional mathematical properties proved in~\cite{gillette2019trimmed} solidify the analogue between the $\calP_r^-\Lambda^k$ and $\calS_r^-\Lambda^k$ families.
+	These containments express the fact that typically a finite element practitioner will get the most computational efficiency for a desired approximation order by choosing an appropriate $\calP^-$ space instead of a $\calP$ space.
+	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the tensor product $\calQ^-$ spaces possible as well.
+%	Many additional mathematical properties proved in~\cite{gillette2019trimmed} solidify the analogue between the $\calP_r^-\Lambda^k$ and $\calS_r^-\Lambda^k$ families.
 
 %At $k=0$ and $k=n$, the trimmed serendipity spaces coincide with regular serendipity spaces, but for intermediate values of $k$ and $r>1$, the containments are strict and hence the dimensions 
     
@@ -295,12 +302,10 @@ Firedrake is a python package that brings together many useful mathematics packa
 % Following this, Gillette and Kloefkorn then introduced the trimmed Serendipity elements $S^-_r$ in \cite{gillette2019trimmed}.  The trimmed serendipity elements are the answer to the question ``Does there exist a minimal compatible finite element system on cubes containing $P_r \Lambda^k$?'', and contain the expected amount of interior degrees of freedom as described by Christiansen and Gillette in \cite{christiansen2016constructions}.  
   
     
-  Subsequently, in \cite{gillette2019computational}, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$.  Prior to this paper, these bases have not been implemented in any finite element software package.
+	As a step toward testing such ideas, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$~\cite{gillette2019computational}.
+	Prior to this paper, these bases have not been implemented in any finite element software package.
   %Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
-  
-  
-  \subsection{Trimmed Serendipity Elements}
-  The trimmed serendipity elements in both 2D and 3D can be defined in terms of the $k$-forms used to represent them, or the type of space they conform to.
+  %  The trimmed serendipity elements in both 2D and 3D can be defined in terms of the $k$-forms used to represent them, or the type of space they conform to.
   
   \subsubsection{Scalar Trimmed Serendipity Elements}
   The scalar trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$.  Therefore it is easy to describe the shape functions of these as the span of all monomials of superlinear degree less than or equal to $r$. In terms of the Periodic Table of Finite Elements, these are the $S_r$ spaces. 
