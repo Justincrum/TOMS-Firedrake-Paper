@@ -507,7 +507,21 @@ Additionally, there are small adjustments made to Firedrake's UFL and TSFC defin
     
    The following experiments were designed to show the benefits and costs to using trimmed Serendipity elements in comparison to traditional tensor product elements.  We used a basic projection example to check implementation, as well as a primal Poisson problem (to test scalar elements), a mixed Poisson problem (to test H(div) elements), and a cavity resonator problem (to test H(curl) elements).  Note that the cavity resonator problem was done only in 3D, as in 2D, the H(curl) elements are just a rotation of the H(div) elements. 
 
+\josh{Somewhere in this section lead in we need to describe our experimental setup, which should include (1) hardware specifications and (2) software specifications (versions of firedrake, etc.)}
+
+\josh{On the hardware side, we can say something like ``all experiments were executed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processor, running at 2.4GHz and with 512GB of memory.''  We should also indicate that are largest runs used a node with 3TB of memory}
+
+\josh{We should also state a little on how we executed these jobs, e.g. reveal some of the specs of the SLURM script we used, such as ``we utilized on node parallelism by executing these jobs with mpirun set up with KK processes''.}
+
+\josh{We'll also want to clarify if we had the node entirely cleared of other running jobs (I believe we did!) and thus we can modify the above to state it is free of other jobs.}
+
+\josh{We'll also want to mention things like ``cache warming'', ''how many runs you averaged together'', etc.  Anything we think a reasonably capable reader needs to know to reproduce our experimental results}
+
+\josh{Is the newpage intentional?}
+
 \newpage
+
+
   \subsection{Projection}
   
   We solve the projection problem to give a baseline of expectations for the elements.  That is, we solve the equation 
@@ -516,7 +530,9 @@ Additionally, there are small adjustments made to Firedrake's UFL and TSFC defin
       \int (u, v) dx = \int (f, v) dx
   \end{equation}
 
- \noindent for $v$ a test function in the appropriate space.  
+ \noindent for $v$ a test function in the appropriate space.  \josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count degrees of freedom (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
+
+\josh{We also probably want to state precisely the mapping from the legend in this diagram (e.g. $S^-_k$ and $Q^-_k$ to their names in specific Firedrake function spaces (perhaps though, this is obvious?}
 
 
 \begin{figure}[h!]
@@ -675,17 +691,21 @@ Additionally, there are small adjustments made to Firedrake's UFL and TSFC defin
     \caption{3D degrees of freedom vs error}
     \label{fig:3dProjectionDofs}
   \end{subfigure}
-  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.}
+  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.  \josh{We should state something like ``lower is better'' to make these easier to digest}} 
 \end{figure}
   
-First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in Figure \ref{fig:2dProjectionH}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed Serendipity and tensor product elements at a given order to be parallel.
+First, we graphed the errors from computing projections using trimmed Serendipity and tensor product elements in 2D, shown in Fig.~\ref{fig:2dProjectionH}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed Serendipity and tensor product elements at a given order to be parallel.
   
-After checking that it is converging at the right rate, we then want to analyze the data from a standpoint of memory usage.  To do this, we plot degrees of freedom vs error, as seen in Figure \ref{fig:2dProjection}.  Overall, the error given by trimmed Serendipity elements is higher than the error from using tensor product elements of the same order.   We see similar results in Figures \ref{fig:3dProjectionDofs} and \ref{fig:3dProjectionH}.
+After checking that it is converging at the right rate, we then want to analyze the data from a standpoint of memory usage.  To do this, we plot degrees of freedom vs error, as seen in Fig.~\ref{fig:2dProjection}.  Overall, the error given by trimmed Serendipity elements is higher than the error from using tensor product elements of the same order.   We see similar results in Figs.~\ref{fig:3dProjectionDofs} and \ref{fig:3dProjectionH}.
   
+\josh{More discussion here?}
 
 
 \newpage
  
+
+
+
 \subsection{The Poisson Problem}
 In this section we discuss results for both the primal Poisson problem as well as the mixed Poisson problem.  We solve the primal Poisson problem described below on a unit square domain $\Omega$:
 \begin{align}
@@ -869,11 +889,11 @@ The primal Poisson problem allows us to test scalar Serendipity elements against
 \end{figure}
 
 
-Figures \ref{fig:2dPrimalDofs}, \ref{fig:2dMixedDofsError}, \ref{fig:3dPrimalDofsError}, and \ref{fig:3dMixedDofsError} give us some interesting data points to focus on.  Before analyzing the results, note again that Serendipity and trimmed Serendipity elements are the same in the primal Poisson case.  While these elements differ in the H(div) and H(curl) cases, our results here indicate that we likely will not see Serendiptiy elements outperforming trimmed Serendipity elements in 3D, so their implementation has been left for a future work.
+Figs.~\ref{fig:2dPrimalDofs}, \ref{fig:2dMixedDofsError}, \ref{fig:3dPrimalDofsError}, and \ref{fig:3dMixedDofsError} give us some interesting data points to focus on.  Before analyzing the results, note again that Serendipity and trimmed Serendipity elements are the same in the primal Poisson case.  While these elements differ in the H(div) and H(curl) cases, our results here indicate that we likely will not see Serendipity elements outperforming trimmed Serendipity elements in 3D, so their implementation has been left for a future work.
 
-In each of the figures in \ref{fig:PrimalMixedErrorAnalysis}, we see that regardless of which element is better, they follow similar trajectories again, indicating that they have the same overall convergence rate.  The primal Poisson problem shows us that there are scenarios where using Serendipity elements can be beneficial in terms of error depending on the number of degrees of freedom.  However, in the mixed Poisson problem, we don't immediately see this benefit in either the 2D case or the 3D case.
+In each of the figures in \ref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, they all follow similar trajectories again, indicating that they have the same overall convergence rate.  The primal Poisson problem shows us that there are scenarios where using \josh{trimmed?} Serendipity elements can be beneficial in terms of error depending on the number of degrees of freedom.  However, in the mixed Poisson problem, we don't immediately see this benefit in either the 2D case or the 3D case.
 
-However, we would also like to analyze timing for tensor product elements and trimmed Serendipity elements.  We do this in the subfigures of \ref{fig:PrimalMixedTimeAnalysis}.  In \ref{fig:3dPrimalDofsTime} and \ref{fig:3dPrimalTimeError}, we see good evidence that Serendipity elements are able to to produce better results at a faster rate.  Specifically, in \ref{fig:3dPrimalDofsTime}, we can see that Serendipity elements are able to do a larger number of degrees of freedom in the same amount of time.  In fig \ref{fig:3dPrimalTimeError} we see that for a given error level, Serendipity elements require less time.
+We would also like to analyze timing for tensor product elements and trimmed Serendipity elements.  We show this comparison in Fig.~\ref{fig:PrimalMixedTimeAnalysis}.  In \ref{fig:3dPrimalDofsTime} and \ref{fig:3dPrimalTimeError}, we see good evidence that Serendipity elements are able to to produce better results at a faster rate.  Specifically, in \ref{fig:3dPrimalDofsTime}, we can see that Serendipity elements are able to do a larger number of degrees of freedom in the same amount of time.  In fig \ref{fig:3dPrimalTimeError} we see that for a given error level, Serendipity elements require less time.
 
 However the picture that is painted in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} is much less clear.  Overall, trimmed Serendipity elements seem to do a bit worse than the corresponding tensor product elements for the mixed Poisson problem, but it is promising that in \ref{fig:3dMixedDofsTime}, the points tend to stay in an overall linear fashion bunched together. 
 
@@ -1152,9 +1172,9 @@ There are two scenarios where the use of trimmed serendipity elements might be b
 
 The trimmed serendipity elements also give another way to refine a solution process.  Consider the case of the mixed Poisson problem solved using tensor product elements and trimmed serendipity elements.  In the case of tensor product elements on the $16 \times 16 \times 16$ mesh, the NCF element paired with DQ at orders $2$ and $1$ respectively solved the problem in approximately the same time that the SminusDiv element paired with DPC at orders $3$ and $2$ respectively.  However, the trimmed serendipity pairing yielded an extra magnitude of accuracy.  If instead the user had tried to refine this solution by increasing the order of the tensor product element pairing used, the time required to solve the mixed Poisson problem would have increased.
 
-The trimmed serendipity elements are not perfect, and will not replace the tensor product elements entirely.  The results here show that while tensor product elements take longer, they are also more accurate the trimmed serendipity elements.  Therefore, if the goal of a user is to find the most accurate solution, regardless of the time required to do so, tensor product elements will do this better than trimmed serendipity elements.  Even then, in some scenarios, it is likely that tensor product elements can fair even better by using tricks that take advantage of the inherent symmetry in the elements.  
+The trimmed serendipity elements are not perfect, and will not replace the tensor product elements entirely.  The results here show that while tensor product elements require more computational effort, they are also more accurate the trimmed serendipity elements.  Therefore, if the goal of a user is to find the most accurate solution, regardless of the time required to do so, tensor product elements will do this better than trimmed serendipity elements.  Even then, in some scenarios, it is likely that tensor product elements can fare even better by using tricks that take advantage of the inherent symmetry in the elements.  
 
-In the future, we would like to apply the trimmed serendipity elements to some large scale engineering problems to test them in a more industrial scenario.  This will give more insight as to their benefits in a real world application.  We would also like to spend time implementing the (ordinary) serendipity vector elements that are  missing from Firedrake.  Currently Firedrake has the serendipity elements in 2D, as well the $H^1$-conforming elements and $L^2$-conforming elements in 3D.  However the vector serendipity elements still need to be finished.  
+In the future, we would like to apply the trimmed serendipity elements to some large scale engineering problems to test them in a more industrial scenario.  This will give more insight as to their benefits in a real world application.  We would also like to spend time implementing the (ordinary) serendipity vector elements that are  missing from Firedrake.  Currently Firedrake has the serendipity elements in 2D, as well the $H^1$-conforming elements and $L^2$-conforming elements in 3D.  Vector serendipity elements are still a work in progress.
 
 %Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the degrees of freedom required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer degrees of freedom.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the degrees of freedom required were nearly half of what the tensor product elements used.  \\
 
