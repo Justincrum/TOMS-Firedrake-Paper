@@ -91,7 +91,7 @@
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
-\newcommand{\akg}[1]{{\textcolor{blue}{\textbf{AG:} #1}}}
+\newcommand\akg[1]{\textbf{\textcolor[rgb]{.5,0,1}{[Andrew: #1]}}}
 \newcommand\josh[1]{\textbf{\textcolor[rgb]{0,.5,1}{[Josh: #1]}}}
 
 \newcommand{\calP}{\mathcal{P}}
@@ -232,9 +232,9 @@ Firedrake is a python package that brings together many useful mathematics packa
 	An important strength of Firedrake is its modular structure for both users and developers.
    For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4-5 in Listing~\ref{lst:mixedPoissonCode} to the appropriate identifiers, ``DPC'' and ``SminusDiv'' inside the ``FunctionSpace'' calls.  
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
-   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT \josh{is it weird to mention FIAT here?} for processing.
+   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and hooking it up to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT \josh{is it weird to mention FIAT here?}\akg{yes - maybe revise to something like ``use them within an existing data strucutre (FIAT)''} for processing.
    
-   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have similar amounts of degrees of freedom to tensor product and serendipity elements.  However, as the degree of the elements are increased, trimmed serendipity elements can have significantly less degrees of freedom
+   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have similar amounts of degrees of freedom to tensor product and serendipity elements.  However, as the degree of the elements are increased, trimmed serendipity elements can have significantly less\akg{fewer - look up the rule :)} degrees of freedom
   %   $V\Lambda^0$, $\tilde{E}_i \Lambda^k$, $E_i \Lambda^k$, $\tilde{F}_i \Lambda^k$, $F_i \Lambda^k$, $F_i^\otimes \Lambda^k$, $\hat{F}_i \Lambda^k$, $I_i \Lambda^k$, $\tilde{I}_i \Lambda^k$ and using them inside of FIAT codes that Firedrake will then call upon for determining what the user means when they call for ``SminusDiv''.  
 %   in section~\ref{sec:buildcap}.
    
@@ -267,7 +267,7 @@ Firedrake is a python package that brings together many useful mathematics packa
   
   %In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
   
-  \section{Background on serendipity and trimmed serendipity elements}
+  \section{Background and notation for trimmed serendipity elements}
   
     \akg{I will add citations to this paragraph later.} 
     Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC)~\cite{AFW2006,AFW2010,ABB2012}.  Among its many advantages, FEEC gives an easy, unified way to notate different element types.  The four best known families of elements are denoted $\calP^-_r \Lambda^k$, $\calP_r \Lambda^k$, $\calQ^-_r \Lambda^k$, and $\calS_r \Lambda^k$, which are, respectively, the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  The $\calP$ and $\calP^-$ spaces are defined over meshes of simplices (triangles, tetrahedra, etc) while the $\calQ^-$ and $\calS$ spaces are defined over meshes of hypercubes (squares, cubes, etc).  
@@ -278,7 +278,7 @@ Firedrake is a python package that brings together many useful mathematics packa
   \subsection{Trimmed Serendipity Elements}
     The trimmed serendipity family is a relatively new addition to this collection that attains a key optimality condition arising from the FEEC framework.
 	In~\cite{christiansen2016constructions}, Christiansen and Gillette computed the minimal possible dimensions for an exact sequence of finite element spaces on cubes that contained $\calP_r\Lambda^k$ for each $k$.
-	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoted them $S^-_r\Lambda^k$ for trimmed serendipity elements.  
+	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoting trimmed serendipity elements with the notation $S^-_r\Lambda^k$ fo.  
 	The trimmed serendipity spaces share the same interleaving containment structure with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  That is, for any fixed dimension $n$:
 \begin{equation*}
       \calS_r \Lambda^k \subset \calS^-_{r+1} \Lambda^k \subset \calS_{r+1} \Lambda^k
@@ -288,7 +288,14 @@ Firedrake is a python package that brings together many useful mathematics packa
       \calP_r \Lambda^k \subset \calP^-_{r+1} \Lambda^k \subset \calP_{r+1} \Lambda^k.
   \end{equation*}
 	These containments express the fact that typically a finite element practitioner will get the most computational efficiency for a desired approximation order by choosing an appropriate $\calP^-$ space instead of a $\calP$ space.
-	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the tensor product $\calQ^-$ spaces possible as well.
+	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the larger dimensional tensor product spaces, $\calQ^-$, possible as well.
+
+	\akg{Maybe this paragraph belongs in the introduction?}
+	While the formulae for the dimensions of each space are somewhat involved, a simple count of degrees of freedom in a standard case highlights the potential gains.
+	To implement a standard mixed method for the Darcy flow with quadratic order error decay ($r=2$) in the velocity estimate ($k=2$), the divergence of the velocity ($k=3$) and the pressure ($k=3$), on a single cube ($n=3$) the pair of $\calQ^-$ elements used have a total of 44 degrees of freedom, the regular serendipity elements have 43 degrees of freedom, but the trimmed serendipity have only 25 degrees of freedom. 
+	The difference in degree of freedom count grows with $r$, meaning the computational savings accrued by trimmed serendipity should be most dramatic for larger $r$ values.
+	Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
+	
 %	Many additional mathematical properties proved in~\cite{gillette2019trimmed} solidify the analogue between the $\calP_r^-\Lambda^k$ and $\calS_r^-\Lambda^k$ families.
 
 %At $k=0$ and $k=n$, the trimmed serendipity spaces coincide with regular serendipity spaces, but for intermediate values of $k$ and $r>1$, the containments are strict and hence the dimensions 
@@ -303,10 +310,12 @@ Firedrake is a python package that brings together many useful mathematics packa
   
     
 	As a step toward testing such ideas, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$~\cite{gillette2019computational}.
-	Prior to this paper, these bases have not been implemented in any finite element software package.
+	Prior to this paper, neither these bases nor any other general implementation of trimmed serendipity elements has been attempted.
   %Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
   %  The trimmed serendipity elements in both 2D and 3D can be defined in terms of the $k$-forms used to represent them, or the type of space they conform to.
   
+  
+  \akg{I think a lot of the rest of Section 2 should be cut, actually.  @Justin: I suggest you copy the text below to a file of notes / text that could go into your thesis since it may be appropriate there. I'll think on this some more and push some more edits on Friday.}
   \subsubsection{Scalar Trimmed Serendipity Elements}
   The scalar trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$.  Therefore it is easy to describe the shape functions of these as the span of all monomials of superlinear degree less than or equal to $r$. In terms of the Periodic Table of Finite Elements, these are the $S_r$ spaces. 
   
