@@ -1,0 +1,242 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% baposter Landscape Poster
+% LaTeX Template
+% Version 1.0 (11/06/13)
+%
+% baposter Class Created by:
+% Brian Amberg (baposter@brian-amberg.de)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[landscape,a0paper,fontscale=0.285]{baposter} % Adjust the font scale/size here
+
+\usepackage{graphicx} % Required for including images
+\graphicspath{{figures/}} % Directory in which figures are stored
+
+\usepackage{amsmath} % For typesetting math
+\usepackage{amssymb} % Adds new symbols to be used in math mode
+
+\usepackage{booktabs} % Top and bottom rules for tables
+\usepackage{enumitem} % Used to reduce itemize/enumerate spacing
+\usepackage{palatino} % Use the Palatino font
+\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+
+\usepackage{xcolor}
+
+\usepackage{multicol} % Required for multiple columns
+\setlength{\columnsep}{1.5em} % Slightly increase the space between columns
+\setlength{\columnseprule}{0mm} % No horizontal rule between columns
+
+\usepackage{tikz} % Required for flow chart
+\usetikzlibrary{shapes,arrows} % Tikz libraries required for the flow chart in the template
+
+\newcommand{\compresslist}{ % Define a command to reduce spacing within itemize/enumerate environments, this is used right after \begin{itemize} or \begin{enumerate}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+}
+
+\definecolor{arizonablue}{RGB}{21,36,74} % Defines the color used for content box headers
+
+\definecolor{arizonared}{RGB}{171,5,32} % Defines the color used for content box headers
+
+
+\begin{document}
+
+\begin{poster}
+{
+headerborder=closed, % Adds a border around the header of content boxes
+colspacing=1em, % Column spacing
+bgColorOne=white, % Background color for the gradient on the left side of the poster
+bgColorTwo=white, % Background color for the gradient on the right side of the poster
+borderColor=arizonablue, % Border color
+headerColorOne=arizonablue, % Background color for the header in the content boxes (left side)
+headerColorTwo=arizonablue, % Background color for the header in the content boxes (right side)
+headerFontColor=arizonared, % Text color for the header text in the content boxes
+boxColorOne=white, % Background color of the content boxes
+textborder=roundedleft, % Format of the border around content boxes, can be: none, bars, coils, triangles, rectangle, rounded, roundedsmall, roundedright or faded
+eyecatcher=false, % Set to false for ignoring the left logo in the title and move the title left
+headerheight=0.1\textheight, % Height of the header
+headershape=roundedright, % Specify the rounded corner in the content box headers, can be: rectangle, small-rounded, roundedright, roundedleft or rounded
+headerfont=\Large\bf\textsc, % Large, bold and sans serif font in the headers of content boxes
+%textfont={\setlength{\parindent}{1.5em}}, % Uncomment for paragraph indentation
+linewidth=2pt % Width of the border lines around content boxes
+}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION 
+%----------------------------------------------------------------------------------------
+%
+{\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % First university/lab logo on the left
+{\bf\textsc{Implementing and Testing:  Trimmed Serendipity Elements in Firedrake}\vspace{0.5em}} % Poster title
+{\textsc{Justin Crum \hspace{12pt} University of Arizona, Program in Applied Mathematics}} % Author names and institution
+{\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % Second university/lab logo on the right
+
+%----------------------------------------------------------------------------------------
+%	OBJECTIVES
+%----------------------------------------------------------------------------------------
+
+\headerbox{Objectives}{name=objectives,column=0,row=0}{
+Trimmed serendipity elements have rarely been implemented and tested in a comprehensive finite element method package.
+ 
+
+\begin{enumerate}\compresslist
+\item Implement trimmed serendipity elements in Firedrake
+\item Test for correct convergence rates
+\item Compare results against tensor product elements on a variety of test problems
+\end{enumerate}
+
+\vspace{0.3em} % When there are two boxes, some whitespace may need to be added if the one on the right has more content
+}
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\headerbox{Introduction}{name=introduction,column=0,below=objectives, above=bottom}{
+The trimmed serendipity finite elements \cite{gillette2019trimmed} are a family of finite elements that are used to solve PDEs on square and cubical meshes.  We denote the family by $\mathcal{S}_r^- \Lambda^k$, where $r$ is the order of the element used and $k$ is the form degree.
+
+%\begin{figure}[h]
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{trimmedSerendipityPT.PNG}
+
+The above is an illustration of the degrees of freedom for trimmed serendipity elements, $\mathcal{S}_1^-\Lambda^1(\square_3)$ and $\mathcal{S}_2^-\Lambda^1(\square_3)$ .
+\end{center}
+
+One example of the set of edge basis functions for $\mathcal{S}_1^-\Lambda^1(\square_3)$, derived in \cite{gillette2019computational}, are:
+\begin{equation*}
+      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz
+\end{equation*}
+where the proper choice of edge assignment will result in 12 different constant one forms.
+
+}
+
+%----------------------------------------------------------------------------------------
+%	RESULTS 1
+%----------------------------------------------------------------------------------------
+
+%\headerbox{Results 1}{name=results,column=2,span=2,row=0,bottomaligned=introduction}{
+
+%\begin{multicols}{2}
+%\vspace{1em}
+%\begin{center}
+%\includegraphics[width=0.8\linewidth]{placeholder}
+%\captionof{figure}{Figure caption}
+%\end{center}
+
+%Aliquam auctor, metus id ultrices porta, risus enim cursus sapien, quis iaculis sapien tortor sed odio. Mauris ante orci, euismod vitae tincidunt eu, porta ut neque. Aenean sapien est, viverra vel lacinia nec, venenatis eu nulla. Maecenas ut nunc nibh, et tempus libero. Aenean vitae risus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing.
+%\end{multicols}
+
+%------------------------------------------------
+
+%\begin{multicols}{2}
+%%\vspace{1em}
+%Sed fringilla tempus hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Etiam ut elit sit amet metus lobortis consequat sit amet in libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel sem magna. Nunc at convallis urna. isus ante. Pellentesque condimentum dui. Etiam sagittis purus non tellus tempor volutpat. Donec et dui non massa tristique adipiscing. Quisque vestibulum eros eu.
+
+%\begin{center}
+%\includegraphics[width=0.8\linewidth]{placeholder}
+%\captionof{figure}{Figure caption}
+%\end{center}
+
+%\end{multicols}
+%}
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	Firedrake
+%----------------------------------------------------------------------------------------
+
+\headerbox{Firedrake}{name=firedrake,column=1,span=2}{ % This block's bottom aligns with the bottom of the conclusion block
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{FiredrakeLogo.PNG}
+\end{center}
+
+In Firedrake \cite{rathgeber2016firedrake}, we are able to implement the trimmed serendipity finite elements by using the basis functions determined in \cite{gillette2019computational} and recreating the equation
+
+\begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
+   \mathcal{S}^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right]
+   \end{equation}
+
+inside of a FIAT element.  Then once a Firedrake code is asked to create a function space using
+\begin{center}
+{\fontfamily{qcr}\selectfont FunctionSpace(mesh, "SminusCurl", 2)} \\
+\end{center}
+it chooses the appropriate set of basis functions based on what portions of Equation \ref{eq:HCurlTrimmedSerendipityBasis} need to be filled in for degree $r=2$.
+
+}
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	RESULTS
+%----------------------------------------------------------------------------------------
+
+\headerbox{Results}{name=results,column=1, span=2, below=firedrake, above=bottom}{ 
+
+}
+
+%----------------------------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+%	Discussion
+%----------------------------------------------------------------------------------------
+
+\headerbox{Discussion}{name=discussion,column=3, bottomaligned=firedrake}{ 
+
+}
+
+%----------------------------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+%	Future Works
+%----------------------------------------------------------------------------------------
+
+\headerbox{Future Work}{name=future,column=3, below=discussion}{ 
+In the future we would like to do:
+
+\begin{enumerate}
+    \item Test trimmed serendipity elements on industrial problems \\
+    \item Implement (ordinary) serendipity elements \\ 
+    \item Further investigate uses of trimmed serendipity elements as a route for solution refinement
+\end{enumerate}
+
+
+}
+
+%----------------------------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+
+\headerbox{References}{name=references,column=3,below=future,above=bottom}{
+
+
+\renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
+\nocite{*} % Insert publications even if they are not cited in the poster
+\small{ % Reduce the font size in this block
+\bibliographystyle{unsrt}
+\bibliography{poster} % Use sample.bib as the bibliography file
+
+}}
+
+\end{poster}
+
+\end{document}
