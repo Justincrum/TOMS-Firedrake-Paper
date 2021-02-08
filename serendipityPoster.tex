@@ -79,8 +79,8 @@ linewidth=2pt % Width of the border lines around content boxes
 %----------------------------------------------------------------------------------------
 %
 {\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % First university/lab logo on the left
-{\bf\textsc{Implementing and Testing:  Trimmed Serendipity Elements in Firedrake}\vspace{0.5em}} % Poster title
-{\textsc{Justin Crum \hspace{12pt} University of Arizona, Program in Applied Mathematics}} % Author names and institution
+{\huge{\bf\textsc{Implementing and Testing:  Trimmed Serendipity Elements in Firedrake}\vspace{0.5em}}} % Poster title
+{\textsc{Justin Crum, Cyrus Cheng, Joshua A. Levine, Robert Kirby, David Ham, Lawrence Mitchell, Andrew Gillette}} % Author names and institution
 {\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % Second university/lab logo on the right
 
 %----------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ Trimmed serendipity elements have rarely been implemented and tested in a compre
 %----------------------------------------------------------------------------------------
 
 \headerbox{Introduction}{name=introduction,column=0,below=objectives, above=bottom}{
-The trimmed serendipity finite elements \cite{gillette2019trimmed} are a family of finite elements that are used to solve PDEs on square and cubical meshes.  We denote the family by $\mathcal{S}_r^- \Lambda^k$, where $r$ is the order of the element used and $k$ is the form degree.
+The trimmed serendipity finite elements \cite{gillette2019trimmed} are a family of finite elements that are used to approximate solutions to PDEs on square and cubical meshes.  We denote the family by $\mathcal{S}_r^- \Lambda^k$, where $r$ is the order of the element used and $k$ is the form degree.
 
 %\begin{figure}[h]
 
@@ -342,9 +342,9 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 
 \headerbox{Discussion}{name=discussion,column=3, bottomaligned=firedrake}{ 
 
-Both of the graphs on the left hand side of our Results section illustrate that the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ elements had parallel trendlines for DOFs vs Error.  This indicates that the trimmed serendipity elements are converging at the same rate as the tensor product elements.  This is what the theory expects to have happen. \\
+Both of the graphs on the left hand side of our Results section illustrate that the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ elements had parallel trendlines for error as a function of DOFs.  This indicates that the trimmed serendipity elements are converging at the same rate as the tensor product elements.  This is what the theory expects to have happen. \\
 
-The comparison between $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ can be seen in the graphs.  In the primal Poisson problem, the trimmed serendipity elements do well in terms of both accuracy and time required to get there.  On the flip-side, the mixed Poisson problem illustrates that there are scenarios where using tensor product elements will still be desired.
+The comparison between $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ can be seen in the graphs.  In the primal Poisson problem, the trimmed serendipity elements do well in terms of both accuracy and time required to get there.  On the flip-side, the mixed Poisson problem illustrates that there are scenarios where using tensor product elements will be computationally preferable.
 
 
 
