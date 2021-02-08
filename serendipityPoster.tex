@@ -31,6 +31,8 @@
 \usepackage{palatino} % Use the Palatino font
 \usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
 
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
 \usepackage{xcolor}
 
 \usepackage{multicol} % Required for multiple columns
@@ -184,8 +186,151 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 %	RESULTS
 %----------------------------------------------------------------------------------------
 
-\headerbox{Results}{name=results,column=1, span=2, below=firedrake, above=bottom}{ 
+\headerbox{Results}{name=results,column=1, span=2, below=firedrake, above=bottom}{
 
+\begin{multicols}{2}
+
+\begin{tikzpicture}[scale=0.8]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=2e8, xmin=1e3,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+
+\begin{tikzpicture}[scale=0.8]
+      \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
+             ylabel near ticks, ymax=1.2e-2, ymin=0.8e-7, xmax=2e7, xmin=5e3,
+             legend pos=south west, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson Error Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+
+
+
+
+\begin{tikzpicture}[scale=0.8]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+     \end{loglogaxis}
+\end{tikzpicture}
+
+    \begin{tikzpicture}[scale=0.8]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-1, ymin=5e-8, xmax=1e5, xmin=0.5e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+
+
+\end{multicols}
 }
 
 %----------------------------------------------------------------------------------------
@@ -196,6 +341,12 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 %----------------------------------------------------------------------------------------
 
 \headerbox{Discussion}{name=discussion,column=3, bottomaligned=firedrake}{ 
+
+Both of the graphs on the left hand side of our Results section illustrate that the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ elements had parallel trendlines for DOFs vs Error.  This indicates that the trimmed serendipity elements are converging at the same rate as the tensor product elements.  This is what the theory expects to have happen. \\
+
+The comparison between $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ can be seen in the graphs.  In the primal Poisson problem, the trimmed serendipity elements do well in terms of both accuracy and time required to get there.  On the flip-side, the mixed Poisson problem illustrates that there are scenarios where using tensor product elements will still be desired.
+
+
 
 }
 
@@ -231,7 +382,7 @@ In the future we would like to do:
 
 \renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
 \nocite{*} % Insert publications even if they are not cited in the poster
-\small{ % Reduce the font size in this block
+\footnotesize{% Reduce the font size in this block
 \bibliographystyle{unsrt}
 \bibliography{poster} % Use sample.bib as the bibliography file
 
