@@ -72,7 +72,8 @@ headerheight=0.1\textheight, % Height of the header
 headershape=roundedright, % Specify the rounded corner in the content box headers, can be: rectangle, small-rounded, roundedright, roundedleft or rounded
 headerfont=\Large\bf\textsc, % Large, bold and sans serif font in the headers of content boxes
 %textfont={\setlength{\parindent}{1.5em}}, % Uncomment for paragraph indentation
-linewidth=2pt % Width of the border lines around content boxes
+linewidth=2pt, % Width of the border lines around content boxes
+columns=5
 }
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION 
@@ -110,15 +111,19 @@ The trimmed serendipity finite elements \cite{gillette2019trimmed} are a family 
 %\begin{figure}[h]
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{trimmedSerendipityPT.PNG}
+\includegraphics[width=0.4\textwidth]{trimmedSerendipityPT.PNG}
 
 The above is an illustration of the degrees of freedom for trimmed serendipity elements, $\mathcal{S}_1^-\Lambda^1(\square_3)$ and $\mathcal{S}_2^-\Lambda^1(\square_3)$ .
 \end{center}
 
 One example of the set of edge basis functions for $\mathcal{S}_1^-\Lambda^1(\square_3)$, derived in \cite{gillette2019computational}, are:
 \begin{equation*}
-      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz
+      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy +
 \end{equation*}
+\begin{equation*}
+    (x \pm 1)(y \pm 1)dz
+\end{equation*}
+
 where the proper choice of edge assignment will result in 12 different constant one forms.
 
 }
@@ -160,7 +165,7 @@ where the proper choice of edge assignment will result in 12 different constant 
 %	Firedrake
 %----------------------------------------------------------------------------------------
 
-\headerbox{Firedrake}{name=firedrake,column=1,span=2}{ % This block's bottom aligns with the bottom of the conclusion block
+\headerbox{Firedrake}{name=firedrake,column=1,span=3}{ % This block's bottom aligns with the bottom of the conclusion block
 \begin{center}
     \includegraphics[width=0.65\textwidth]{FiredrakeLogo.PNG}
 \end{center}
@@ -173,9 +178,9 @@ In Firedrake \cite{rathgeber2016firedrake}, we are able to implement the trimmed
 
 inside of a FIAT element.  Then once a Firedrake code is asked to create a function space using
 \begin{center}
-{\fontfamily{qcr}\selectfont FunctionSpace(mesh, "SminusCurl", 2)} \\
+{\fontfamily{qcr}\selectfont FunctionSpace(mesh, "SminusCurl", r)} \\
 \end{center}
-it chooses the appropriate set of basis functions based on what portions of Equation \ref{eq:HCurlTrimmedSerendipityBasis} need to be filled in for degree $r=2$.
+it chooses the appropriate set of basis functions based on what portions of Equation \ref{eq:HCurlTrimmedSerendipityBasis} need to be filled in for degree the chosen degree $r$.
 
 }
 
@@ -186,11 +191,11 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 %	RESULTS
 %----------------------------------------------------------------------------------------
 
-\headerbox{Results}{name=results,column=1, span=2, below=firedrake, above=bottom}{
+\headerbox{Results}{name=results,column=1, span=3, below=firedrake, above=bottom}{
 
-\begin{multicols}{2}
-
-\begin{tikzpicture}[scale=0.8]
+\begin{multicols}{3}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
       \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=2e8, xmin=1e3,
              legend pos=south west, legend style={font=\tiny} ,
@@ -223,8 +228,42 @@ it chooses the appropriate set of basis functions based on what portions of Equa
         \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
+      
+\begin{tikzpicture}[scale=0.7]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Primal Poisson Time Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addlegendentry{$S^-_2$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addlegendentry{$S^-_3$ }
+        \addplot[orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addlegendentry{$S^-_4$}
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addlegendentry{$Q^-_2$}
+        \addplot[densely dotted, blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addlegendentry{$Q^-_3$}
+        \addplot[densely dotted, orange]
+        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+        \addlegendentry{$Q^-_4$}
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
+        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
+        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
+     \end{loglogaxis}
+\end{tikzpicture}
 
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.7]
       \begin{loglogaxis}[xlabel={Degrees of Freedom}, ylabel={Error},
              ylabel near ticks, ymax=1.2e-2, ymin=0.8e-7, xmax=2e7, xmin=5e3,
              legend pos=south west, legend style={font=\tiny} ,
@@ -257,49 +296,13 @@ it chooses the appropriate set of basis functions based on what portions of Equa
         \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-
-
-
-
-\begin{tikzpicture}[scale=0.8]
-      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
-             ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
-             legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
-        \addlegendentry{$S^-_2$}
-        \addplot[blue] 
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
-        \addlegendentry{$S^-_3$ }
-        \addplot[orange]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
-        \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
-        \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
-        \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
-        table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
-        \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
-        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
-     \end{loglogaxis}
-\end{tikzpicture}
-
-    \begin{tikzpicture}[scale=0.8]
+      
+      
+    \begin{tikzpicture}[scale=0.7]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=5e-8, xmax=1e5, xmin=0.5e-1,
              legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
+             cycle list name=color list, title={Mixed Poisson Time Analysis}]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
         \addplot[red]
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
@@ -328,8 +331,66 @@ it chooses the appropriate set of basis functions based on what portions of Equa
         \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
+      
 
+\begin{tikzpicture}[scale=0.7]
+      \begin{loglogaxis}[xlabel={Dofs}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=3e6, xmin=3.5e4,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        \addlegendentry{$S^- \lambda = 3$}
+        \addplot[blue] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addlegendentry{$S^- \lambda = 5$ }
+        \addplot[densely dotted, red]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        \addlegendentry{$Q^- \lambda = 3$}
+        \addplot[densely dotted, blue]
+        table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+        \addlegendentry{$Q^- \lambda = 5$}
 
+        
+        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+
+      
+      
+\begin{tikzpicture}[scale=0.7]
+      \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
+             ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=185, xmin=0,
+             legend pos=north east, legend style={font=\tiny} ,
+             cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
+        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
+        \addplot[red]
+        table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        \addlegendentry{$S^- \lambda = 3$}
+        \addplot[blue] 
+        table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addlegendentry{$S^- \lambda = 5$ }
+        \addplot[densely dotted, red]
+        table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        \addlegendentry{$Q^- \lambda = 3$}
+        \addplot[densely dotted, blue]
+        table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+        \addlegendentry{$Q^- \lambda = 5$}
+
+        
+        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+      \end{loglogaxis}
+      \end{tikzpicture}
+      
+
+\end{center}
 \end{multicols}
 }
 
@@ -340,11 +401,11 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 %	Discussion
 %----------------------------------------------------------------------------------------
 
-\headerbox{Discussion}{name=discussion,column=3, bottomaligned=firedrake}{ 
+\headerbox{Discussion}{name=discussion,column=4, bottomaligned=firedrake}{ 
 
-Both of the graphs on the left hand side of our Results section illustrate that the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ elements had parallel trendlines for error as a function of DOFs.  This indicates that the trimmed serendipity elements are converging at the same rate as the tensor product elements.  This is what the theory expects to have happen. \\
+The primal Poisson and mixed Poisson error analysis graphs illustrate that $\mathcal{S}^-_r$ elements are converging at the expected rates, and that there are scenarios where either the $\mathcal{S}^-_r$ or $\mathcal{Q}^-_r$ elements might be useful.  The timing data below both of these error analysis plots also enforces this. \\
 
-The comparison between $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ can be seen in the graphs.  In the primal Poisson problem, the trimmed serendipity elements do well in terms of both accuracy and time required to get there.  On the flip-side, the mixed Poisson problem illustrates that there are scenarios where using tensor product elements will be computationally preferable.
+The Maxwell Eigenvalue problem illustrates one example where using trimmed serendipity elements might be able to save researchers a lot of time at a relatively small loss in error.  Results here are found by using SLEPc inside of Firedrake, and calling the {\fontfamily{qcr}\selectfont  "SminusCurl"} or {\fontfamily{qcr}\selectfont  "NCE"} families.
 
 
 
@@ -357,13 +418,13 @@ The comparison between $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ can be seen in th
 %	Future Works
 %----------------------------------------------------------------------------------------
 
-\headerbox{Future Work}{name=future,column=3, below=discussion}{ 
+\headerbox{Future Work}{name=future,column=4, below=discussion}{ 
 In the future we would like to do:
 
-\begin{enumerate}
-    \item Test trimmed serendipity elements on industrial problems \\
-    \item Implement (ordinary) serendipity elements \\ 
-    \item Further investigate uses of trimmed serendipity elements as a route for solution refinement
+\begin{enumerate}\compresslist
+    \item Test trimmed serendipity elements on specific application contexts 
+    \item Implement regular serendipity elements
+    %\item Further investigate uses of trimmed serendipity elements as a route for solution refinement
 \end{enumerate}
 
 
@@ -377,16 +438,32 @@ In the future we would like to do:
 %	REFERENCES
 %----------------------------------------------------------------------------------------
 
-\headerbox{References}{name=references,column=3,below=future,above=bottom}{
+\headerbox{References}{name=references,column=4,below=future}{
 
 
 \renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
 \nocite{*} % Insert publications even if they are not cited in the poster
-\footnotesize{% Reduce the font size in this block
+\tiny{% Reduce the font size in this block
 \bibliographystyle{unsrt}
 \bibliography{poster} % Use sample.bib as the bibliography file
 
 }}
+
+
+%----------------------------------------------------------------------------------------
+%	Acknowledgements
+%----------------------------------------------------------------------------------------
+
+\headerbox{Acknowledgements}{name=acknowledgements,column=4, below=references, above=bottom}{ 
+
+Research supported in part by NSF Collaborative Research Award DMS-1913094
+}
+
+%----------------------------------------------------------------------------------------
+
+
+
+
 
 \end{poster}
 
