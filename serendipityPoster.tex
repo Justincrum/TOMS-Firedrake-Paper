@@ -37,7 +37,8 @@
 
 \usepackage{multicol} % Required for multiple columns
 \setlength{\columnsep}{1.5em} % Slightly increase the space between columns
-\setlength{\columnseprule}{0mm} % No horizontal rule between columns
+\setlength{\columnseprule}{0.2pt}
+%\setlength{\columnseprule}{0mm} % No horizontal rule between columns
 
 \usepackage{tikz} % Required for flow chart
 \usetikzlibrary{shapes,arrows} % Tikz libraries required for the flow chart in the template
@@ -81,8 +82,8 @@ columns=5
 %
 {\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % First university/lab logo on the left
 {\huge{\bf\textsc{Implementing and Testing:  Trimmed Serendipity Elements in Firedrake}\vspace{0.5em}}} % Poster title
-{\textsc{Justin Crum$^1$, Cyrus Cheng$^2$, Joshua A. Levine$^1$, Robert Kirby$^3$, David Ham$^2$, Lawrence Mitchell$^4$, Andrew Gillette$^1$\\
-$^1=$ University of Arizona, $^2=$ Imperial College, $^3=$ Baylor University, $^4=$Durham University }} % Author names and institution
+{\textsc{Justin Crum$^1$, Cyrus Cheng$^2$, Joshua A. Levine$^1$, Robert Kirby$^3$, David Ham$^2$, Lawrence Mitchell$^4$, Andrew Gillette$^1$\\}
+\small{$^1$ University of Arizona, $^2$ Imperial College, $^3$ Baylor University, $^4$Durham University} } % Author names and institution
 {\includegraphics[height=4em]{ua_stack_rgb_4.pdf}} % Second university/lab logo on the right
 
 %----------------------------------------------------------------------------------------
@@ -168,7 +169,7 @@ where the proper choice of edge assignment will result in 12 different constant 
 
 \headerbox{Firedrake}{name=firedrake,column=1,span=3}{ % This block's bottom aligns with the bottom of the conclusion block
 \begin{center}
-    \includegraphics[width=0.65\textwidth]{FiredrakeLogo.PNG}
+    \includegraphics[width=0.45\textwidth]{FiredrakeLogo.PNG}
 \end{center}
 
 In Firedrake \cite{rathgeber2016firedrake}, we are able to implement the trimmed serendipity finite elements by using the basis functions determined in \cite{gillette2019computational} and recreating the equation
@@ -340,24 +341,24 @@ it chooses the appropriate set of basis functions based on what portions of Equa
              legend pos=north east, legend style={font=\tiny} ,
              cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+        \addplot[green, mark=diamond]
         table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
-        \addplot[blue] 
-        table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
-        \addlegendentry{$S^- \lambda = 5$ }
-        \addplot[densely dotted, red]
+        \addplot[densely dotted, green, mark=square*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
         \addlegendentry{$Q^- \lambda = 3$}
-        \addplot[densely dotted, blue]
+        \addplot[violet, mark=diamond] 
+        table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addlegendentry{$S^- \lambda = 5$ }
+        \addplot[densely dotted, violet, mark=square*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
         \addlegendentry{$Q^- \lambda = 5$}
 
         
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+        %\addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        %\addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        %\addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        %\addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
       \end{loglogaxis}
       \end{tikzpicture}
 
@@ -369,24 +370,24 @@ it chooses the appropriate set of basis functions based on what portions of Equa
              legend pos=north east, legend style={font=\tiny} ,
              cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+        \addplot[green, mark=diamond]
         table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
-        \addplot[blue] 
-        table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
-        \addlegendentry{$S^- \lambda = 5$ }
-        \addplot[densely dotted, red]
+        \addplot[densely dotted, green, mark=square*]
         table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
         \addlegendentry{$Q^- \lambda = 3$}
-        \addplot[densely dotted, blue]
+        \addplot[violet, mark=diamond] 
+        table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        \addlegendentry{$S^- \lambda = 5$ }
+        \addplot[densely dotted, violet, mark=square*]
         table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
         \addlegendentry{$Q^- \lambda = 5$}
 
         
-        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
+        %\addplot+[only marks, green, mark=circle*] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
+        %\addplot+[only marks, green, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
+        %\addplot+[only marks, purple, mark=circle] table [x=Time,y=Error,col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
+        %\addplot+[only marks, purple, mark=square] table [x=Time,y=Error,col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
       \end{loglogaxis}
       \end{tikzpicture}
       
@@ -402,7 +403,7 @@ it chooses the appropriate set of basis functions based on what portions of Equa
 %	Discussion
 %----------------------------------------------------------------------------------------
 
-\headerbox{Discussion}{name=discussion,column=4, bottomaligned=firedrake}{ 
+\headerbox{Discussion}{name=discussion,column=4}{ 
 
 The primal Poisson and mixed Poisson error analysis graphs illustrate that $\mathcal{S}^-_r$ elements are converging at the expected rates, and that there are scenarios where either the $\mathcal{S}^-_r$ or $\mathcal{Q}^-_r$ elements might be useful.  The timing data below both of these error analysis plots also enforces this. \\
 
@@ -445,7 +446,7 @@ In the future we would like to do:
 \renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
 \nocite{*} % Insert publications even if they are not cited in the poster
 \tiny{% Reduce the font size in this block
-\bibliographystyle{unsrt}
+\bibliographystyle{abbrv}
 \bibliography{poster} % Use sample.bib as the bibliography file
 
 }}
@@ -458,6 +459,9 @@ In the future we would like to do:
 \headerbox{Acknowledgements}{name=acknowledgements,column=4, below=references, above=bottom}{ 
 
 Research supported in part by NSF Collaborative Research Award DMS-1913094 and DMS-1912653.
+\begin{center}
+\includegraphics[scale=0.15]{nsf.pdf}
+\end{center}
 }
 
 %----------------------------------------------------------------------------------------
