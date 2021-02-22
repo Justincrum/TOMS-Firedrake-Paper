@@ -182,7 +182,7 @@
 %% article.
 
 \begin{abstract}
-       We present an implementation of trimmed serendipity finite elements using Firedrake.  To test how well trimmed serendipity elements perform in comparison to tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall we find that the trimmed serendipity elements do in fact converge at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve a problem.
+       We present the first complete implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on affinely mapped meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
 \end{abstract}
   
   
