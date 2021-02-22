@@ -294,8 +294,8 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   \subsection{Trimmed Serendipity Elements}
     The trimmed serendipity family is a relatively new addition to this collection that attains a key optimality condition arising from the FEEC framework.
 	In~\cite{christiansen2016constructions}, Christiansen and Gillette computed the minimal possible dimensions for an exact sequence of finite element spaces on cubes that contained $\calP_r\Lambda^k$ for each $k$.
-	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoting trimmed serendipity elements with the notation $S^-_r\Lambda^k$.  
-	The trimmed serendipity spaces share the same interleaving containment structure with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  That is, for any fixed dimension $n$:
+	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoting them trimmed serendipity elements with the notation $S^-_r\Lambda^k$.  
+	The trimmed serendipity spaces share the same interleaving containment structure with the serendipity spaces as the polynomial and trimmed polynomial subspaces have.  That is, for any fixed dimension $n$, any form order $0\leq k\leq n$, and any approximation order $r\geq 1$, we have both
 \begin{equation*}
       \calS_r \Lambda^k \subset \calS^-_{r+1} \Lambda^k \subset \calS_{r+1} \Lambda^k
   \end{equation*}
@@ -333,11 +333,11 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   
   %\akg{I think a lot of the rest of Section 2 should be cut, actually.  @Justin: I suggest you copy the text below to a file of notes / text that could go into your thesis since it may be appropriate there. I'll think on this some more and push some more edits on Friday.}
   \subsubsection{Scalar Trimmed Serendipity Elements}
-  The scalar trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$.  Therefore it is easy to describe the shape functions of these as the span of all monomials of superlinear degree less than or equal to $r$. In terms of the Periodic Table of Finite Elements, these are the $S_r$ spaces. 
+  The scalar-valued trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$, i.e.\ they are identical to the scalar-valued serendipity elements from the Periodic Table of Finite Elements.  Arnold and Awanout provided a simple description of the shape functions for these spaces as the span of all monomials of ``superlinear degree'' less than or equal to $r$~\cite{arnold2011serendipity}. 
   
-  Then there are the scalar trimmed serendipity elements that are represented by $n$-forms and create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the dPc$_r$ spaces.  The shape functions for these spaces turn out to be simply the space of order $r$ polynomials.  That is, $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
+  Likewise, the scalar-valued trimmed serendipity elements that are represented by $n$-forms create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the dPc$_r$ spaces.  The shape functions for these spaces turn out to be simply the space of order $r$ polynomials.  That is, $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
   
-  \subsubsection{Vector Trimmed Seredipity Elements}
+  \subsubsection{Vector Trimmed Serendipity Elements}
   
   The vector trimmed serendipity elements can be split into two groups.  The first group normally discussed are the $2$-forms in 3D and $1$-forms in 2D, $S_r^-\Lambda^2(\square_3)$ and $S_r^-\Lambda^1(\square_2)$.  These form an \hdiv- conforming finite element space.  Unfortunately, the vector trimmed serendipity elements do not have a ``nice'' definition for their shape functions.  Instead, we have the definition that in general, 
   \begin{equation*}
