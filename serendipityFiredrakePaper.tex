@@ -1051,58 +1051,43 @@ Then, we consider the weak formulation of this problem (similar to \cite{fumio19
 \hline
 Actual & N = 4 & N = 8 & N = 16 & N = 32 \\ 
 \hline
-2 &2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00) \\  
-2 & 2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00)  \\
-2 & 2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00)\\
-3 & 3.001536 & 3.000098 (3.97) & 3.000006 (4.03) & 3.0000004 (4.02) \\
-3 & 3.001536 & 3.000098 (3.97) & 3.000006 (4.03) & 3.0000004 (4.02) \\
-5 & 5.030601 & 5.002081 (3.88)& 5.000133 (3.97) & 5.000008 (4.06) \\
-5 & 5.030601 & 5.002081 (3.88)& 5.000133 (3.97) & 5.000008 (4.06) \\
-5 & 5.030601 & 5.002081 (3.88) & 5.000133 (3.97) & 5.000008 (4.06) \\
-5 & 5.030601 & 5.0002081 (3.88) & 5.000133 (3.97) & 5.000008 (4.06) \\
-6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) &  6.000008 (4.08) \\
-6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) & 6.000008 (4.08) \\
-6 & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) & 6.000008 (4.08) \\
-8 & - & -& - & - \\
+2 (3) &2.001024 & 2.000066 (3.96) & 2.000004 (4.04) & 2.0000003 (4.00) \\  
+3 (2) & 3.001536 & 3.000098 (3.97) & 3.000006 (4.03) & 3.0000004 (4.02) \\
+5 (4) & 5.030601 & 5.002081 (3.88)& 5.000133 (3.97) & 5.000008 (4.06) \\
+6 (3) & 6.031114 & 6.002114 (3.88) & 6.000135 (3.97) &  6.000008 (4.08) \\
+8 (0) & - & -& - & - \\
 \hline
-Iterations & 4 & 4 & 3 & 5 \\
-\hline
+%Iterations & 4 & 4 & 3 & 5 \\
+%\hline
 DOF  & 1944 & 13872 & 104544 & 811200 \\
 \hline
-EPS Solve Time (seconds) & 0.062609 & 0.297538 & 3.145271 & 38.093263 \\
+EPS solve time per iteration & 0.01565225 & 0.0743845 & 1.0484236 & 7.6186526 \\
 \hline
 \multicolumn{5}{c}{$S^-$ H$($curl$)$ Elements} \\
 \hline
 Actual & N = 4 & N = 8 & N = 16 & N = 32 \\ 
 \hline
-2 &2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00) \\  
-2 & 2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00)  \\
-2 & 2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00)\\
-3 & 3.009018 & 3.000586 (3.94) & 3.000037 (3.99) & 3.000002 (4.21) \\
-3 & 3.009018 & 3.000586 (3.94) & 3.000037 (3.99) & 3.000002 (4.21) \\
-5 & 5.032027 & 5.002097 (3.93)& 5.000133 (3.98) & 5.000008 (4.06) \\
-5 & 5.032027 & 5.002097 (3.93)& 5.000133 (3.98) & 5.000008 (4.06) \\
-5 & 5.032027 & 5.002097 (3.93) & 5.000133 (3.98) & 5.000008 (4.06) \\
-5 & 5.032027 & 5.002097 (3.93) & 5.000133 (3.98) & - \\
-6 & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000020 (4.00) \\
-6 & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000024 (3.73)\\
-6 & - & - & 6.00038 & 6.000024 (3.98)\\
-8 & - & - & - & 8.000017 \\
-\hline
-Iterations & 4 & 5 & 4 & 3 \\
+2 (3) & 2.001092 & 2.000066 (4.05) & 2.000004 (4.04) & 2.000000 (4.00) \\  
+3 (2) & 3.009018 & 3.000586 (3.94) & 3.000037 (3.99) & 3.000002 (4.21) \\
+5 (3) & 5.032027 & 5.002097 (3.93)& 5.000133 (3.98) & 5.000008 (4.06) \\
+5 (1) & 5.032027 & 5.002097 (3.93) & 5.000133 (3.98) & - \\
+6 (1) & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000020 (4.00) \\
+6 (1) & 6.072012 & 6.004976 (3.86) & 6.000319 (3.96) & 6.000024 (3.73)\\
+6 (1) & - & - & 6.00038 & 6.000024 (3.98)\\
+8 (1) & - & - & - & 8.000017 \\
 \hline
 DOF  & 1080 & 7344 & 53856 & 411840 \\
 \hline
-EPS Solve Time (seconds) & 0.051549 & 0.154884 & 1.606652 & 12.599062 \\
+EPS solve time per iteration & 0.01288725 & 0.0309768 & 0.401663 & 4.1996873 \\
 \hline
 
 \end{tabular}
-\caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. }  
+\caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. An eigenvalue found with the same error multiple times was condensed to a single row.}  
 \label{tab:Eigenvalue}
 \end{table}
 \end{center}
 
-In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D.  The table is split into two mirrored halves, the top half giving values from using NCE elements while the bottom half gives values from using $S^-$ elements.  The column labeled ``Actual'' represents the theoretical eigenvalue that eigenvalues in that row are converging towards.  Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall degrees of freedom in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product (NCE) elements and trimmed Serendipity ($S^-$) elements in 3D.  The table is split into two mirrored halves, the top half giving values from using NCE elements while the bottom half gives values from using $S^-$ elements.  The column labeled ``Actual'' represents the theoretical eigenvalue that eigenvalues in that row are converging towards and gives a number in the parentheses that indicates the number of times the eigensolver found that eigenvalue with the exact same set of error values.  Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall degrees of freedom in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
 
 
 Note that the convergence rates are computed by doing
@@ -1115,7 +1100,7 @@ The experiment was done by using SLEPc in Firedrake, computing an inverted shift
 
 Knowing that both elements are solving this problem in a fashion that is expected theoretically, we can analyze the rest of the results shown in this table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that NCE elements are able to get results that are up to a magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed Serendipity elements results in a significant reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed Serendipity elements have nearly half the DOFs of NCE elements, and correspondingly, require about half the time to solve for the eigenvalues.  At higher orders, we expect that this will be even more exaggerated.  
 
-Finally, we wanted to analyze the timing results for the eigenvalue problem more carefully.  We sent Firedrake, using the SLEPc tools, to solve the same Maxwell Cavity Eigenvalue problem, but instead of refining the mesh, we chose to increase the order of the elements used while holding the mesh steady at a size of $16 \times 16 \times 16$.  Then, for the results we choose two specific eigenvalues of $\lambda = 3$ and $\lambda = 5$ and choose the timing data based on the largest time required for any of the multiplicities that are found. 
+Finally, we wanted to analyze the timing results for the eigenvalue problem more carefully.  We sent Firedrake, using the SLEPc tools, to solve the same Maxwell Cavity Eigenvalue problem, but instead of refining the mesh, we chose to increase the order of the elements used from order$r=2$ to $r=5$ while holding the mesh steady at a size of $16 \times 16 \times 16$.  Then for the results we choose two specific eigenvalues of $\lambda = 3$ and $\lambda = 5$ and choose the timing data based on the largest time required for any of the multiplicities that are found. 
 
 \begin{figure}[ht]
   \centering
