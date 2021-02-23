@@ -209,7 +209,7 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
     \int_\Omega  \nabla \cdot \sigma \nu \text{d}x = - \int_\Gamma f \nu \text{ d}s \text{  } \forall \nu \in V.
 \end{equation*}
   
-\noindent Solving the discretized version of this requires a suitable pairing of finite elements that create a stable method.  One example of that is using {\fontfamily{qcr}\selectfont RTCF} as the vector element and {\fontfamily{qcr}\selectfont DQ} as the scalar element to get a tensor product pairing (later for trimmed serendipity, we will use {\fontfamily{qcr}\selectfont SminusDiv} and {\fontfamily{qcr}\selectfont DPC} for the vector and scalar elements respectively).  As seen in Listing \ref{lst:mixedPoissonCode}, the order of these elements needs to be offset so that the scalar elements are 1 degree less than the vector elements, which is true in the trimmed serendipity scenario as well.
+\noindent Solving the discretized version of this requires a suitable pairing of finite element spaces to create a stable method.  One example of that is using {\fontfamily{qcr}\selectfont RTCF} as the vector element and {\fontfamily{qcr}\selectfont DQ} as the scalar element to get a tensor product pairing (later for trimmed serendipity, we will use {\fontfamily{qcr}\selectfont SminusDiv} and {\fontfamily{qcr}\selectfont DPC} for the vector and scalar elements, respectively).  As seen in Listing \ref{lst:mixedPoissonCode}, the order of these elements needs to be offset so that the scalar elements are 1 degree less than the vector elements, which is true in the trimmed serendipity scenario as well.
   
   %
   % AG NOTE: I added the lstset basic style command below to switch to a monospaced font 
@@ -284,9 +284,8 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   %In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
   
   \section{Background and notation for trimmed serendipity elements}
-  
-    \akg{I will add citations to this paragraph later.} 
-    Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC)~\cite{AFW2006,AFW2010,ABB2012}.  Among its many advantages, FEEC gives an easy, unified way to notate different element types.  The four best known families of elements are denoted $\calP^-_r \Lambda^k$, $\calP_r \Lambda^k$, $\calQ^-_r \Lambda^k$, and $\calS_r \Lambda^k$, which are, respectively, the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  The $\calP$ and $\calP^-$ spaces are defined over meshes of simplices (triangles, tetrahedra, etc) while the $\calQ^-$ and $\calS$ spaces are defined over meshes of hypercubes (squares, cubes, etc).  
+   
+    Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC)~\cite{AFW2006,AFW2010,ABB2012}.  Among its many advantages, FEEC gives an easy, unified way to notate different element types.  The four best known families of elements are denoted $\calP^-_r \Lambda^k$, $\calP_r \Lambda^k$, $\calQ^-_r \Lambda^k$, and $\calS_r \Lambda^k$, which are, respectively, the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  The $\calP$ and $\calP^-$ spaces are defined over meshes of simplices (triangles, tetrahedra, etc) while the $\calQ^-$ and $\calS$ spaces are defined over meshes of hypercubes (squares, cubes, etc). The optional notation $(\square_n)$ denotes the spaces used specifically for $n$-dimensional cubes in $\R^n$, but we will frequently omit this addition if $n$ is clear from context.
     
     The mathematical results from FEEC regarding these four families families synthesize decades of research into what constitutes a stable finite element, i.e.\ a numerical method that can be proven to converge to the correct solution of certain PDEs in certain norms at a prescribed rate, indicated by the subscript $r$.  In any dimension, the $0$-form spaces provide scalar-valued, $H^1$-conforming elements.  In 2D, $1$-forms can represent both \hcurl~and \hdiv~elements, depending on the orientation of the degrees of freedom defined on the edges of a mesh.  In 3D, $1$-forms correspond to \hcurl~elements while $2$-forms correspond to \hdiv~elements.  
         
@@ -306,15 +305,10 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
 	These containments express the fact that typically a finite element practitioner will get the most computational efficiency for a desired approximation order by choosing an appropriate $\calP^-$ space instead of a $\calP$ space.
 	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the larger dimensional tensor product spaces, $\calQ^-$, possible as well.
 
-%	\akg{Maybe this paragraph belongs in the introduction?}
-%	While the formulae for the dimensions of each space are somewhat involved, a simple count of degrees of freedom in a standard case highlights the potential gains.
-%	To implement a standard mixed method for the Darcy flow with quadratic order error decay ($r=2$) in the velocity estimate ($k=2$), the divergence of the velocity ($k=3$) and the pressure ($k=3$), on a single cube ($n=3$) the pair of $\calQ^-$ elements used have a total of 44 degrees of freedom, the regular serendipity elements have 43 degrees of freedom, but the trimmed serendipity have only 25 degrees of freedom. 
-%	The difference in degree of freedom count grows with $r$, meaning the computational savings accrued by trimmed serendipity should be most dramatic for larger $r$ values.
-%	Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
+
 	
 %	Many additional mathematical properties proved in~\cite{gillette2019trimmed} solidify the analogue between the $\calP_r^-\Lambda^k$ and $\calS_r^-\Lambda^k$ families.
 
-%At $k=0$ and $k=n$, the trimmed serendipity spaces coincide with regular serendipity spaces, but for intermediate values of $k$ and $r>1$, the containments are strict and hence the dimensions 
     
     
 %Solving partial differential equations on cubical meshes has been a topic of many different finite element studies. In 3D, this includes the $H($curl$)$ and $H($div$)$ Nedelec elements. However, this ignores the other two families of finite element differential forms for square and cubical meshes, the serendipity and trimmed serendipity elements.
@@ -333,13 +327,22 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   
   %\akg{I think a lot of the rest of Section 2 should be cut, actually.  @Justin: I suggest you copy the text below to a file of notes / text that could go into your thesis since it may be appropriate there. I'll think on this some more and push some more edits on Friday.}
   \subsubsection{Scalar Trimmed Serendipity Elements}
-  The scalar-valued trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0(\square_n)$ and have the property that $\calS_r^-\Lambda^0 = \calS_r\Lambda^0$, i.e.\ they are identical to the scalar-valued serendipity elements from the Periodic Table of Finite Elements.  Arnold and Awanout provided a simple description of the shape functions for these spaces as the span of all monomials of ``superlinear degree'' less than or equal to $r$~\cite{arnold2011serendipity}. 
+  The scalar-valued trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0$ and are identical to the scalar-valued serendipity elements from the Periodic Table of Finite Elements, i.e.\ $\calS_r^-\Lambda^0(\square_n) = \calS_r\Lambda^0(\square_n)$ for any $n$.  Arnold and Awanout provided a simple description of the shape functions for these spaces as the span of all monomials of ``superlinear degree'' less than or equal to $r$~\cite{arnold2011serendipity}. 
   
-  Likewise, the scalar-valued trimmed serendipity elements that are represented by $n$-forms create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the dPc$_r$ spaces.  The shape functions for these spaces turn out to be simply the space of order $r$ polynomials.  That is, $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
+  Likewise, the scalar-valued trimmed serendipity elements that are represented by $n$-forms create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the \textbf{dPc}$_r$ spaces.  The shape functions for these spaces are simply the space of order $r$ polynomials.  Since no inter-element continuity is needed for $L^2$-conformity, we have the additional equivalence $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
   
   \subsubsection{Vector Trimmed Serendipity Elements}
   
-  The vector trimmed serendipity elements can be split into two groups.  The first group normally discussed are the $2$-forms in 3D and $1$-forms in 2D, $S_r^-\Lambda^2(\square_3)$ and $S_r^-\Lambda^1(\square_2)$.  These form an \hdiv- conforming finite element space.  Unfortunately, the vector trimmed serendipity elements do not have a ``nice'' definition for their shape functions.  Instead, we have the definition that in general, 
+\akg{Talk about Arnold Awanou paper:~\cite{arnold2014finite} and Arbogast Correa paper~\cite{arbogast2016two}}
+
+	The trimmed serendipity elements are truly distinct from regular serendipity spaces for $k$ values $0<k<n$.  We will only consider dimensions $n=2$ and $n=3$, where the $k$-form spaces can be identified as vector-valued finite elements.  First we look at the case $k=n-1$, i.e.\ the \hdiv-conforming element families $\calS_r^-\Lambda^1(\square_2)$ and $\calS_r^-\Lambda^2(\square_3)$. 
+	\akg{Still editing from here}
+	
+%At $k=0$ and $k=n$, the trimmed serendipity spaces coincide with regular serendipity spaces, but for intermediate values of $k$ and $r>1$, the containments are strict and hence the dimensions 
+  
+  The vector trimmed serendipity elements can be split into two groups: 1-forms and $(n-1)$-forms.  
+  
+  The first group normally discussed are the $2$-forms in 3D and $1$-forms in 2D, .  Both are \hdiv-conforming finite elements.  Unfortunately, the vector trimmed serendipity elements do not have a ``nice'' definition for their shape functions.  Instead, we have the definition that in general, 
   \begin{equation*}
       \calS_r^-\Lambda^k = \calS_{r-1}\Lambda^k + \kappa \calS_{r-1}\Lambda^{k+1}
   \end{equation*}
@@ -351,104 +354,6 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   
   
   
-  
-  
-  
-  
-  
-  \subsection{2D Elements}
-  
-  \vspace{0.5in}
-  
-  DO WE NEED THIS SECTION?  I think the goal of this section is to include a bit about the related/previous work, and if so, then I think I do need this but nothing in super great detail theoretically.  Or maybe I cover this more in the previous half of section 2?
-  
-  \vspace{0.5in}
-  
-  \subsubsection{Scalar Serendipity Elements}
-  
-  The scalar serendipity elements are the classical elements that Arnold and Awanou devised in \cite{arnold2011serendipity}, which are denoted as $\calS_r\Lambda^0(\square_n))$.  The scalar serendipity and trimmed serendipity elements are the same, so we do not give a separate definition for scalar trimmed serendipity elements.  They described these elements as the space of all polynomials in $n$ variables with superlinear degree at most $r$, before proving that the degrees of freedom given by 
-  
-  \begin{equation*}
-      u \mapsto \int_f uq, \text{   } q \in P_{r-2d}(f)
-  \end{equation*}
-  
-  \noindent are unisolvent, where $f$ is a face of $\square_n$ of dimension $d \geq 0$.
-  
-  
-  \subsubsection{Vector Serendipity Elements}
-  The vector serendipity elements, both in 2d and 3d, are not the main focus of this paper.  However, for completeness, we include a small discussion of them here.  
-  
-  Vector serendipity elements, denoted with $S_r \Lambda^1 (\R^2)$, are the same as the rectangular BDM elements from \cite{brezzi1985two}.  
-  
-  \subsubsection{Vecctor Trimmed Serendipity Elements}
-  The vector trimmed serendipity elements, $\calS_r^-\Lambda^1(\R^2)$, have been defined in a vector calculus context by Arbogast-Correa \cite{arbogast2018direct} and a FEEC context by Gillette-Kloefkorn \cite{gillette2019trimmed}.  The FEEC context allowed 
-  
-  \begin{enumerate}
-%  \item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^2)$)
-  \item Vector Serendipity (BDM = Arnold-Awanou = $\calS_r\Lambda^1(\R^2)$)
-  \item Vector Trimmed Serendipity (Arbogast-Correa = Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^2)$)
-  \item Direct (Arbogast-Tao / Arbogast-Correa)
-  
-  
-  
-  
-  \end{enumerate}
-  
-  \subsubsection{Direct (Arbogast-Tao / Arbogast-Correa)}
-  
-  \subsection{3D Elements}
-  
-  
-  \subsubsection{Vector Serendipity Elements}
-  
-  The vector serendipity elements are not a large focus of this paper, but we do briefly mention them here to aid in the construction of the trimmed serendipity vector elements to follow.  The vector serendipity elements were again first defined in generality by Arnold and Awanou in \cite{arnold2014finite}.  Using the foundation that they built previously, they were able to define the \hcurl-conforming space $\calS_r \Lambda^1$ and \hdiv-conforming space $\calS_r \Lambda^2$ in 3d.  
-  
-  The shape functions for $\calS_r \Lambda^1$ are given as 
-  
-  \begin{equation}
-      u = (v_1, v_2, v_3) +(x_2x_3(w_2 - w_3), x_3x_1(w_3 - w_1), x_1x_2(w_1 - w_2)) + \text{ grad } s
-  \end{equation}
-  
-  \noindent where $v_i \in \calP_r(\square_3)$, $w_i \in \calP_{r-1}(\square_3)$, and $s$ is a polynomial in $\square_3$ of superlinear degree at most $r+1$. The degrees of freedom for the $\calS_r \Lambda^1$ elements were defined as 
-  
-  \begin{equation*}
-      u \mapsto \int_e u \cdot tp, p \in \calP_r(e), \text{ } e \text{ an edge of } \square_3 \\
-  \end{equation*}
-  \begin{equation*}
-      u \mapsto \int_f u \times np, p \in [\calP_{r-2}(f)]^2, \text{ } f \text{ a face of } \square_3
-  \end{equation*}
-  \begin{equation*}
-      u \mapsto \int_{I^3} u \cdot p, \text{ } p \in [\calP_{r-4}(\square_3)]^3.
-  \end{equation*}
-  
-  Similarly, the shape functions for $\calS_r \Lambda^2$ are defined as
-  
-  \begin{equation}
-      u = (v_1, v_2, v_3) + \text{ curl}(x_2x_3(w_2 - w_3), x_3x_1(w_3 - w_1), x_1x_2(w_1-w_2))
-  \end{equation}
-  
-  \noindent with $v_i, w_i \in \calP_r (\square_3)$.  Then the degrees of freedom here are defined as
-  
-  \begin{equation*}
-      u \mapsto \int_f u \cdot np, p \in \calP_r(f), \text{ } f \text{ an edge of } I^3 \\
-  \end{equation*}
-  \begin{equation*}
-      u \mapsto \int_{I^3} u \cdot p, \text{ } p \in [\calP_{r-2}(I^3)]^3.
-  \end{equation*}
-  
-  In both scenarios, the degrees freedom were shown to be unisolvent. 
-  
-  \subsubsection{Vector Trimmed Serendipity Elements}
-  
-  
-  
-  
-  \begin{enumerate}
-  %\item Scalar (classical = Arnold-Awanou = $\calS_r\Lambda^0(\R^3)$)
-  \item Vector serendipity (Arnold-Awanou = $\calS_r\Lambda^1(\R^3)$ and $\calS_r\Lambda^2(\R^3)$
-  \item Vector trimmed serendipity (Gillette-Kloefkorn = $\calS_r^-\Lambda^1(\R^3)$ and $\calS_r^-\Lambda^2(\R^3)$)
-  
-  \end{enumerate}
   
   \section{Building capacity for serendipity element types in Firedrake}
   \label{sec:buildcap}
