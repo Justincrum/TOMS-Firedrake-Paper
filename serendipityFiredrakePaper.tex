@@ -323,6 +323,7 @@ Summarizing, the contributions of this paper are that we:
   
     
 	As a step toward testing such ideas, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$~\cite{gillette2019computational}.
+  \josh{referring back to the abstract/intro where we say ``complete'', it is my understanding our implementation supports $n=2,3$ and $k=0, \ldots, n-1$.  Do we implement $k = n$ or am I missing something?}
 	Prior to this paper, neither these bases nor any other general implementation of trimmed serendipity elements has been attempted.
   %Using these basis functions, we implemented the trimmed Serendipity elements in 2 and 3 dimensions inside of Firedrake, a python package for solving partial differential equations using finite element methods. 
   %  The trimmed serendipity elements in both 2D and 3D can be defined in terms of the $k$-forms used to represent them, or the type of space they conform to.
@@ -361,14 +362,14 @@ Summarizing, the contributions of this paper are that we:
   \section{Building capacity for serendipity element types in Firedrake}
   \label{sec:buildcap}
   
-  Firedrake is a Python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC (\cite{alnaes2012ufl},\cite{hamfinat},\cite{homolya2017exposing}, \cite{homolya2018tsfc}, \cite{kirby2004algorithm}, \cite{kirby2012fiat}).  
+  Firedrake is a Python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC (\cite{alnaes2012ufl},\cite{hamfinat},\cite{homolya2017exposing}, \cite{homolya2018tsfc}, \cite{kirby2004algorithm}, \cite{kirby2012fiat}).  \josh{This paragraph feels redundant to the intro.  Instead, maybe combine with the intro and then in this section specifically go through the changes we make.  That said, most of this section is focusing on FIAT so you could discuss it that way instead.}
   
  The first step in implementing the trimmed serendipity elements was to focus on using FIAT.  Inside FIAT (FInite element Automatic Tabulator), we can create classes that provide the basis functions for the trimmed serendipity elements and tabulate them.  We break down the basis functions into distinct sets dependent upon the dimension of the mesh element they correspond to (vertices, edges, faces, or cell interiors).  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
    \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
    \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
    \end{equation}
    
-  Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3d.
+  Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
   
   \begin{example}\label{ex:UsingComputationalBasis}
   To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
@@ -376,12 +377,12 @@ Summarizing, the contributions of this paper are that we:
       (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
   \end{equation*}
   
-  Notice that, given a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
+  Notice that, given a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.  \josh{Is this example really illustrating equation 1?  It seems like most everything is ignored because of the fact $r=1$.  More generally, it's unclear that someone reading this knows what to implement from the brief description here...could we elaborate more?  For me, it's missing the mark.}
   \end{example}
  
-To see how this plays out in the Firedrake implementation, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3d. According to Equation~\ref{eq:HCurlTrimmedSerendipityBasis}, these require using two sets of functions, one set on the edges of the reference element and one set on the faces of the reference element. For example, when we define the edge basis functions, we can create a list called {\fontfamily{qcr}\selectfont EL} and one of the functions in this list will be represented as  
+To see how this plays out in the Firedrake implementation, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3D. According to Equation~\ref{eq:HCurlTrimmedSerendipityBasis}, these require using two sets of functions, one set on the edges of the reference element and one set on the faces of the reference element. For example, when we define the edge basis functions, we can create a list called {\fontfamily{qcr}\selectfont EL} and one of the functions in this list will be represented as  
 {\fontfamily{qcr}\selectfont 
-tuple$([(0, 0, \text{leg}(j, z_{mid})*dx[0]*dy[0])])$,} where this tuple is acting as the function $z^j(x+1)(y+1)\text{ d}z$.  After we do that for each of the functions in {\fontfamily{qcr}\selectfont EL} and {\fontfamily{qcr}\selectfont FL}, we can then combine them together to create the basis for the trimmed serendipity $H($curl$)$ elements in a FIAT class.
+tuple$([(0, 0, \text{leg}(j, z_{mid})*dx[0]*dy[0])])$,} where this tuple is acting as the function $z^j(x+1)(y+1)\text{ d}z$.  \josh{I have doubts a reader is going to follow the mix of python syntax and math here without more context.}  After we do that for each of the functions in {\fontfamily{qcr}\selectfont EL} and {\fontfamily{qcr}\selectfont FL}, we can then combine them together to create the basis for the trimmed serendipity $H($curl$)$ elements in a FIAT class.  \josh{EL and FL are variables in code, but without the code they are nonsensical}
 
 
 %A code snippet of how this is done for the edge functions is given in Listing~\ref{lst:edge_basis_functions}.
@@ -424,10 +425,10 @@ tuple$([(0, 0, \text{leg}(j, z_{mid})*dx[0]*dy[0])])$,} where this tuple is acti
 %           degree=degree, mapping=contravariant piola)
 %\end{lstlisting}
 
-Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}).
+Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}).  \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
 
 \lstset{language=Python}
-\begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3d.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]] 
+\begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]] 
         ...
     PolyDegree = n
     Cells = 2**j
