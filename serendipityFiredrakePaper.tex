@@ -222,9 +222,9 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
     PolyDegree = 2
     Cells = 2**5
     mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
-    DQ = FunctionSpace(mesh, "DQ", PolyDegree - 1)
-    RTCF = FunctionSpace(mesh, "RTCF", PolyDegree)
-    W = RTCF * DQ
+    HdivSpace = FunctionSpace(mesh, "RTCF", PolyDegree)
+    L2Space = FunctionSpace(mesh, "DQ", PolyDegree - 1)
+    MixedSpace = DivSpace * L2Space
     
     sigma, u = TrialFunctions(W)
     tau, v = TestFunctions(W)
@@ -362,7 +362,7 @@ Summarizing, the contributions of this paper are that we:
   \section{Building capacity for serendipity element types in Firedrake}
   \label{sec:buildcap}
   
-  To implement new elements in Firedrake, we can make use of FIAT, FInAT, UFL, and TSFC (\cite{alnaes2012ufl},\cite{hamfinat},\cite{homolya2017exposing}, \cite{homolya2018tsfc}, \cite{kirby2004algorithm}, \cite{kirby2012fiat}).  FIAT is a finite element tabulator where we can create classes that provide the basis functions for an element and tabulate them.  
+  To implement new elements in Firedrake, we can make use of FIAT  \cite{kirby2004algorithm}, \cite{kirby2012fiat}.  FIAT is a finite element tabulator where we can create classes that provide the basis functions for an element and tabulate them.  
   
   %Firedrake is a Python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC (\cite{alnaes2012ufl},\cite{hamfinat},\cite{homolya2017exposing}, \cite{homolya2018tsfc}, \cite{kirby2004algorithm}, \cite{kirby2012fiat}).  \josh{This paragraph feels redundant to the intro.  Instead, maybe combine with the intro and then in this section specifically go through the changes we make.  That said, most of this section is focusing on FIAT so you could discuss it that way instead.}
   
@@ -371,7 +371,7 @@ Summarizing, the contributions of this paper are that we:
    \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
    \end{equation}
    
-  Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
+  \noindent Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
   
   \begin{example}\label{ex:UsingComputationalBasis}
   To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
@@ -439,34 +439,30 @@ To see how this plays out in the Firedrake implementation, consider the \hcurl~e
 %           degree=degree, mapping=contravariant piola)
 %\end{lstlisting}
 
-Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}). % \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
+Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}).  The FInAT adjustments are done by adding in the relevant element names and properties to {\fontfamily{qcr}\selectfont fiat\_elements.py} and {\fontfamily{qcr}\selectfont \_\_init\_\_.py}. To adjust TSFC to recognize the trimmed serendipity elements, we adjust {\fontfamily{qcr}\selectfont fiatinterface.py} and {\fontfamily{qcr}\selectfont finatinterface.py} so that they look for the {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} aliases.  Finally, we edit {\fontfamily{qcr}\selectfont elementlist.py}, adding in {\fontfamily{qcr}\selectfont register\_element2} functions for the trimmed serendipity elements. % \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
 
 \begin{table}
 \begin{tabular}{|l|l|l|l|}
 \cline{1-4}
- & Firedrake (2D) & Firedrake (3D) & Stable Pairing \\\cline{1-4}
- Tensor Product $H^1$ & Lagrange & Lagrange & -  \\\cline{1-4}
- Tensor Product \hdiv& RTCF & NCF & DQ  \\\cline{1-4}
- Tensor Product \hcurl& RTCE & NCE & -  \\\cline{1-4}
- Trimmed Serendipity $H^1$ & S & S & -  \\\cline{1-4}
- Trimmed Serendipity \hdiv& SminusDiv & SminusDiv & DPC  \\\cline{1-4}
- Trimmed Serendipity \hcurl& SminusCurl & SminusCurl & - \\ \cline{1-4}
+& Mathematical Expression & Firedrake (2D) & Firedrake (3D) \\\cline{1-4}
+ Tensor Product $H^1$ & $\mathcal{Q}^-_r \Lambda^0$ & {\fontfamily{qcr}\selectfont Lagrange} & {\fontfamily{qcr}\selectfont Lagrange}  \\\cline{1-4}
+  Tensor Product \hcurl& $\mathcal{Q}^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont RTCE or RTCF} & {\fontfamily{qcr}\selectfont NCE} \\\cline{1-4}
+ Tensor Product \hdiv& $\mathcal{Q}^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DQ} & {\fontfamily{qcr}\selectfont NCF}  \\\cline{1-4}
+  Tensor Product $L^2$& $\mathcal{S}^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DQ}\\ \cline{1-4}
+ Trimmed Serendipity $H^1$ & $\mathcal{S}^-_r \Lambda^0 $ & {\fontfamily{qcr}\selectfont S} & {\fontfamily{qcr}\selectfont S}  \\\cline{1-4}
+ Trimmed Serendipity \hdiv& $\mathcal{S}^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont SminusCurl or SminusDiv} & {\fontfamily{qcr}\selectfont SminusCurl}  \\\cline{1-4}
+ Trimmed Serendipity \hcurl& $\mathcal{S}^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DPC} & {\fontfamily{qcr}\selectfont SminusDiv}\\ \cline{1-4}
+ Trimmed Serendipity $L^2$& $\mathcal{S}^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DPC}\\ \cline{1-4}
 \end{tabular}
-\caption{How \hdiv and \hcurl tensor product and trimmed serendipity elements are represented in Firedrake. The $L^2$ elements are the DQ and DPC elements that pair with the \hdiv elements.}
+\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.}
 \label{tab:FiredrakeNames}
 \end{table}
 
 \lstset{language=Python}
 \begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]] 
         ...
-    PolyDegree = n
-    Cells = 2**j
-    msh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
-    mesh = ExtrudedMesh(msh, layers=Cells, layer_height=1/(Cells))
-    
-    Sminus = FunctionSpace(mesh, "SminusDiv", PolyDegree)
-    DPC = FunctionSpace(mesh, "DPC", PolyDegree - 1)
-    W = Sminus * DPC
+    HdivSpace = FunctionSpace(mesh, "SminusDiv", PolyDegree)
+    L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
         ...
 \end{lstlisting}
 
@@ -506,6 +502,7 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
 
 \begin{figure}[h]
   \begin{subfigure}[h]{0.5\textwidth}
+  \caption{2D edge length vs error}
     %\includegraphics[height=2.2in]{2dProjectionH.pdf}
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
@@ -540,11 +537,11 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
         \addplot+[only marks, orange, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    \caption{2D edge length vs error}
     \label{fig:2dProjectionH}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
+  \caption{2D DOFs vs error}
      %\includegraphics[height=2.2in]{2dProjection.png}
      \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
@@ -579,10 +576,8 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
         \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-     \caption{2D DOFs vs error}
      \label{fig:2dProjection}
-  \end{subfigure} \\
-  ~
+  \end{subfigure} \\[3mm]
   \begin{subfigure}[h]{0.5\textwidth}
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
@@ -708,11 +703,11 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
 \josh{Do we want all of these equations numbered?  Earlier in the paper we left out many of them}
 
 \begin{figure}[h!]
-  \centering
+  %\centering
   \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \captionlistentry{}
-    %\caption{2D Primal Poisson Error Analysis}
+    %\centering
+    %\captionlistentry{}
+    \caption{2D primal Poisson error analysis.}
       \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-4, ymin=1e-16, xmax=2e6, xmin=2e3,
@@ -752,9 +747,9 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
-    \centering
+    %\centering
     \captionlistentry{}
-    %\caption{2D Mixed Poisson Error Analysis}
+    \caption{2D mixed Poisson error analysis.}
     \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=2e6, xmin=3e2,
@@ -793,7 +788,7 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
     \label{fig:2dMixedDofsError}
   \end{subfigure} \\[3mm]
   \begin{subfigure}[h]{0.5\textwidth}
-    \centering
+    %\centering
     \captionlistentry{}
     \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
@@ -829,11 +824,12 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
       \end{loglogaxis}
       \end{tikzpicture}
     %\includegraphics[height=2.2in]{3dPrimalDofsError.pdf}
+    \caption{3D primal Poisson error analysis.}
     \label{fig:3dPrimalDofsError}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
-    \centering
+    %\centering
     \captionlistentry{}
     %\caption{3D Mixed Poisson Error Analysis}
     %\hspace{5mm} \caption{3D Mixed}
@@ -871,6 +867,7 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
         \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
+      \caption{3D mixed Poisson error analysis.}
     \label{fig:3dMixedDofsError}
   \end{subfigure}
   \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.  \josh{the spacing between the title of the chart and the subcaption makes it a bit weird (it looks like the bottom row is (a) (b) rather than (c) (d)} \justin{I decided to try getting rid of the captions entirely here, as its unclear to me if we need them.}}
@@ -890,6 +887,7 @@ However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} 
   \centering
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
+        \caption{3D Primal DOFs vs Time}
           \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Time},
              ylabel near ticks, ymax=1.e+4, ymin=0.5e-1, xmax=2.e8, xmin=1.e+3,
@@ -924,12 +922,12 @@ However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} 
       \end{loglogaxis}
       \end{tikzpicture}
     %\includegraphics[height=2.2in]{3dPrimalDofsTime.pdf}
-    \caption{3D Primal DOFs vs Time}
     \label{fig:3dPrimalDofsTime}
   \end{subfigure}
   ~
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
+        \caption{3D Primal Time vs Error}
     \begin{tikzpicture}[scale=0.88]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
@@ -964,10 +962,8 @@ However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} 
       \end{loglogaxis}
       \end{tikzpicture}
     %\includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
-    \caption{3D Primal Time vs Error}
     \label{fig:3dPrimalTimeError}
-  \end{subfigure}\\
-  ~
+  \end{subfigure}\\[3mm]
   \begin{subfigure}[h]{0.5\textwidth}
     \centering
     \begin{tikzpicture}[scale=0.88]
