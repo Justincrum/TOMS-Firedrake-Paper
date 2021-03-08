@@ -536,7 +536,7 @@ Additionally, there are small adjustments made to Firedrake's UFL and TSFC defin
     
 The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We used a basic projection example to debug our implementation.  Next, we present results on a primal Poisson problem (to test scalar elements), a mixed Poisson problem (to test H(div) elements), and a cavity resonator problem (to test H(curl) elements).  Note that the cavity resonator problem was done only in 3D, as the 2D H(curl) elements are just a rotation of the 2D H(div) elements. 
    
-The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  A few of the larger runs performed on a high memory node with 3TB of memory but otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  
+The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  A few of the larger runs performed on a high memory node with 3TB of memory but otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  \justin{The projection, primal Poisson, and mixed Poisson problems all made use of MUMPS as the sparse direct solver, and the exact solver parameters for each of these problems can be found in the zenodo link.  The eigenvalue problem was solved using SLEPc, with a variety of command line entries that will be listed when we discuss the problem.}
 
 %\josh{Somewhere in this section lead in we need to describe our experimental setup, which should include (1) hardware specifications and (2) software specifications (versions of firedrake, etc.)}
 
@@ -561,7 +561,7 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
       \int u v  \text{ d}x = \int f v \text{ d}x \text{ for all v } \in V
   \end{equation}
 
- \noindent where $V$ is a test function space.   Recall that the trimmed serendipity elements are denoted with $\calS_r^-$ and the tensor product elements with $\calQ^-_r$, and in Firedrake, these have a variety of names.  The trimmed serendipity elements, in both 2D and 3D, fall under the labels {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} for 1- and 2-forms respectively.  The tensor product elements use the labels {\fontfamily{qcr}\selectfont RTCE} (or {\fontfamily{qcr}\selectfont RTCF}) and  {\fontfamily{qcr}\selectfont NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  {\fontfamily{qcr}\selectfont NCF}.  %\josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count DOFs (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
+ \noindent where $V$ is a test function space.   Recall that the trimmed serendipity elements are denoted with $\calS_r^-$ and the tensor product elements with $\calQ^-_r$, and in Firedrake, these have a variety of names.  The trimmed serendipity elements, in both 2D and 3D, fall under the labels {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} for 1- and 2-forms respectively.  The tensor product elements use the labels {\fontfamily{qcr}\selectfont RTCE} (or {\fontfamily{qcr}\selectfont RTCF}) and  {\fontfamily{qcr}\selectfont NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  {\fontfamily{qcr}\selectfont NCF}. %\josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count DOFs (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
 
 %\josh{We also probably want to state precisely the mapping from the legend in this diagram (e.g. $S^-_k$ and $Q^-_k$ to their names in specific Firedrake function spaces (perhaps though, this is obvious?}
 
@@ -721,7 +721,7 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
     \caption{3D DOFs vs error}
     \label{fig:3dProjectionDofs}
   \end{subfigure}
-  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.  A trendline being lower implies that for a similar mesh size, the error value is lower.} 
+  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.  A trendline being lower implies that for a similar mesh size, the error value is lower.  The error in these plots is calculated as the $L^2$ error between a projection of the solution into the finite element space and the exact function evaluated at the DOFs.} 
 \end{figure}
 \newpage
 
@@ -936,7 +936,7 @@ In a similar fashion as for the primal Poisson problem, we can create the weak f
       \caption{3D mixed Poisson error analysis.}
     \label{fig:3dMixedDofsError}
   \end{subfigure}
-  \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.  \josh{the spacing between the title of the chart and the subcaption makes it a bit weird (it looks like the bottom row is (a) (b) rather than (c) (d)} \justin{I decided to try getting rid of the captions entirely here, as its unclear to me if we need them.}}
+  \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.  Error here is calculated as the $L^2$ error between the exact solution and the approximate using the corresponding finite element space.}
 \label{fig:PrimalMixedErrorAnalysis}
 \end{figure}
 
@@ -945,7 +945,7 @@ The error analysis results for the primal Poisson and mixed Poisson problems can
 
 We would also like to analyze timing for tensor product elements and trimmed serendipity elements.  We show this comparison in Fig.~\ref{fig:PrimalMixedTimeAnalysis}.  In \ref{fig:3dPrimalDofsTime} and \ref{fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \ref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In Fig \ref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time.
 
-However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} are mixed.  Overall, trimmed serendipity elements seem to do a bit worse than the corresponding tensor product elements for the mixed Poisson problem, but it is promising that in \ref{fig:3dMixedDofsTime}, the points tend to stay in an overall linear fashion bunched together, similar to the results in the primal Poisson problem.  \josh{It might help to explain a bit more here wrt how this might be caused by timing measurements}  \justin{I'm not sure exactly what you mean here.}
+However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} are mixed.  Overall, \ref{fig:3dMixedDofsTime} shows that the time scales based off DOFs regardless of the element that is used.  Furthermore, while \ref{fig:3dMixedTimeError} indicates that in the mixed Poisson problem trimmed serendipity elements do not do better than the tensor product elements, there is still a scenario where we may find them useful.  For example, trimmed serendipity elements at order 3 can solve the problem in approximately the same time as tensor product elements at order 2, while giving an extra order of accuracy.  Similarly, we see this happening again at order 4 trimmed serendipity elements in comparison to order 3 tensor product elements.
 
 %\newpage
 
@@ -1109,7 +1109,7 @@ However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} 
     \caption{3D Mixed Time vs Error}
     \label{fig:3dMixedTimeError}
   \end{subfigure}
-  \caption{Analyzing timing data for primal and mixed Poisson problems using trimmed serendipity and tensor product elements.}
+  \caption{Analyzing timing data for primal and mixed Poisson problems using trimmed serendipity and tensor product elements.  Error here is calculated as the $L^2$ error between the exact solution and the approximate solution found using the corresponding finite element space.}
 \label{fig:PrimalMixedTimeAnalysis}
 \end{figure}
 
@@ -1263,7 +1263,7 @@ Finally, we wanted to analyze the timing results for the eigenvalue problem more
     \caption{Eigenvalue time analysis.}
     \label{fig:EigenvalueTimeError}
   \end{subfigure}\\
-  \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$.}
+  \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$.  Error is calculated as the $L^1$ error between the actual eigenvalue and the approximated eigenvalue.}
 \label{fig:EigenvalueAnalysis}
 \end{figure}
 
