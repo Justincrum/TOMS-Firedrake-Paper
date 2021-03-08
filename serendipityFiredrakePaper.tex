@@ -446,20 +446,23 @@ To see how this plays out in the Firedrake implementation, consider the \hcurl~e
 %           degree=degree, mapping=contravariant piola)
 %\end{lstlisting}
 
-Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}).  The FInAT adjustments are done by adding in the relevant element names and properties to {\fontfamily{qcr}\selectfont fiat\_elements.py} and {\fontfamily{qcr}\selectfont \_\_init\_\_.py}. To adjust TSFC to recognize the trimmed serendipity elements, we adjust {\fontfamily{qcr}\selectfont fiatinterface.py} and {\fontfamily{qcr}\selectfont finatinterface.py} so that they look for the {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} aliases.  Finally, we edit {\fontfamily{qcr}\selectfont elementlist.py}, adding in {\fontfamily{qcr}\selectfont register\_element2} functions for the trimmed serendipity elements. % \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
+Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see \cref{lst:pde_using_trimmed_serendipity}).  The FInAT adjustments are done by adding in the relevant element names and properties to \texttt{fiat\_elements.py} and \texttt{\_\_init\_\_.py}. To adjust TSFC to recognize the trimmed serendipity elements, we adjust \texttt{fiatinterface.py} and \texttt{finatinterface.py} so that they look for the \texttt{SminusCurl} and \texttt{SminusDiv} aliases.  Finally, we edit \texttt{elementlist.py}, adding in \texttt{register\_element2} functions for the trimmed serendipity elements. % \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
 
 \begin{table}
-\begin{tabular}{|l|l|l|l|}
-\cline{1-4}
-& Mathematical Expression & Firedrake (2D) & Firedrake (3D) \\\cline{1-4}
- Tensor Product $H^1$ & $\mathcal{Q}^-_r \Lambda^0$ & {\fontfamily{qcr}\selectfont Lagrange} & {\fontfamily{qcr}\selectfont Lagrange}  \\\cline{1-4}
-  Tensor Product \hcurl& $\mathcal{Q}^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont RTCE or RTCF} & {\fontfamily{qcr}\selectfont NCE} \\\cline{1-4}
- Tensor Product \hdiv& $\mathcal{Q}^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DQ} & {\fontfamily{qcr}\selectfont NCF}  \\\cline{1-4}
-  Tensor Product $L^2$& $\mathcal{S}^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DQ}\\ \cline{1-4}
- Trimmed Serendipity $H^1$ & $\mathcal{S}^-_r \Lambda^0 $ & {\fontfamily{qcr}\selectfont S} & {\fontfamily{qcr}\selectfont S}  \\\cline{1-4}
- Trimmed Serendipity \hdiv& $\mathcal{S}^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont SminusCurl or SminusDiv} & {\fontfamily{qcr}\selectfont SminusCurl}  \\\cline{1-4}
- Trimmed Serendipity \hcurl& $\mathcal{S}^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DPC} & {\fontfamily{qcr}\selectfont SminusDiv}\\ \cline{1-4}
- Trimmed Serendipity $L^2$& $\mathcal{S}^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DPC}\\ \cline{1-4}
+\begin{tabular}{llll}
+  \toprule
+  Element name & FEEC & Firedrake (2D) & Firedrake (3D) \\
+  \midrule
+  Tensor Product $H^1$ & $\mathcal{Q}^-_r \Lambda^0$ & \texttt{Lagrange} & \texttt{Lagrange}  \\
+  Tensor Product \hcurl& $\mathcal{Q}^-_r \Lambda^1$ & \texttt{RTCE} or \texttt{RTCF} & \texttt{NCE} \\
+  Tensor Product \hdiv& $\mathcal{Q}^-_r \Lambda^2$ & \texttt{DQ} & \texttt{NCF}  \\
+  Tensor Product $L^2$& $\mathcal{Q}^-_r \Lambda^3$ & \texttt{-} & \texttt{DQ}\\
+  \midrule
+  Trimmed Serendipity $H^1$ & $\mathcal{S}^-_r \Lambda^0 $ & \texttt{S} & \texttt{S}  \\
+  Trimmed Serendipity \hdiv& $\mathcal{S}^-_r \Lambda^1$ & \texttt{SminusCurl} or \texttt{SminusDiv} & \texttt{SminusCurl}  \\
+  Trimmed Serendipity \hcurl& $\mathcal{S}^-_r \Lambda^2$ & \texttt{DPC} & \texttt{SminusDiv}\\
+  Trimmed Serendipity $L^2$& $\mathcal{S}^-_r \Lambda^3$ & \texttt{-} & \texttt{DPC}\\
+  \bottomrule
 \end{tabular}
 \caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.}
 \label{tab:FiredrakeNames}
