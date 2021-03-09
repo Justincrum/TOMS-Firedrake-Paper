@@ -1,91 +1,49 @@
-%%Trying out a new ordering for the paper.
-%%
-%% This is file `sample-manuscript.tex',
-%% generated with the docstrip utility.
-%%
-%% The original source files were:
-%%
-%% samples.dtx  (with options: `manuscript')
-%% 
-%% IMPORTANT NOTICE:
-%% 
-%% For the copyright see the source file.
-%% 
-%% Any modified versions of this file must be renamed
-%% with new filenames distinct from sample-manuscript.tex.
-%% 
-%% For distribution of the original source see the terms
-%% for copying and modification in the file samples.dtx.
-%% 
-%% This generated file may be distributed as long as the
-%% original source files, as listed above, are part of the
-%% same distribution. (The sources need not necessarily be
-%% in the same archive or directory.)
-%%
-%% The first command in your LaTeX source must be the \documentclass command.
-%%%% Small single column format, used for CIE, CSUR, DTRAP, JACM, JDIQ, JEA, JERIC, JETC, PACMCGIT, TAAS, TACCESS, TACO, TALG, TALLIP (formerly TALIP), TCPS, TDSCI, TEAC, TECS, TELO, THRI, TIIS, TIOT, TISSEC, TIST, TKDD, TMIS, TOCE, TOCHI, TOCL, TOCS, TOCT, TODAES, TODS, TOIS, TOIT, TOMACS, TOMM (formerly TOMCCAP), TOMPECS, TOMS, TOPC, TOPLAS, TOPS, TOS, TOSEM, TOSN, TQC, TRETS, TSAS, TSC, TSLP, TWEB.
-% \documentclass[acmsmall]{acmart}
-
-%%%% Large single column format, used for IMWUT, JOCCH, PACMPL, POMACS, TAP, PACMHCI
-% \documentclass[acmlarge,screen]{acmart}
-
-%%%% Large double column format, used for TOG
-% \documentclass[acmtog, authorversion]{acmart}
-
-%%%% Generic manuscript mode, required for submission
-%%%% and peer review
-\documentclass[manuscript,screen]{acmart}
-
-%%
-%% \BibTeX command to typeset BibTeX logo in the docs
-\AtBeginDocument{%
-  \providecommand\BibTeX{{%
-    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
-
-%% Rights management information.  This information is sent to you
-%% when you complete the rights form.  These commands have SAMPLE
-%% values in them; it is your responsibility as an author to replace
-%% the commands and values with those provided to you when you
-%% complete the rights form.
-\setcopyright{acmcopyright}
-\copyrightyear{2018}
-\acmYear{2018}
-\acmDOI{10.1145/1122445.1122456}
-
-%% These commands are for a PROCEEDINGS abstract or paper.
-%%\acmConference[Woodstock '18]{Woodstock '18: ACM Symposium on Neural
-%%  Gaze Detection}{June 03--05, 2018}{Woodstock, NY}
-%%\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection,
-%%  June 03--05, 2018, Woodstock, NY}
-%\acmPrice{15.00}
-%\acmISBN{978-1-4503-XXXX-X/18/06}
+\documentclass[format=acmsmall,screen,timestamp=false,a4paper]{acmart}
+\pdfoutput=1
+\newif\ifarxiv
+\arxivtrue
 
 
-%%
-%% Submission ID.
-%% Use this when submitting an article to a sponsored event. You'll
-%% receive a unique submission ID from the organizers
-%% of the event, and this ID should be used as the parameter to this command.
-%%\acmSubmissionID{123-A56-BU3}
+\ifarxiv
+\setkeys{acmart.cls}{nonacm}
+\settopmatter{printccs=false,printacmref=false}
+\else
+\setkeys{acmart.cls}{draft}
+\fi
+\setcopyright{none}
+\acmDOI{}
 
-%%
-%% The majority of ACM publications use numbered citations and
-%% references.  The command \citestyle{authoryear} switches to the
-%% "author year" style.
-%%
-%% If you are preparing content for an event
-%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
-%% citations and references.
-%% Uncommenting
-%% the next command will enable that style.
-%%\citestyle{acmauthoryear}
+\acmJournal{TOMS}
 
+\usepackage{amsmath}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
-\usepackage{listings}
+\pgfplotscreateplotcyclelist{mycolor}{
+  red,every mark/.append style={fill=red},mark=*\\
+  blue,every mark/.append style={fill=blue},mark=*\\
+  orange,every mark/.append style={fill=orange},mark=*\\
+  red,densely dotted, every mark/.append style={fill=red},mark=square*\\
+  blue,densely dotted, every mark/.append style={fill=blue},mark=square*\\
+  orange,densely dotted every mark/.append style={fill=orange},mark=square*\\
+}
 
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{multirow}
+\lstloadlanguages{python}
+
+% Default listing language
+\lstset{language=python,
+  basicstyle=\footnotesize\ttfamily,
+  showspaces=false,
+  showtabs=false,
+  frame=tb,
+  numbers=left,
+  xleftmargin=0em,
+  xrightmargin=0em}
 
 \DeclareMathOperator{\Div}{div}
 \DeclareMathOperator{\curl}{curl}
@@ -95,23 +53,22 @@
 \newcommand\akg[1]{\textbf{\textcolor[rgb]{.5,0,1}{[Andrew: #1]}}}
 \newcommand\josh[1]{\textbf{\textcolor[rgb]{0,.5,1}{[Josh: #1]}}}
 \newcommand\justin[1]{\textbf{\textcolor[rgb]{0,1,0.5}{[Justin: #1]}}}
-
+\newcommand\lm[1]{\textbf{\textcolor[rgb]{1,0,0.5}{[Lawrence: #1]}}}
 \newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calS}{\mathcal{S}}
-\newcommand{\hcurl}{$H($curl$)$}
-\newcommand{\hdiv}{$H($div$)$}
+\newcommand{\hcurl}{\ensuremath{{H}(\curl)}\xspace}
+\newcommand{\hdiv}{\ensuremath{{H}(\Div)}\xspace}
 
 \newcommand{\cancel}[1]{}
 
 %%
 %% end of the preamble, start of the body of the document source.
-\begin{document}
 
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Bringing Trimmed Serendipity Methods to Computational Practice in Firedrake}
+\title[Trimmed Serendipity elements in Firedrake]{Bringing Trimmed Serendipity Methods to Computational Practice in Firedrake}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -138,24 +95,22 @@
 
 \author{David Ham}
 \affiliation{%
-  \institution{Imperial College}
-  \city{London}
-  \country{United Kingdom}
-}
+  \institution{Imperial College London}
+  \department{Department of Mathematics}}
 \email{david.ham@imperial.ac.uk}
 
 \author{Lawrence Mitchell}
+\orcid{0000-0001-8062-1453}
 \affiliation{%
   \institution{Durham University}
-  \city{Durham}
-  \country{United Kingdom}}
-\email{wence@gmx.li}
+  \department{Department of Computer Science}}
+\email{lawrence.mitchell@durham.ac.uk}
 
 \author{Robert Kirby}
 \affiliation{%
- \institution{Baylor University}
- \city{Waco}
- \state{Texas}
+  \institution{Baylor University}
+  \city{Waco}
+  \state{Texas}
 }
 \email{robert_kirby@baylor.edu}
 
@@ -184,78 +139,76 @@
 %% article.
 
 \begin{abstract}
-       We present an implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on affinely mapped meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
+       We present an implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on affinely \lm{bilinearly?} mapped meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
 \end{abstract}
   
-  
+
+% Use \cref and \Cref for references and everything "works out"
+\usepackage[capitalise]{cleveref}
+
+\begin{document}
   \maketitle
   
   
   \section{Introduction}
   
-  In addition to the four families of finite elements present on the Periodic Table of Finite Elements \cite{arnold2014periodic}, recent research has examined a fifth family, called the \emph{trimmed serendipity finite elements}.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, we expect that the serendipity and trimmed serendipity elements should be able to attain the same rate of convergence as tensor product elements while requiring fewer degrees of freedom (DOFs) to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we seek to make these elements available to the broader finite element community while assessing their computational advantages in a common and practical setting for the first time.
+  In addition to the four families of finite elements present on the Periodic Table of Finite Elements \cite{arnold2014periodic}, recent research has examined a fifth family, called the \emph{trimmed serendipity finite elements}.  Similar to their tensor product and ``regular'' serendipity counterparts,  trimmed serendipity elements provide another finite element method for approximating the solution to partial differential equations on square or cubical meshes.  While potential computational advantages of these new elements have been described in previous works, they have never been realized or tested in a modern finite element package.  In particular, the serendipity and trimmed serendipity elements should attain the same rate of convergence as tensor product elements while requiring fewer degrees of freedom (DOFs) to do so.  By implementing the trimmed serendipity and tensor product elements in the same software package, we seek to make these elements available to the broader finite element community while assessing their computational advantages in a common and practical setting for the first time.
   
   %(The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
   
   In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package \cite{rathgeber2016firedrake}, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
-  % computational challenges.
-  % which can be found in section 4.  
-Firedrake is a Python package that creates a user-friendly Python library for approximating the solution to partial differential equations (PDEs) via finite elements. Firedrake makes the approximation of solutions to PDEs simple by using the unified form language (UFL) package, which has the capability of mimicking mathematical notation.  
+Firedrake is a Python package that uses the FEniCS problem solving language and the Unified Form Language (UFL) \cite{Logg:2012,alnaes2014unified} to provide a flexible and high level interface to the solution of PDEs close to their mathematical formulation.
 
-An example of writing a discretized PDE and solving it in Firedrake can be found in Listing~\ref{lst:mixedPoissonCode}, where we illustrate how to solve the mixed Poisson problem using Firedrake.  To do this, we first write the mixed Poisson equation on a domain $\Omega = [0, 1] \times [0,1]$ with boundary $\Gamma$ in the weak formulation, where we are solving for $\sigma \in \Sigma$ and $\nu \in V$ such that the following equations are satisfied:
-
+An example of writing a discretized PDE and solving it in Firedrake can be found in \cref{lst:mixedPoissonCode}, where we illustrate how to solve the mixed Poisson problem.  To do this, we first write the mixed Poisson equation on a domain $\Omega = [0, 1] \times [0,1]$ with boundary $\Gamma$ in the weak formulation, where we are solving for $\sigma \in \Sigma$ and $u \in V$ such that the following equations are satisfied:
 \begin{equation*}
-    \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u) \text{d}x = \int_\Gamma \tau \cdot n \text{ } u \text{ d}s \text{  } \forall \tau \in \Sigma
+\begin{aligned}
+  \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u) \text{d}x &= \int_\Gamma \tau \cdot n u \text{d}s\\
+  \int_\Omega  \nabla \cdot \sigma v \text{d}x &= - \int_\Omega f \nu \text{d}x
+\end{aligned}
 \end{equation*}
-\begin{equation*}
-    \int_\Omega  \nabla \cdot \sigma \nu \text{d}x = - \int_\Gamma f \nu \text{ d}s \text{  } \forall \nu \in V.
-\end{equation*}
+
+for all $\tau \in \Sigma$, $v \in V$. \lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
+Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  One example of that is using the tensor product elements \texttt{RTCF} as the vector element and \texttt{DQ} as the scalar element to get a tensor product pairing \lm{This is slightly strange wording?} (later for trimmed serendipity, we will use \texttt{SminusDiv} and \texttt{DPC} for the vector and scalar elements, respectively).  We demonstrate tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
+\akg{In the revised Listing 1, you define MixedSpace but then never use it.  I think all you have to do is replace \texttt{W} by \texttt{MixedSpace} on lines 8,9,18, but please confirm and then make the change.}
   
-\noindent Solving the discretized version of this requires a suitable pairing of finite element spaces to create a stable method.  One example of that is using the tensor product elements {\fontfamily{qcr}\selectfont RTCF} as the vector element and {\fontfamily{qcr}\selectfont DQ} as the scalar element to get a tensor product pairing (later for trimmed serendipity, we will use {\fontfamily{qcr}\selectfont SminusDiv} and {\fontfamily{qcr}\selectfont DPC} for the vector and scalar elements, respectively).  We demonstrate tensor product pairing in Listing \ref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
-  
-  %
-  % AG NOTE: I added the lstset basic style command below to switch to a monospaced font 
-  % 
-  \lstset{language=Python}
-  \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
-  \begin{lstlisting}[frame=single, caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]]
-    PolyDegree = 2
-    Cells = 2**5
-    mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
-    HDivSpace = FunctionSpace(mesh, "RTCF", PolyDegree)
-    L2Space = FunctionSpace(mesh, "DQ", PolyDegree - 1)
-    MixedSpace = HDivSpace * L2Space
-    
-    sigma, u = TrialFunctions(MixedSpace)
-    tau, v = TestFunctions(MixedSpace)
-    
-    x, y, z = SpatialCoordinate(mesh)
-    uex = sin(pi*x)*sin(pi*y)*sin(pi*z)
-    sigmaex = grad(uex)
-    
-    f = -div(grad(uex))
-    a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
-    L = -f*v*dx
-    w = Function(MixedSpace)
-        ...
-    solve(a == L, w, solver_parameters=params)
-  \end{lstlisting}
+\begin{lstlisting}[float=htpb,caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1]
+PolyDegree = 2
+Cells = 2**5
+mesh = UnitSquareMesh(Cells, Cells, quadrilateral=True)
+HDivSpace = FunctionSpace(mesh, "RTCF", PolyDegree)
+L2Space = FunctionSpace(mesh, "DQ", PolyDegree - 1)
+MixedSpace = HDivSpace * L2Space
+
+sigma, u = TrialFunctions(MixedSpace)
+tau, v = TestFunctions(MixedSpace)
+
+x, y, z = SpatialCoordinate(mesh)
+uex = sin(pi*x)*sin(pi*y)*sin(pi*z)
+
+f = -div(grad(uex))
+a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
+L = -f*v*dx
+w = Function(MixedSpace)
+# LM: What are params? Do they matter, should we remove?
+solve(a == L, w, solver_parameters=params)
+\end{lstlisting}
+
 
   
   
-	An important strength of Firedrake is its modular structure for both users and developers.
-   For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4-5 in Listing~\ref{lst:mixedPoissonCode} to the appropriate identifiers, {\fontfamily{qcr}\selectfont DPC} and {\fontfamily{qcr}\selectfont SminusDiv} inside the {\fontfamily{qcr}\selectfont FunctionSpace} calls.  
+An important strength of Firedrake is its modular structure for both users and developers.
+For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4--5 in \cref{lst:mixedPoissonCode} to the appropriate identifiers, \texttt{DPC} and \texttt{SminusDiv} inside the \texttt{FunctionSpace} calls. \lm{After this work?}
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
-   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within an existing data structure (FIAT) for processing.
+   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within an existing data structure (FIAT) for processing \lm{FIAT is not a data structure?}.
    
-   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have fewer, though similar, numbers of DOFs to tensor product and serendipity elements.  However, as the degree of the elements are increased, the gap between the number of DOFs for trimmed serendipity elements and tensor product elements starts to increase.  
+   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have fewer, though similar, numbers of DOFs to tensor product and serendipity elements.  However, as the degree of the elements is increased, the gap between the number of DOFs for trimmed serendipity elements and tensor product elements grows.  
    
    While the formulae for the dimensions of each space are somewhat involved, a simple count of DOFs in a standard case highlights the potential gains.
-	To implement a standard mixed method for Darcy flow with quadratic order error decay ($r=2$) in the velocity estimate ($k=2$), the divergence of the velocity ($k=3$) and the pressure ($k=3$), on a single cube ($n=3$) the pair of tensor product elements used have a total of 44 DOFs.
-	For the same setup, the appropriate pair of regular serendipity elements have 43 DOFs, but the pair of trimmed serendipity elements have only 25 DOFs. 
-	This represents a reduction in DOFs of 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
-	Such reduction increases with $r$, meaning the computational savings accrued by trimmed serendipity should be most dramatic for larger $r$ values.
-	Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
+   To implement a standard mixed method for Darcy flow with quadratic order error decay in the velocity estimate, the divergence of the velocity and the pressure, on a single cube the pair of tensor product elements used have a total of 44 DOFs.
+   For the same setup, the appropriate pair of regular serendipity elements have 43 DOFs, but the pair of trimmed serendipity elements have only 25 DOFs. 
+   This represents a reduction in DOFs of 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
+   Such reduction increases with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.
+   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper. \lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
    
    
    %\akg{The rest of the intro goes into a detailed example as we discussed but I don't think this is the right place for it.  This fits more naturally into Section 3 where the notation will already have been defined and it makes sense to go into some detail.  Instead, I think the intro should have 1-2 more paragraphs highlighting the expected benefits of trimmed serendipity elements (huge reduction in DoFs in 3D, for higher order) and summarizing the major contributions.  We can discuss at our next meeting.}
@@ -268,7 +221,7 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   %Functions here have the basic naming scheme that any set denoted with a $V$ are functions defined on the vertices, sets denoted with $E$ or $\tilde{E}$ are functions defined on the edges, sets denoted with $F, \tilde{F}, \hat{F}$ are functions defined on the faces, and the sets denoted with an $I$ or $\tilde{I}$ are defined on the interior of the cube in 3d. 
   
   %\begin{example}\label{ex:UsingComputationalBasis}
-  %To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
+  %To illustrate how \cref{eq:HCurlTrimmedSerendipityBasis} works, consider the case of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$.  This means we only need to focus on the functions associated to the edge of the reference element.  These functions form a basis of $12$ functions that all have the form of
   
   %\begin{equation*}
   %    (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
@@ -278,27 +231,24 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
   %\end{example}
   
 Summarizing, the contributions of this paper are that we:
-  \begin{enumerate}
-      \item show how the Firedrake software environment can be used to implement trimmed serendipity elements and allow a user to work with these elements with only small changes to their existing code, 
-      \item illustrate trimmed serendipity finite elements achieving the theoretical bounds that are predicted in terms of convergence rates, and  
-      \item examine the costs and benefits of using trimmed serendipity elements within the confines of typical test problems for numerical analysis by comparing them to tensor product elements.
-  \end{enumerate}
+\begin{enumerate}
+\item show how the Firedrake software environment can be used to implement trimmed serendipity elements and allow a user to work with these elements with only small changes to their existing code, 
+\item illustrate trimmed serendipity finite elements achieving the theoretical bounds that are predicted in terms of convergence rates, and  
+\item examine the costs and benefits of using trimmed serendipity elements within the confines of typical test problems for numerical analysis by comparing them to tensor product elements.
+\end{enumerate}
   
   
   %In the next section, we will give more background on the trimmed serendipity elements that will explain where these basis functions come from.  This is followed by an explanation of what Firedrake is and how it makes implementing and using new finite elements easy in the third section.  Finally in section 4, we focus on various numerical experiments comparing the efficiency of using tensor product and trimmed serendipity elements.  
   
-  \section{Background and notation for trimmed serendipity elements}
+\section{Background and notation for trimmed serendipity elements}
    
     Over the last 15 years, conforming finite element methods for Hodge-Laplace type problems on simplicial and cubical meshes have been categorized using the language of Finite Element Exterior Calculus (FEEC)~\cite{AFW2006,AFW2010,ABB2012}.  Among its many advantages, FEEC gives an easy, unified way to notate different element types.  The four best known families of elements are denoted $\calP^-_r \Lambda^k$, $\calP_r \Lambda^k$, $\calQ^-_r \Lambda^k$, and $\calS_r \Lambda^k$, which are, respectively, the trimmed polynomial, polynomial, tensor product, and serendipity elements of order $r$ using $k$-forms.  The $\calP$ and $\calP^-$ spaces are defined over meshes of simplices (triangles, tetrahedra, etc) while the $\calQ^-$ and $\calS$ spaces are defined over meshes of hypercubes (squares, cubes, etc). The optional notation $(\square_n)$ denotes the spaces used specifically for $n$-dimensional cubes in $\R^n$, but we will frequently omit this addition if $n$ is clear from context.
     
     The mathematical results from FEEC regarding these four families families synthesize decades of research into what constitutes a stable finite element, i.e.\ a numerical method that can be proven to converge to the correct solution of certain PDEs in certain norms at a prescribed rate, indicated by the subscript $r$.  In any dimension, the $0$-form spaces provide scalar-valued, $H^1$-conforming elements.  In 2D, $1$-forms can represent both \hcurl~and \hdiv~elements, depending on the orientation of the DOFs defined on the edges of a mesh.  In 3D, $1$-forms correspond to \hcurl~elements while $2$-forms correspond to \hdiv~elements.  Notably, the serendipity family $\calS_r\Lambda^k$ is the youngest, least implemented, and hence least understood among all these families.  In particular, the 1-form and 2-form (regular) serendipity elements in 3D were only characterized in 2014 by Arnold and Awanou~\cite{arnold2014finite}, whereas the equivalent tensor product elements were first described by N\'ed\'elec in the 1980s~\cite{N1980,N1986}.
  
  
- 
- 
- 
- 
-\begin{table}
+\begin{table}[htbp]
+  \centering
 \begin{tabular}{rm{.14\textwidth}m{.05\textwidth}m{.14\textwidth}m{.05\textwidth}m{.14\textwidth}m{.05\textwidth}m{.14\textwidth}m{.05\textwidth}}
 % $n=3$\\
  & $\qquad\calS_r^-\Lambda^0(\square_3)$ && $\qquad\calS_r^-\Lambda^1(\square_3)$  && $\qquad\calS_r^-\Lambda^2(\square_3)$  && $\qquad\calS_r^-\Lambda^3(\square_3)$ \\[2mm]
@@ -330,6 +280,7 @@ $r=3$
 & {\includegraphics[width=.14\textwidth]{ts3d/Sm-333}}
 & \raisebox{8\height}{\Large 10}
 \end{tabular}
+
 \caption{Trimmed serendipity elements on a reference cube in 3D, akin to the Periodic Table of the Finite Elements.  Columns show increasing form order from $k=0$ to $k=3$, corresponding to $H^1$,~\hcurl,~\hdiv, and $L^2$ conformity, respectively.  Rows show increasing order of approximation $r=1,2,3$.
 On the front face of each element, dots indicate the number of DOFs associated to each vertex, edge, or face of the cubical element.  The number of DOFS associated to the interior of the cube is indicated with ``$+X$.''  The total degree of freedom count for each element is shown to its right.
 }
@@ -340,7 +291,7 @@ On the front face of each element, dots indicate the number of DOFs associated t
  
  
     
-  \subsection{Trimmed Serendipity Elements}
+\subsection{Trimmed Serendipity Elements}
     The trimmed serendipity family is an even newer addition to this collection that attains a key optimality condition arising from the FEEC framework.
 	In~\cite{christiansen2016constructions}, Christiansen and Gillette computed the minimal possible dimensions for an exact sequence of conforming finite element spaces on cubes that contained $\calP_r\Lambda^k$ for each $k$.
 	In~\cite{gillette2019trimmed}, Gillette and Kloefkorn identified polynomial differential form spaces with these prescribed dimensions and approximation power, denoting them trimmed serendipity elements with the notation $S^-_r\Lambda^k$.  
@@ -348,12 +299,12 @@ On the front face of each element, dots indicate the number of DOFs associated t
 \begin{equation*}
       \calS_r \Lambda^k \subset \calS^-_{r+1} \Lambda^k \subset \calS_{r+1} \Lambda^k
   \end{equation*}
- \noindent and   
+  and   
    \begin{equation*}
       \calP_r \Lambda^k \subset \calP^-_{r+1} \Lambda^k \subset \calP_{r+1} \Lambda^k.
   \end{equation*}
 	These containments express the fact that typically a finite element practitioner will get the most computational efficiency for a desired approximation order by choosing an appropriate $\calP^-$ space instead of a $\calP$ space.
-	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the larger dimensional tensor product spaces, $\calQ^-$, possible as well.
+	An equivalent claim is implied about serendipity and trimmed serendipity spaces, with additional comparison to the larger dimensioned tensor product spaces, $\calQ^-$, possible as well.
 
 %	Many additional mathematical properties proved in~\cite{gillette2019trimmed} solidify the analogue between the $\calP_r^-\Lambda^k$ and $\calS_r^-\Lambda^k$ families.
 
@@ -370,7 +321,7 @@ On the front face of each element, dots indicate the number of DOFs associated t
 	As a step toward testing such ideas, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$~\cite{gillette2019computational}.
   %\josh{referring back to the abstract/intro where we say ``complete'', it is my understanding our implementation supports $n=2,3$ and $k=0, \ldots, n-1$.  Do we implement $k = n$ or am I missing something?}
 	The main challenge in this effort was ensuring recovery of specific approximation power on vertices, edges, faces, and interiors (of cubes) according to the geometric association of degrees of freedom.  
-	This association is visualized for low orders in 3D is in Table~\ref{tab:tsfamily}, arranged equivalently to the Periodic Table of the Finite Elements.
+	This association is visualized for low orders in 3D in \cref{tab:tsfamily}, arranged equivalently to the Periodic Table of the Finite Elements.
 	While the bases presented in~\cite{gillette2019computational} ensure the required relation to degrees of freedom, neither these bases nor any other general implementation of trimmed serendipity elements has been attempted prior to this paper.
 
 	
@@ -380,16 +331,17 @@ On the front face of each element, dots indicate the number of DOFs associated t
   
   
   \subsubsection{Scalar Trimmed Serendipity Elements}
-  The scalar-valued trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0$ and are identical to the scalar-valued serendipity elements from the Periodic Table of Finite Elements, i.e.\ $\calS_r^-\Lambda^0(\square_n) = \calS_r\Lambda^0(\square_n)$ for any $n$.  Arnold and Awanout provided a simple description of the shape functions for these spaces as the span of all monomials of ``superlinear degree'' less than or equal to $r$~\cite{arnold2011serendipity}. 
+  The scalar-valued trimmed serendipity elements that are represented by $0$-forms are used as the shape functions for an $H^1$-conforming finite element space.  These are denoted by $\calS_r^-\Lambda^0$ and are identical to the scalar-valued serendipity elements from the Periodic Table of Finite Elements, i.e.\ $\calS_r^-\Lambda^0(\square_n) = \calS_r\Lambda^0(\square_n)$ for any $n$.  Arnold and Awanou provided a simple description of the shape functions for these spaces as the span of all monomials of ``superlinear degree'' less than or equal to $r$~\cite{arnold2011serendipity}. 
   
   Likewise, the scalar-valued trimmed serendipity elements that are represented by $n$-forms create $L^2$-conforming finite element spaces.  These are denoted by $\calS_r^-\Lambda^n(\square_n)$, and here we have the equality $\calS_r^-\Lambda^n(\square_n) = \calS_{r+1}\Lambda^n(\square_n)$.  In terms of the Periodic Table of Finite Elements, these are the \textbf{dPc}$_r$ spaces.  The shape functions for these spaces are simply the space of order $r$ polynomials.  Since no inter-element continuity is needed for $L^2$-conformity, we have the additional equivalence $\calS_r^-\Lambda^n(\square_n) = \calP_{r+1}\Lambda^n(\square_n)$.
   
-  \subsubsection{Vector Trimmed Serendipity Elements}
+  \subsubsection{Vector-valued Trimmed Serendipity Elements}
   
 
 	The trimmed serendipity elements are truly distinct from regular serendipity spaces for $k$ values $0<k<n$.  Here, we will only consider dimensions $n=2$ and $n=3$, where the $k$-form spaces can be identified as vector-valued finite elements.  	
 	In 2D, the vector-valued spaces $\calS_r^-\Lambda^1(\square_2)$ bear close relation to the Arbogast Correa elements~\cite{arbogast2016two}, as explained in~\cite[Prop 2.2]{gillette2019trimmed}.
 	In 3D, the vector valued spaces $\calS_r^-\Lambda^1(\square_3)$ and $\calS_r^-\Lambda^2(\square_3)$ were also characterized by Cockburn and Fu~\cite{CF2016}, as explained in~\cite[Prop 2.3]{gillette2019trimmed}.
+
 	
 	A major reason that the vector trimmed serendipity elements have only recently been considered in the mathematical literature is that their DOF per element count is complicated.
 	As evidenced by Table~\ref{tab:tsfamily}, \textit{certain} DOFs grow in predictable patterns with $r$.
@@ -416,7 +368,7 @@ On the front face of each element, dots indicate the number of DOFs associated t
 %  \begin{equation*}
 %      \calS_r^-\Lambda^k = \calS_{r-1}\Lambda^k + \kappa \calS_{r-1}\Lambda^{k+1}
 %  \end{equation*}
-%  where $\kappa$ is the Kozsul differential operator, and $k=2$ in 3D, $k=1$ in 2D.  This is a more difficult definition to work with, which emphasizes the importance of having the computational bases, such as the one shown in \ref{ex:UsingComputationalBasis}.  
+%  where $\kappa$ is the Kozsul differential operator, and $k=2$ in 3D, $k=1$ in 2D.  This is a more difficult definition to work with, which emphasizes the importance of having the computational bases, such as the one shown in \cref{ex:UsingComputationalBasis}.  
 %  
 %  In 3D, the $1$-forms that are used to represent an \hcurl-conforming finite element space also are defined using the shape forms as described above, using $k=1$ instead of $k=2$.  In 2D, the \hcurl-conforming finite element space is simply a rotation of the \hdiv-space.  
   
@@ -425,117 +377,78 @@ On the front face of each element, dots indicate the number of DOFs associated t
   
   \section{Building capacity for serendipity element types in Firedrake}
   \label{sec:buildcap}
+
+  Firedrake uses the FIAT \cite{kirby2004algorithm,kirby2012fiat} to provide finite element basis functions on reference elements. To provide a new element in FIAT is a case of implementing tabulation of (arbitrary derivatives of) its basis functions at points on the reference cell. Said element is then made available in Firedrake by providing a symbolic name (in UFL \cite{alnaes2014unified}) and a translation from symbolic name to concrete implementation in the form compiler TSFC \cite{homolya2018tsfc}. We follow the construction of \cite{gillette2019computational} which provides explicit formulae for the basis functions for each of the trimmed serendipity elements and directly implement tabulation of the basis functions rather than using a Ciarlet definition and providing a dual basis from which FIAT constructs the primal basis. To provide tabulations of derivatives, we implement the basis functions symbolically with SymPy \cite{sympy2017} and compute derivatives symbolically. \lm{Andrew/Justin: is this actually true? Is this the implementation route? Is there something deeper than typing out the equations in \cite{gillette2019computational}?}
   
-  To implement new elements in Firedrake, we can make use of FIAT  \cite{kirby2004algorithm}, \cite{kirby2012fiat}.  FIAT is a finite element tabulator where we can create classes that provide the basis functions for an element and tabulate them.  
-  
-  %Firedrake is a Python package that is made to solve finite element problems.  It does this by tying together many packages in a cohesive manner.  For implementing a new finite element, we can focus on a few specific packages, namely FIAT, FInAT, UFL, and TSFC (\cite{alnaes2012ufl},\cite{hamfinat},\cite{homolya2017exposing}, \cite{homolya2018tsfc}, \cite{kirby2004algorithm}, \cite{kirby2012fiat}).  \josh{This paragraph feels redundant to the intro.  Instead, maybe combine with the intro and then in this section specifically go through the changes we make.  That said, most of this section is focusing on FIAT so you could discuss it that way instead.}
   
  For the trimmed serendipity case, we break down the basis functions into distinct sets dependent upon the dimension of the mesh element they correspond to (vertices, edges, faces, or cell interiors).  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$, the trimmed serendipity $H($curl$)$-conforming element in 3D, can be decomposed as
    \begin{equation}\label{eq:HCurlTrimmedSerendipityBasis}
    \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
    \end{equation}
-   
-  \noindent Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
-  
+  Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
   \begin{example}\label{ex:UsingComputationalBasis}
-  To illustrate how equation \ref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
+  To illustrate how \cref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
   \begin{equation*}
       (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
   \end{equation*}
   
   Notice that, given a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
   
-  The next step to taking the analytic basis function from paper to code is to translate from a differential form to a vector.  We consider $dx$ as our first component of the vector, $dy$ as our second, and $dz$ as the third.  Therefore, we  think of $(y+1)(z+1)dx$ as being a vector $\big((y+1)(z+1), 0, 0\big)$.  Finally, we take the vector we've created and push that into a FIAT context where it is able to represent the degree of freedom on the $y=1, z=1$ edge.
-  %\josh{Is this example really illustrating equation 1?  It seems like most everything is ignored because of the fact $r=1$.  More generally, it's unclear that someone reading this knows what to implement from the brief description here...could we elaborate more?  For me, it's missing the mark.}
+  The next step to taking the analytic basis function from paper to code is to translate from a differential form to a vector.  We consider $dx$ as our first component of the vector, $dy$ as our second, and $dz$ as the third.  Therefore, we  think of $(y+1)(z+1)dx$ as being a vector $\big((y+1)(z+1), 0, 0\big)$.  Finally, we take the vector we've created and push that into a FIAT context \lm{I don't think I know what this means} where it is able to represent the degree of freedom on the $y=1, z=1$ edge.
+  \josh{Is this example really illustrating equation 1?  It seems like most everything is ignored because of the fact $r=1$.  More generally, it's unclear that someone reading this knows what to implement from the brief description here...could we elaborate more?  For me, it's missing the mark.}
+  \lm{I agree with this comment. I think we need to figure out what the core ``computational mathematics'' contribution is.}
   \end{example}
  
-To see how this plays out in the Firedrake implementation, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3D. According to Equation~\ref{eq:HCurlTrimmedSerendipityBasis}, we know that the basis functions will then come from
-
+To see how this plays out in the Firedrake implementation, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3D. According to \cref{eq:HCurlTrimmedSerendipityBasis}, we know that the basis functions will then come from
 \begin{equation}
    \calS^-_2\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{1} E_i \Lambda^1\right] \oplus \left[\tilde{F}_2 \Lambda^1\right]
    \end{equation}
-   
-\noindent where these require using two sets of functions, one set on the edges of the reference element to satisfy the functions in the $E_i\Lambda^1$ sum, and one set on the faces of the reference element for the $\tilde{F}_2\Lambda^1$ functions. Similar to the previous example, this time we end up with edge DOFs being defined by the functions 
-
+where these require using two sets of functions, one set on the edges of the reference element to satisfy the functions in the $E_i\Lambda^1$ sum, and one set on the faces of the reference element for the $\tilde{F}_2\Lambda^1$ functions. Similar to the previous example, this time we end up with edge DOFs being defined by the functions 
 \begin{equation*}
     x^i(y\pm 1)(z\pm 1)dx + y^i(x\pm 1)(z\pm 1) dy + z^i(x \pm 1)(y \pm 1)dz
 \end{equation*}
+and we choose their association to edges in the same fashion as before.  Then, we also have to add in the basis functions in $\tilde{F}_2\Lambda^1$.  The general form for these functions becomes a little more complicated, but one example of them would be $(z+1)(y^2-1)dx$.  Then substituting in $i=0, 1$ into the first set of equations will yield $24$ basis functions, 2 per each edge, while the collective $\tilde{F}_2\Lambda^1$ set gives 2 more functions per face.  Finally, we take the two sets of basis functions and combine them together into a single list of basis functions for the trimmed serendipity space $\mathcal{S}_2\Lambda^1(\square_3)$.   \lm{It feels like this paragraph just recapitulates the example, is there a reason why we do it twice?}
 
-\noindent and we choose their association to edges in the same fashion as before.  Then, we also have to add in the basis functions in $\tilde{F}_2\Lambda^1$.  The general form for these functions becomes a little more complicated, but one example of them would be $(z+1)(y^2-1)dx$.  Then substituting in $i=0, 1$ into the first set of equations will yield $24$ basis functions, 2 per each edge, while the collective $\tilde{F}_2\Lambda^1$ set gives 2 more functions per face.  Finally, we take the two sets of basis functions and combine them together into a single list of basis functions for the trimmed serendipity space $\calS_2\Lambda^1(\square_3)$.  
+\justin{Here we can put something like:  "To see the exact syntax for the FIAT classes defining the trimmed serendipity elements, see here."  and link the Zenodo github integration.}  This process allows us to define the FIAT element that Firedrake is going to use when we request \texttt{SminusCurl} function spaces.  After we have the element defined, FIAT does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.   \lm{I am not quite sure the point this paragraph is trying to make.}
 
-%A code snippet of how this is done for the edge functions is given in Listing~\ref{lst:edge_basis_functions}.
- 
- %\lstset{language=Python}
- %\begin{lstlisting}[frame=single, caption={Portion of edge basis function implementation.}, label={lst:edge_basis_functions}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]]
-%    def e_lambda_1_3d(deg, dx, dy, dz, x_mid, y_mid, z_mid):
-%        EL = ()
-%        for j in range(0, deg):
-%            EL += tuple([(0, 0, leg(j, z_mid) * dx[0] * dy[0])])
-%        for j in range(0, deg):
-%            EL += tuple([(0, 0, leg(j, z_mid) * dx[0] * dy[1])])
-%        for j in range(0, deg):
-%            EL += tuple([(0, 0, leg(j, z_mid) * dx[1] * dy[0])])
-%        for j in range(0, deg):
-%            EL += tuple([(0, 0, leg(j, z_mid) * dx[1] * dy[1])])
-%        ...
-% \end{lstlisting}
- 
- %After we create the edge basis functions and face basis functions, we can use those in the FIAT class we have defined for the trimmed serendipity $H($curl$)$ elements. %as seen in the Listing~\ref{lst:basis_functions}.  
- \justin{Here we can put something like:  "To see the exact syntax for the FIAT classes defining the trimmed serendipity elements, see here."  and link the Zenodo github integration.}  This process allows us to define the FIAT element that Firedrake is going to use when we request {\fontfamily{qcr}\selectfont SminusCurl} function spaces.  After we have the element defined, FIAT does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.   
- 
-%\lstset{language=Python}
-% \begin{lstlisting}[frame=single, caption={Collecting the basis functions for the trimmed serendipity class inside FIAT.}, label={lst:basis_functions}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]] 
-%    if dim == 3:
-%        ...
-%        EL = e_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
-%        if (degree > 1):
-%            FL = f_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
-%        else:
-%            FL = ()
-%        if (degree > 3):
-%            IL = I_lambda_1_3d(degree, dx, dy, dz, x_mid, y_mid, z_mid)
-%        else:
-%            IL = ()
-%    
-%        Sminus_list = EL + FL + IL
-%        self.basis = {(0, 0, 0): Array(Sminus_list)}
-%        super(TrimmedSerendipityCurl, self).__init__(ref_el=ref_el, 
-%           degree=degree, mapping=contravariant piola)
-%\end{lstlisting}
 
-Additionally, there are small adjustments made to Firedrake's UFL and TSFC definitions so that each of the packages know to look for the trimmed serendipity elements.  The changes to TSFC and UFL are what then allow the user to make a call to the trimmed serendipity elements in a Firedrake code (see Listing~\ref{lst:pde_using_trimmed_serendipity}).  The FInAT adjustments are done by adding in the relevant element names and properties to {\fontfamily{qcr}\selectfont fiat\_elements.py} and {\fontfamily{qcr}\selectfont \_\_init\_\_.py}. To adjust TSFC to recognize the trimmed serendipity elements, we adjust {\fontfamily{qcr}\selectfont fiatinterface.py} and {\fontfamily{qcr}\selectfont finatinterface.py} so that they look for the {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} aliases.  Finally, we edit {\fontfamily{qcr}\selectfont elementlist.py}, adding in {\fontfamily{qcr}\selectfont register\_element2} functions for the trimmed serendipity elements. % \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
-
-\begin{table}
-\begin{tabular}{|l|l|l|l|}
-\cline{1-4}
-& FEEC Notation & Firedrake (2D) & Firedrake (3D) \\\cline{1-4}
- Tensor Product $H^1$ & $\calQ^-_r \Lambda^0$ & {\fontfamily{qcr}\selectfont Lagrange} & {\fontfamily{qcr}\selectfont Lagrange}  \\\cline{1-4}
-  Tensor Product \hcurl& $\calQ^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont RTCE or RTCF} & {\fontfamily{qcr}\selectfont NCE} \\\cline{1-4}
- Tensor Product \hdiv& $\calQ^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DQ} & {\fontfamily{qcr}\selectfont NCF}  \\\cline{1-4}
-  Tensor Product $L^2$& $\calQ^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DQ}\\ \cline{1-4}
- Trimmed Serendipity $H^1$ & $\calS^-_r \Lambda^0$  & {\fontfamily{qcr}\selectfont S} & {\fontfamily{qcr}\selectfont S}  \\\cline{1-4}
- Trimmed Serendipity \hcurl& $\calS^-_r \Lambda^1$ & {\fontfamily{qcr}\selectfont SminusCurl or SminusDiv} & {\fontfamily{qcr}\selectfont SminusCurl}  \\\cline{1-4}
- Trimmed Serendipity \hdiv& $\calS^-_r \Lambda^2$ & {\fontfamily{qcr}\selectfont DPC} & {\fontfamily{qcr}\selectfont SminusDiv}\\ \cline{1-4}
- Trimmed Serendipity $L^2$& $\calS^-_r \Lambda^3$ & {\fontfamily{qcr}\selectfont -} & {\fontfamily{qcr}\selectfont DPC}\\ \cline{1-4}
+\begin{table}[htbp]
+  \centering
+\begin{tabular}{llll}
+  \toprule
+  Element name & FEEC & UFL name (2D) & UFL name (3D) \\
+  \midrule
+  Tensor Product $H^1$ & $\mathcal{Q}^-_r \Lambda^0$ & \texttt{Lagrange} & \texttt{Lagrange}  \\
+  Tensor Product \hcurl& $\mathcal{Q}^-_r \Lambda^1$ & \texttt{RTCE} or \texttt{RTCF} & \texttt{NCE} \\
+  Tensor Product \hdiv& $\mathcal{Q}^-_r \Lambda^2$ & \texttt{DQ} & \texttt{NCF}  \\
+  Tensor Product $L^2$& $\mathcal{Q}^-_r \Lambda^3$ & \texttt{-} & \texttt{DQ}\\
+  \midrule
+  Trimmed Serendipity $H^1$ & $\mathcal{S}^-_r \Lambda^0 $ & \texttt{S} & \texttt{S}  \\
+  Trimmed Serendipity \hdiv& $\mathcal{S}^-_r \Lambda^1$ & \texttt{SminusCurl} or \texttt{SminusDiv} & \texttt{SminusCurl}  \\
+  Trimmed Serendipity \hcurl& $\mathcal{S}^-_r \Lambda^2$ & \texttt{DPC} & \texttt{SminusDiv}\\
+  Trimmed Serendipity $L^2$& $\mathcal{S}^-_r \Lambda^3$ & \texttt{-} & \texttt{DPC}\\
+  \bottomrule
 \end{tabular}
-\caption{A translation for going from Finite Element Exterior Calculus to Firedrake usage names for tensor product and trimmed serendipity elements.\akg{I like this table now. Can we pad the vertical spacing a little so it's easier to read?}}
-\label{tab:FiredrakeNames}
+\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.
+\lm{I had a go making this table nicer. The ``Element name'' column is kind of bad though, because the $\Lambda^2$ space is not an \hdiv space in 2D. Perhaps just drop that column entirely?}\label{tab:FiredrakeNames}}
 \end{table}
 
+The newly supported elements, mapping FEEC spaces onto names in UFL are shown in \cref{tab:FiredrakeNames}. Modifying the code from \cref{lst:mixedPoissonCode} to utilise trimmed serendipity spaces rather than tensor product spaces is then simply a case of replacing the element names in the \texttt{FunctionSpace} definitions with appropriate trimmed space names. Concretely, the new \texttt{FunctionSpace} definitions are shown in \cref{lst:pde_using_trimmed_serendipity}, the rest of the code remains unchanged.
+\begin{lstlisting}[float=htbp,caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1] 
+HdivSpace = FunctionSpace(mesh, "SminusDiv", PolyDegree)
+L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
 
-\lstset{language=Python}
-\begin{lstlisting}[frame=single, caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1, xleftmargin=20pt, xrightmargin=20pt]] 
-        ...
-    HdivSpace = FunctionSpace(mesh, "SminusDiv", PolyDegree)
-    L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
-        ...
 \end{lstlisting}
+ 
+ \lm{I removed this paragraph of which files we edited, since I don't think it is enlightening. I put something in the intro to this section.}
+ %  \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
+
 
   \section{Experiments}
     
-The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We used a basic projection example to debug our implementation.  Next, we present results on a primal Poisson problem (to test scalar elements), a mixed Poisson problem (to test H(div) elements), and a cavity resonator problem (to test H(curl) elements).  Note that the cavity resonator problem was done only in 3D, as the 2D H(curl) elements are just a rotation of the 2D H(div) elements. 
-   
-The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  A few of the larger runs performed on a high memory node with 3TB of memory but otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  \justin{The projection, primal Poisson, and mixed Poisson problems all made use of MUMPS as the sparse direct solver, and the exact solver parameters for each of these problems can be found in the zenodo link.  The eigenvalue problem was solved using SLEPc, with a variety of command line entries that will be listed when we discuss the problem.}
+The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We used a basic projection example to debug our implementation.  Next, we present results on a primal Poisson problem (to test scalar elements), a mixed Poisson problem (to test \hdiv elements), and a cavity resonator problem (to test \hcurl elements).  Note that the cavity resonator problem was done only in 3D, as the 2D \hcurl elements are just a rotation of the 2D \hdiv) elements. 
+
+The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  A few of the larger runs performed on a high memory node with 3TB of memory but otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by requesting a full node and executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  \justin{The projection, primal Poisson, and mixed Poisson problems all made use of MUMPS as the sparse direct solver, and the exact solver parameters for each of these problems can be found in the zenodo link.  The eigenvalue problem was solved using SLEPc, with a variety of command line entries that will be listed when we discuss the problem.}
 
 %\josh{Somewhere in this section lead in we need to describe our experimental setup, which should include (1) hardware specifications and (2) software specifications (versions of firedrake, etc.)}
 
@@ -552,181 +465,144 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
 %\newpage
 
 
-  \subsection{Projection}
+\subsection{Projection}
   
-  We solve the projection problem to give a baseline of expectations for the elements. Given either the unit square or unit cube as our domain $\Omega$, we solve the equation 
-  
-  \begin{equation*}
-      \int u v  \text{ d}x = \int f v \text{ d}x \text{ for all v } \in V
-  \end{equation*}
+%<<<<<<< wence/edits
+We solve an $L^2$ projection problem to give a baseline of expectations for the elements. Given either the unit square or unit cube as our domain $\Omega$, we solve the problem, given some suitable $f$, find $u \in V$ such that
+\begin{equation*}
+  \int u v  \text{ d}x = \int f v \text{ d}x
+\end{equation*}
+for all $v \in V$, where $V$ is chosen according to the particular space we are taking the projection into.   Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ and the tensor product elements with $\mathcal{Q}^-_r$, and in Firedrake, these have a variety of names.  The trimmed serendipity elements, in both 2D and 3D, fall under the labels \texttt{SminusCurl} and \texttt{SminusDiv} for 1- and 2-forms respectively.  The tensor product elements use the labels \texttt{RTCE} (or \texttt{RTCF}) and  \texttt{NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  \texttt{NCF}.  %\josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count DOFs (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
+%=======
+%  \begin{equation*}
+%      \int u v  \text{ d}x = \int f v \text{ d}x \text{ for all v } \in V
+%  \end{equation*}
 
- \noindent where $V$ is a test function space.   Recall that the trimmed serendipity elements are denoted with $\calS_r^-$ and the tensor product elements with $\calQ^-_r$, and in Firedrake, these have a variety of names.  The trimmed serendipity elements, in both 2D and 3D, fall under the labels {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} for 1- and 2-forms respectively.  The tensor product elements use the labels {\fontfamily{qcr}\selectfont RTCE} (or {\fontfamily{qcr}\selectfont RTCF}) and  {\fontfamily{qcr}\selectfont NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  {\fontfamily{qcr}\selectfont NCF}. %\josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count DOFs (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
+% \noindent where $V$ is a test function space.   Recall that the trimmed serendipity elements are denoted with $\calS_r^-$ and the tensor product elements with $\calQ^-_r$, and in Firedrake, these have a variety of names.  The trimmed serendipity elements, in both 2D and 3D, fall under the labels {\fontfamily{qcr}\selectfont SminusCurl} and {\fontfamily{qcr}\selectfont SminusDiv} for 1- and 2-forms respectively.  The tensor product elements use the labels {\fontfamily{qcr}\selectfont RTCE} (or {\fontfamily{qcr}\selectfont RTCF}) and  {\fontfamily{qcr}\selectfont NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  {\fontfamily{qcr}\selectfont NCF}. %\josh{What domain, how did you discretize it?  Mesh resolution, etc.?  May always want to clarify how we ``count'' things, e.g. compute error and count DOFs (perhaps the latter is obvious though...it would be to me once i knew the mesh)}  
+%>>>>>>> master
 
 %\josh{We also probably want to state precisely the mapping from the legend in this diagram (e.g. $S^-_k$ and $Q^-_k$ to their names in specific Firedrake function spaces (perhaps though, this is obvious?}
 
-
-\begin{figure}[h]
-  \begin{subfigure}[h]{0.5\textwidth}
-  \caption{2D edge length vs error}
-    %\includegraphics[height=2.2in]{2dProjectionH.pdf}
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=0.3, xmin=0.5e-2,
              legend pos=south east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Projection Error Analysis in 2D}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus2dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot 
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus2dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus2dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus2dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO2.csv};
-        \addplot+[only marks, blue] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus2dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO3.csv};
-        \addplot+[only marks, orange] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus2dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    \label{fig:2dProjectionH}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-  \caption{2D DOFs vs error}
-     %\includegraphics[height=2.2in]{2dProjection.png}
-     \begin{tikzpicture}[scale=0.75]
+      \caption{2D edge length vs error\label{fig:2dProjectionH}}
+    \end{subfigure}
+    \begin{subfigure}[h]{0.48\textwidth}
+      \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=3e6, xmin=0.5e2,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Projection Error Analysis in 2D}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus2dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus2dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus2dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus2dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus2dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus2dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionRTCE2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-     \label{fig:2dProjection}
-  \end{subfigure} \\[3mm]
-  \begin{subfigure}[h]{0.5\textwidth}
+      \caption{2D DOFs vs error\label{fig:2dProjection}}
+  \end{subfigure} \\[0.5\baselineskip]
+  \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-10, xmax=0.2, xmin=0.5e-2,
              legend pos=south east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Projection Error Analysis in 3D}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionNCE3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionNCE3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionNCE3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionNCE3dO2.csv};
-        \addplot+[only marks, blue] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionNCE3dO3.csv};
-        \addplot+[only marks, orange] table [x=h,y=Error,col sep=comma]{csvs/ProjectionSminus3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=h,y=Error,col sep=comma]{csvs/ProjectionNCE3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dProjectionHError.pdf}
-    \caption{3D edge length vs error}
-    \label{fig:3dProjectionH}
+    \caption{3D edge length vs error\label{fig:3dProjectionH}}
   \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
+  \begin{subfigure}[h]{0.48\textwidth}
   \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=3e-2, ymin=0.5e-9, xmax=4e8, xmin=0.25e4,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Projection Error Analysis in 3D}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionNCE3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionNCE3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionNCE3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionNCE3dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionNCE3dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionSminus3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/ProjectionNCE3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dProjectionDofsError.pdf}
-    \caption{3D DOFs vs error}
-    \label{fig:3dProjectionDofs}
+    \caption{3D DOFs vs error\label{fig:3dProjectionDofs}}
   \end{subfigure}
   \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.  A trendline being lower implies that for a similar mesh size, the error value is lower.  The error in these plots is calculated as the $L^2$ error between a projection of the solution into the finite element space and the exact function evaluated at the DOFs.} 
 \end{figure}
-\newpage
 
-First, we graphed the errors from computing projections using trimmed serendipity and tensor product elements in 2D, shown in Fig.~\ref{fig:2dProjectionH}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed serendipity and tensor product elements at a given order to be parallel.
+First, we graphed the errors from computing projections using trimmed serendipity and tensor product elements in 2D, shown in \cref{fig:2dProjectionH}.  Since we expect that the order of convergence for both of these elements should be the same (only off by a constant factor), we look for the lines representing trimmed serendipity and tensor product elements at a given order to be parallel.
   
-We next analyze the data from a standpoint of memory usage.  To do this, we plot DOFs vs error, as seen in Fig.~\ref{fig:2dProjection}. At second order, the trimmed serendipity elements manage to do a bit better in terms of memory vs error, and then the tensor product elements pull ahead at the higher orders. We see similar results in Figs.~\ref{fig:3dProjectionDofs} and \ref{fig:3dProjectionH}.  Thus in the projection problem, we have good evidence both of the convergence rates being what we expect for trimmed serendipity elements, as well as a case where they can be beneficial to use over the tensor product elements.
+We next analyze the data from a standpoint of memory usage.  To do this, we plot DOFs vs error, as seen in \cref{fig:2dProjection}. At second order, the trimmed serendipity elements manage to do a bit better in terms of memory vs error, and then the tensor product elements pull ahead at the higher orders. We see similar results in \cref{fig:3dProjectionDofs,fig:3dProjectionH}.  Thus in the projection problem, we have good evidence both of the convergence rates being what we expect for trimmed serendipity elements, as well as a case where they can be beneficial to use over the tensor product elements.
 
 %\josh{this paragraph is making too coarse/negative of a conclusion, isn't it?  Why are we not talking about how the lines swap as $r$ increases?}
 
@@ -740,398 +616,324 @@ In this section we discuss results for both the primal Poisson problem as well a
 \begin{align*}
     -\nabla^2 u &= f \\
     u\vert_{\partial \Omega} &= 0
+%<<<<<<< wence/edits
 \end{align*}
-where $f(x,y) = 3\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  By multiplying by a test function and integrating by parts, then applying the boundary condition, we get the weak form of the Poisson problem:
-
+where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 3\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  By multiplying by a test function and integrating by parts, then applying the boundary condition, we get the weak form of the Poisson problem:
 \begin{equation*}
     \int_\Omega \nabla u \cdot \nabla v \text{ d}x = \int_\Omega f v \text{ d}x
 \end{equation*}
+such that the weak form equation holds for all $v$ in the test function space.
+%=======
+%\end{align*}
+%where $f(x,y) = 3\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  By multiplying by a test function and integrating by parts, then applying the boundary condition, we get the weak form of the Poisson problem:
 
-\noindent such that the weak form equation holds for all $v$ in the test function space.
+%\begin{equation*}
+%    \int_\Omega \nabla u \cdot \nabla v \text{ d}x = \int_\Omega f v \text{ d}x
+%\end{equation*}
+%>>>>>>> master
 
-The primal Poisson problem allows us to test scalar (trimmed) serendipity elements against Lagrange elements (see Table~\ref{tab:FiredrakeNames}).  Then we wish to also test H(div) elements.  To do this, we solve a discretization of the mixed Poisson problem:
-
+The primal Poisson problem allows us to test scalar (trimmed) serendipity elements against Lagrange elements.  Then we wish to also test \hdiv elements.  To do this, we solve a discretization of the mixed Poisson problem:
 \begin{align}
      \sigma - \nabla u &= 0 \notag \\
      \nabla \cdot \sigma &= -f \notag \\
      u\vert_{\partial \Omega} &= 0 \notag
 \end{align}
-
 In a similar fashion as for the primal Poisson problem, we can create the weak formulation of the mixed Poisson problem.  This results in the weak form being given by
-
+%<<<<<<< wence/edits
 \begin{equation*}
     \int_\Omega \sigma \cdot \tau + \nabla \cdot \tau u + \nabla \cdot \sigma v \text{ d}x = - \int_\Omega fv \text{ d}x
 \end{equation*}
+for all $\tau, v$ in the appropriate test function spaces.
+%=======
 
-\noindent for all $\tau, v$ in the appropriate test function spaces.  
+%\begin{equation*}
+%    \int_\Omega \sigma \cdot \tau + \nabla \cdot \tau u + \nabla \cdot \sigma v \text{ d}x = - \int_\Omega fv \text{ d}x
+%\end{equation*}
+%>>>>>>> master
+
+\lm{Can we state all these variational problems more precisely/in more standard ``Find $u\ in V$ such that ... for all $v \in V$?'' What do you think?}
 
 %\josh{Do we want all of these equations numbered?  Earlier in the paper we left out many of them}
 
-\begin{figure}[h!]
-  %\centering
-  \begin{subfigure}[h]{0.5\textwidth}
-    %\centering
-    %\captionlistentry{}
-    \caption{2D primal Poisson error analysis.}
-      \begin{tikzpicture}[scale=0.88]
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[h]{0.48\textwidth}
+      \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-4, ymin=1e-16, xmax=2e6, xmin=2e3,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Primal Poisson Error Analysis}]
+             cycle list name=mycolor]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity2dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity2dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity2dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange2dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange2dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange2dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity2dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange2dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity2dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange2dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity2dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{2dPrimalPoisson.png}
-    %\caption{2D Primal}
-    \label{fig:2dPrimalDofs}
+      \caption{2D primal Poisson error analysis. \label{fig:2dPrimalDofs}}
   \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    %\centering
-    \captionlistentry{}
-    \caption{2D mixed Poisson error analysis.}
-    \begin{tikzpicture}[scale=0.88]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=2e6, xmin=3e2,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={2D Mixed Poisson Error Analysis}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonRTCF2dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus2dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonRTCF2dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus2dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonRTCF2dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{2dMixedPoissonDofs.pdf}
-    %\caption{2D Mixed}
-    \label{fig:2dMixedDofsError}
-  \end{subfigure} \\[3mm]
-  \begin{subfigure}[h]{0.5\textwidth}
-    %\centering
-    \captionlistentry{}
-    \begin{tikzpicture}[scale=0.88]
+    \caption{2D mixed Poisson error analysis. \label{fig:2dMixedDofsError}}
+  \end{subfigure} \\[0.5\baselineskip]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=2e8, xmin=1e3,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={3D Primal Poisson Error Analysis}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dPrimalDofsError.pdf}
-    \caption{3D primal Poisson error analysis.}
-    \label{fig:3dPrimalDofsError}
+    \caption{3D primal Poisson error analysis. \label{fig:3dPrimalDofsError}}
   \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    %\centering
-    \captionlistentry{}
-    %\caption{3D Mixed Poisson Error Analysis}
-    %\hspace{5mm} \caption{3D Mixed}
-    %\includegraphics[height=2.2in]{3dMixedPoissonDofsError.pdf}
-    \begin{tikzpicture}[scale=0.88]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1.2e-2, ymin=0.8e-7, xmax=2e7, xmin=5e3,
              legend pos=south west, legend style={font=\tiny} ,
-             cycle list name=color list, title={3D Mixed Poisson Error Analysis}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{3D mixed Poisson error analysis.}
-    \label{fig:3dMixedDofsError}
+      \caption{3D mixed Poisson error analysis. \label{fig:3dMixedDofsError}}
   \end{subfigure}
   \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.  Error here is calculated as the $L^2$ error between the exact solution and the approximate using the corresponding finite element space.}
 \label{fig:PrimalMixedErrorAnalysis}
 \end{figure}
 
 
-The error analysis results for the primal Poisson and mixed Poisson problems can be seen in Figs.~\ref{fig:2dPrimalDofs}, \ref{fig:2dMixedDofsError}, \ref{fig:3dPrimalDofsError}, and \ref{fig:3dMixedDofsError}.  In each of the figures in \ref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, they all follow similar trajectories again, indicating that they have the same overall convergence rate.  The primal Poisson problem shows us that there are scenarios where using trimmed serendipity elements can be beneficial in terms of error depending on the number of DOFs.  However, in the mixed Poisson problem, we do not see this benefit in either the 2D case or the 3D case.  
+The error analysis results for the primal Poisson and mixed Poisson problems can be seen in \cref{fig:2dPrimalDofs,fig:2dMixedDofsError,fig:3dPrimalDofsError,fig:3dMixedDofsError}.  In each of the subfigures of \cref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, they all follow similar trajectories again, indicating that they have the same overall convergence rate.  The primal Poisson problem shows us that there are scenarios where using trimmed serendipity elements can be beneficial in terms of error depending on the number of DOFs.  However, in the mixed Poisson problem, we do not see this benefit in either the 2D case or the 3D case.  
 
-We would also like to analyze timing for tensor product elements and trimmed serendipity elements.  We show this comparison in Fig.~\ref{fig:PrimalMixedTimeAnalysis}.  In \ref{fig:3dPrimalDofsTime} and \ref{fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \ref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In Fig \ref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time.
+We would also like to analyze timing for tensor product elements and trimmed serendipity elements.  We show this comparison in \cref{fig:PrimalMixedTimeAnalysis}.  In \cref{fig:3dPrimalDofsTime,fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \cref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In \cref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time. \lm{What are your experiments measuring? I think everything is using sparse LU, so we should be stating this.}
 
-However the results in \ref{fig:3dMixedDofsTime} and \ref{fig:3dMixedTimeError} are mixed.  Overall, \ref{fig:3dMixedDofsTime} shows that the time scales based off DOFs regardless of the element that is used.  Furthermore, while \ref{fig:3dMixedTimeError} indicates that in the mixed Poisson problem trimmed serendipity elements do not do better than the tensor product elements, there is still a scenario where we may find them useful.  For example, trimmed serendipity elements at order 3 can solve the problem in approximately the same time as tensor product elements at order 2, while giving an extra order of accuracy.  Similarly, we see this happening again at order 4 trimmed serendipity elements in comparison to order 3 tensor product elements.
+%<<<<<<< wence/edits
+%However the results in \cref{fig:3dMixedDofsTime,fig:3dMixedTimeError} are mixed.  Overall, trimmed serendipity elements seem to do a bit worse than the corresponding tensor product elements for the mixed Poisson problem, but it is promising that in \cref{fig:3dMixedDofsTime}, the points tend to stay in an overall linear fashion bunched together, similar to the results in the primal Poisson problem.  \josh{It might help to explain a bit more here wrt how this might be caused by timing measurements}  \justin{I'm not sure exactly what you mean here.}
+%=======
+However the results in \cref{fig:3dMixedDofsTime,fig:3dMixedTimeError} are mixed.  Overall, \cref{fig:3dMixedDofsTime} shows that the time scales based off DOFs regardless of the element that is used.  Furthermore, while \cref{fig:3dMixedTimeError} indicates that in the mixed Poisson problem trimmed serendipity elements do not do better than the tensor product elements, there is still a scenario where we may find them useful.  For example, trimmed serendipity elements at order 3 can solve the problem in approximately the same time as tensor product elements at order 2, while giving an extra order of accuracy.  Similarly, we see this happening again at order 4 trimmed serendipity elements in comparison to order 3 tensor product elements.
+%>>>>>>> master
 
 %\newpage
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
   \centering
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-        \caption{3D Primal DOFs vs Time}
-          \begin{tikzpicture}[scale=0.88]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Time},
              ylabel near ticks, ymax=1.e+4, ymin=0.5e-1, xmax=2.e8, xmin=1.e+3,
              legend pos=north west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dPrimalDofsTime.pdf}
-    \label{fig:3dPrimalDofsTime}
+      \caption{3D Primal DOFs vs Time \label{fig:3dPrimalDofsTime}}
   \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-        \caption{3D Primal Time vs Error}
-    \begin{tikzpicture}[scale=0.88]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
              legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Primal Poisson using $S^-$ and $Q^-$}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO2.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO3.csv};
-        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonSerendipity3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/PrimalPoissonLagrange3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
-    \label{fig:3dPrimalTimeError}
-  \end{subfigure}\\[3mm]
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \begin{tikzpicture}[scale=0.88]
+      \caption{3D Primal Time vs Error \label{fig:3dPrimalTimeError}}
+  \end{subfigure}\\[0.5\baselineskip]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Time},
              ylabel near ticks, ymax=2e4, ymin=1e-1, xmax=2e7, xmin=0.5e4,
              legend pos=north west, legend style={font=\tiny} ,
-             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
+             cycle list name=mycolor]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
-        \addplot+[only marks, blue] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
-        \addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Dofs,y=Time,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dMixedPoissonDofsTime.pdf}
-    \caption{3D Mixed DOFs vs Time}
-    \label{fig:3dMixedDofsTime}
+    \caption{3D Mixed DOFs vs Time \label{fig:3dMixedDofsTime}}
   \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \begin{tikzpicture}[scale=0.88]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=5e-8, xmax=1e5, xmin=0.5e-1,
              legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Mixed Poisson using $S^-$ and $Q^-$}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[red]
+             cycle list name=mycolor]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
         \addlegendentry{$S^-_2$}
-        \addplot[blue] 
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
         \addlegendentry{$S^-_3$ }
-        \addplot[orange]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
         \addlegendentry{$S^-_4$}
-        \addplot[densely dotted, red]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
         \addlegendentry{$Q^-_2$}
-        \addplot[densely dotted, blue] 
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
         \addlegendentry{$Q^-_3$}
-        \addplot[densely dotted, orange]
+        \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
         \addlegendentry{$Q^-_4$}
-        
-        \addplot+[only marks, red] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
-        \addplot+[only marks, red, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO2.csv};
-        \addplot+[only marks, blue] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO3.csv};
-        \addplot+[only marks, blue, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO3.csv};
-        \addplot+[only marks, orange] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonSminus3dO4.csv};
-        \addplot+[only marks, orange, mark=square*] table [x=Time,y=Error,col sep=comma]{csvs/MixedPoissonNCF3dO4.csv};
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dMixedPoissonTimeError.pdf}
-    \caption{3D Mixed Time vs Error}
-    \label{fig:3dMixedTimeError}
+    \caption{3D Mixed Time vs Error \label{fig:3dMixedTimeError}}
   \end{subfigure}
+%<<<<<<< wence/edits
+%  \caption{Analyzing timing data for primal and mixed Poisson problems using trimmed serendipity and tensor product elements.\label{fig:PrimalMixedTimeAnalysis}}
+%=======
   \caption{Analyzing timing data for primal and mixed Poisson problems using trimmed serendipity and tensor product elements.  Error here is calculated as the $L^2$ error between the exact solution and the approximate solution found using the corresponding finite element space.}
 \label{fig:PrimalMixedTimeAnalysis}
+%>>>>>>> master
 \end{figure}
-
-
-\newpage  
-  
-\newpage 
-
-
 
 \subsection{Cavity Resonator}
 
-For testing the H$($curl$)$ elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\lambda$ represents a quantity proportional to the frequency squared of the time-harmonic electric field (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
-
+%<<<<<<< wence/edits
+For testing the \hcurl elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\lambda$ represents a quantity proportional to the frequency squared of the time-harmonic electric field (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
 \begin{align*}
     \nabla \cdot E &= 0 \text{ in } \Omega \\
     \nabla \times \nabla \times E &= \lambda E  \text{ in } \Omega \\
     E \times n &= 0 \text{ on } \partial \Omega.
 \end{align*}
-
 Then, we consider the weak formulation of this problem (similar to \cite{fumio1987mixed}), where $\omega$ represents the resonances (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
-
 \begin{equation*}
+%=======
+%For testing the H$($curl$)$ elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\lambda$ represents a quantity proportional to the frequency squared of the time-harmonic electric field (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
+
+%\begin{align*}
+%    \nabla \cdot E &= 0 \text{ in } \Omega \\
+%    \nabla \times \nabla \times E &= \lambda E  \text{ in } \Omega \\
+%    E \times n &= 0 \text{ on } \partial \Omega.
+%\end{align*}
+
+%Then, we consider the weak formulation of this problem (similar to \cite{fumio1987mixed}), where $\omega$ represents the resonances (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
+
+%\begin{equation*}
+%>>>>>>> master
     \int_\Omega \big(\nabla \times F\big) \cdot \big(\nabla \times E \big) \text{ d}x = \omega^2 \int_\Omega F \cdot E \text{ d}x \text{ for all } F \in H_0(\text{curl}).
     %\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle \text{ for all } F \in H_0(\text{curl}).
 \end{equation*}
@@ -1139,16 +941,14 @@ Then, we consider the weak formulation of this problem (similar to \cite{fumio19
 %\noindent We tested out the H$($curl$)$ elements in 3D on the cavity resonator problem, where the time-harmonic Maxwell equations applied to a 
 %\akg{(1) The wording is a little ambiguous - are you about the state the resonator problem or Maxwell's equations?  Or are these the same?  (2) I prefer to see the statement of the variables prior to the PDE i.e. move the part after the equation to before it. (3) You need to state the domain - I think it's $[0,1]^3\subset\R^3$ - and the boundary conditions (periodic?) (4) Give the eigenvalue equation a label so you can reference it later.}
 
-\noindent The exact eigenvalues should follow the formula
-
+The exact eigenvalues should follow the formula
 \[ \omega^2 = m_1^2 + m_2^2 + m_3^2 \]
-
-\noindent where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time \cite{rognes2010efficient}.
+where $m_i \in \mathbb{N} \cup {0}$ and no more than one of $m_1, m_2, m_3$ may be equal to $0$ at a time \cite{rognes2010efficient}.
 
 %\akg{Put discretized version of eigenvalue problem here (see comment below)}
 
-\begin{center}
-\begin{table}
+\begin{table}[htbp]
+  \centering
 \begin{tabular}{ c c c c c }
 \multicolumn{5}{c}{NCE Elements} \\
 \hline
@@ -1185,19 +985,24 @@ EPS solve time per iteration & 0.01288725 & 0.0309768 & 0.401663 & 4.1996873 \\
 \hline
 
 \end{tabular}
-\caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. An eigenvalue found with the same error multiple times was condensed to a single row.}  
-\label{tab:Eigenvalue}
+\caption{A comparison of how order 2 NCE and $S^-$ finite elements solve the Maxwell cavity resonator eigenvalue problem, $\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle$. An eigenvalue found with the same error multiple times was condensed to a single row.\label{tab:Eigenvalue} \lm{Found it hard to understand this table. I think the explanation in the text of how to read it should be in the caption}}
 \end{table}
-\end{center}
 
-In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product and trimmed serendipity elements in 3D.  The table is split into two mirrored halves, the top half giving values from using $\calQ^-$ H$($curl$)$ elements while the bottom half gives values from using the corresponding $\calS^-$ elements.  The column labeled ``Actual'' represents the theoretical eigenvalue that eigenvalues in that row are converging towards and gives a number in the parentheses that indicates the number of times the eigensolver found that eigenvalue with the exact same set of error values. Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall DOFs in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+%<<<<<<< wence/edits
+In \cref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product and trimmed serendipity elements in 3D.  The table is split into two mirrored halves, the top half giving values from using $\mathcal{Q}^-$ H$($curl$)$ elements while the bottom half gives values from using the corresponding $\mathcal{S}^-$ elements.  The column labeled ``Actual'' represents the theoretical eigenvalue that eigenvalues in that row are converging towards and gives a number in the parentheses that indicates the number of times the eigensolver found that eigenvalue with the exact same set of error values. Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall DOFs in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+%=======
+%In Table~\ref{tab:Eigenvalue}, we look at the convergence rates of different eigenvalues based off solving the problem with tensor product and trimmed serendipity elements in 3D.  The table is split into two mirrored halves, the top half giving values from using $\calQ^-$ H$($curl$)$ elements while the bottom half gives values from using the corresponding $\calS^-$ elements.  The column labeled ``Actual'' represents the theoretical eigenvalue that eigenvalues in that row are converging towards and gives a number in the parentheses that indicates the number of times the eigensolver found that eigenvalue with the exact same set of error values. Each of the $N=4, N=8, N=16, N=32$ columns represents the approximate eigenvalues calculated on a mesh of size $N x N x N$.  The number in parenthesis next to approximate eigenvalues is the rate of convergence of that eigenvalue.  Finally, each half has a row giving the overall DOFs in the mesh at each given mesh size and another row that gives the time that the eigenvalue solver needed to find the requested number of eigenvalues.
+%>>>>>>> master
 
 
 Note that the convergence rates are computed by doing
-
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)} \]
+%<<<<<<< wence/edits
+\noindent and are indicated in the chart by using parentheses.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table relatively well for both $\mathcal{S}^-$ and $\mathcal{Q}^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.
+%=======
 
-\noindent and are indicated in the chart by using parentheses.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table relatively well for both $\calS^-$ and $\calQ^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.
+%\noindent and are indicated in the chart by using parentheses.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table relatively well for both $\calS^-$ and $\calQ^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.
+%>>>>>>> master
 
 
 \justin{Add in zenodo link here}
@@ -1207,69 +1012,67 @@ Knowing that both elements are solving this problem in a fashion that is expecte
 
 Finally, we wanted to analyze the timing results for the eigenvalue problem more carefully.  We used Firedrake, using the SLEPc tools, to solve the same Maxwell Cavity Eigenvalue problem, but instead of refining the mesh, we chose to increase the order of the elements used from order$r=2$ to $r=5$ while holding the mesh steady at a size of $16 \times 16 \times 16$.  Then for the results we choose two specific eigenvalues of $\lambda = 3$ and $\lambda = 5$ and choose the timing data based on the largest time required for any of the multiplicities that are found. 
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
   \centering
-  \begin{subfigure}[h]{0.5\textwidth}
-  \centering
-  \begin{tikzpicture}[scale=0.7]
+  \begin{subfigure}[h]{0.48\textwidth}
+  \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Dofs}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=3e6, xmin=3.5e4,
-             legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
-        %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
-        \addplot[green, mark=diamond]
+             legend pos=north east, legend style={font=\tiny}]
+        \addplot[red, mark=*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
-        \addplot[densely dotted, green, mark=square*]
+        \addplot[densely dotted, red, mark=square*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
         \addlegendentry{$Q^- \lambda = 3$}
-        \addplot[violet, mark=diamond] 
+        \addplot[blue, mark=*] 
         table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
         \addlegendentry{$S^- \lambda = 5$ }
-        \addplot[densely dotted, violet, mark=square*]
+        \addplot[densely dotted, blue, mark=square*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
         \addlegendentry{$Q^- \lambda = 5$}
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{Eigenvalue error analysis.}
-      \label{fig:EigenvalueDofsError}
+      \caption{Eigenvalue error analysis. \label{fig:EigenvalueDofsError}}
      \end{subfigure}
-  ~
-  \begin{subfigure}[h]{0.5\textwidth}
-    \centering
-    \begin{tikzpicture}[scale=0.7]
+  \begin{subfigure}[h]{0.48\textwidth}
+    \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=185, xmin=0,
-             legend pos=north east, legend style={font=\tiny} ,
-             cycle list name=color list, title={Maxwell Eigenvalue Analysis}]
-        \addplot[green, mark=diamond]
+             legend pos=north east, legend style={font=\tiny}]
+        \addplot[red, mark=*]
         table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
-        \addplot[densely dotted, green, mark=square*]
+        \addplot[densely dotted, red, mark=square*]
         table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue3.csv};
         \addlegendentry{$Q^- \lambda = 3$}
-        \addplot[violet, mark=diamond] 
+        \addplot[blue, mark=*] 
         table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue5.csv};
         \addlegendentry{$S^- \lambda = 5$ }
-        \addplot[densely dotted, violet, mark=square*]
+        \addplot[densely dotted, blue, mark=square*]
         table [x=Time,y=Error, col sep=comma]{csvs/TensorEigenvaluesValue5.csv};
         \addlegendentry{$Q^- \lambda = 5$}
       \end{loglogaxis}
       \end{tikzpicture}
-    %\includegraphics[height=2.2in]{3dPrimalTimeError.pdf}
-    \caption{Eigenvalue time analysis.}
-    \label{fig:EigenvalueTimeError}
+    \caption{Eigenvalue time analysis. \label{fig:EigenvalueTimeError}}
   \end{subfigure}\\
+%<<<<<<< wence/edits
+%  \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$. \label{fig:EigenvalueAnalysis}}
+%\end{figure}
+
+%The error results shown in \cref{fig:EigenvalueDofsError} for the eigenvalue problem give trimmed serendipity elements an application where the same DOFs can result in an improvement of accuracy in the eigenvalues that are found.  This is a change from the mixed Poisson problem where the DOFs vs Error trendline for trimmed serendipity was generally above the trendline for tensor product elements.  However, it is important to note that the refinement was done differently in the case of the eigenvalue problem.  In order to achieve a higher count of DOFs, we increased the order $r$ for $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ rather than refining the mesh as was done in the mixed Poisson problem experiments.  The timing results in \cref{fig:EigenvalueTimeError} for the trimmed serendipity elements were similarly better for the eigenvalue problem in comparison to the tensor product elements.
+%=======
   \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$.  Error is calculated as the $L^1$ error between the actual eigenvalue and the approximated eigenvalue.}
 \label{fig:EigenvalueAnalysis}
 \end{figure}
 
-The error results shown in \ref{fig:EigenvalueDofsError} for the eigenvalue problem give trimmed serendipity elements an application where the same DOFs can result in an improvement of accuracy in the eigenvalues that are found.  This is a change from the mixed Poisson problem where the DOFs vs Error trendline for trimmed serendipity was generally above the trendline for tensor product elements.  However, it is important to note that the refinement was done differently in the case of the eigenvalue problem.  In order to achieve a higher count of DOFs, we increased the order $r$ for $\calS^-_r$ and $\calQ^-_r$ rather than refining the mesh as was done in the mixed Poisson problem experiments.  The timing results in \ref{fig:EigenvalueTimeError} for the trimmed serendipity elements were similarly better for the eigenvalue problem in comparison to the tensor product elements.
+The error results shown in \cref{fig:EigenvalueDofsError} for the eigenvalue problem give trimmed serendipity elements an application where the same DOFs can result in an improvement of accuracy in the eigenvalues that are found.  This is a change from the mixed Poisson problem where the DOFs vs Error trendline for trimmed serendipity was generally above the trendline for tensor product elements.  However, it is important to note that the refinement was done differently in the case of the eigenvalue problem.  In order to achieve a higher count of DOFs, we increased the order $r$ for $\calS^-_r$ and $\calQ^-_r$ rather than refining the mesh as was done in the mixed Poisson problem experiments.  The timing results in \ref{fig:EigenvalueTimeError} for the trimmed serendipity elements were similarly better for the eigenvalue problem in comparison to the tensor product elements.
+%>>>>>>> master
 
 
 \section{Discussion}
 
-Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed serendipity elements should be able to converge at the same rate as tensor product and serendipity elements, while using fewer DOFs overall.  The plots here demonstrate that the rate of convergence is consistent with that theory at orders $2, 3$ and $4$ for H$($curl$)$, H$($div$)$, and $H^1$ elements in both 2 and 3D.  These experiments also confirmed that as the degree of the elements increased, the number of DOFs for trimmed serendipity elements were approximately half the DOFs that the tensor product elements used.
+Each finite element has a time and place where it could be considered beneficial to use.  We explored the numerical properties of trimmed serendipity elements to refine our understanding of how they act.  From the theory, we knew that trimmed serendipity elements should be able to converge at the same rate as tensor product and serendipity elements, while using fewer DOFs overall.  The plots here demonstrate that the rate of convergence is consistent with that theory at orders $2, 3$ and $4$ for \hcurl, \hdiv, and $H^1$ elements in both 2 and 3D.  These experiments also confirmed that as the degree of the elements increased, the number of DOFs for trimmed serendipity elements were approximately half the DOFs that the tensor product elements used.
 
 Our experimental results suggest that there are two scenarios where the use of trimmed serendipity elements might be beneficial.  The first is when the speed of the solve matters.  The second is when the memory that the solve requires is limited.  In both of these scenarios, the smaller amount of DOFs required for trimmed serendipity elements is a benefit that users can take advantage of in order to meet one of these two limitations.  
 
@@ -1279,21 +1082,32 @@ The trimmed serendipity elements are not perfect, and will not replace the tenso
 
 In the future, we would like to apply the trimmed serendipity elements to some large scale engineering problems to test them in a more real world scenario.  This will give more insight as to their benefits in a real world application.  We would also like to spend time implementing the (ordinary) serendipity vector elements that are  missing from Firedrake.  Currently Firedrake has the serendipity elements in 2D, as well the $H^1$-conforming elements and $L^2$-conforming elements in 3D.  Vector serendipity elements are still a work in progress.
 
-%Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the DOFs required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer DOFs.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \ref{tab:Eigenvalue}, where the DOFs required were nearly half of what the tensor product elements used.  \\
+%Beyond the convergence rates hitting what we expect, we were able to analyze memory usage on these problems by studying the DOFs required.  Trimmed Serendipity, while generally have a worse error at a given order $k$, also uses significantly fewer DOFs.  This is illustrated well in the Maxwell Cavity Eigenvalue problem in \cref{tab:Eigenvalue}, where the DOFs required were nearly half of what the tensor product elements used.  \\
 
 %Another example of this is the 3D mixed Poisson problem, where we see that the trimmed serendipity elements are able to be used at more refined meshes while the tensor product elements would need to be allotted more time on a high memory computer to be able to get results on the same sized mesh.  \\
 
 %In general, it is clear from these results that trimmed serendipity is not always a better choice compared to tensor product elements.  However, these examples illustrates the benefit of trimmed serendipity elements--in a setting where the mesh is fixed, the option to use a trimmed serendipity element might give an extra way to refine a problem to increase the accuracy of a solution.
 
-\section{Acknowledgements}
+\section*{Code availability}
 
+All major Firedrake components, as well as the code for the numerical experiments in the paper have been archived on Zenodo \cite{zenodo/2021}. An installation of Firedrake with components matching those used to produce the results in this paper can be obtained following the instructions at \url{https://www.firedrakeproject.org/download.html}.
+
+\begin{acks}
 This work was supported by NSF Collaborative Research Awards DMS-1913094 and DMS-1912653.
     
-\josh{ We also need to decide where to give the point for the code}
+%<<<<<<< wence/edits
+\josh{Acknowledgements section is missing?  We need to add this for the grant.  We also need to decide where to give the point for the code}
+  
+\end{acks}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{serendipityFiredrakePaper}
+%=======
+%\josh{ We also need to decide where to give the point for the code}
 
     
 
-\bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
-\bibliography{serendipityFiredrakePaper}  %Change this to the bib file
+%\bibliographystyle{ACM-Reference-Format}  %Might need acmart.cls (unclear)
+%\bibliography{serendipityFiredrakePaper}  %Change this to the bib file
+%>>>>>>> master
 
 \end{document}
