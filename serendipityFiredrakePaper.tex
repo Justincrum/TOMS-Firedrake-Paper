@@ -139,7 +139,7 @@
 %% article.
 
 \begin{abstract}
-       We present an implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on affinely \lm{bilinearly?} mapped meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
+       We present an implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor products elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
 \end{abstract}
   
 
@@ -169,7 +169,6 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
 
 for all $\tau \in \Sigma$, $v \in V$. \lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
 Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  One example of that is using the tensor product elements \texttt{RTCF} as the vector element and \texttt{DQ} as the scalar element to get a tensor product pairing \lm{This is slightly strange wording?} (later for trimmed serendipity, we will use \texttt{SminusDiv} and \texttt{DPC} for the vector and scalar elements, respectively).  We demonstrate tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
-\akg{In the revised Listing 1, you define MixedSpace but then never use it.  I think all you have to do is replace \texttt{W} by \texttt{MixedSpace} on lines 8,9,18, but please confirm and then make the change.}
   
 \begin{lstlisting}[float=htpb,caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1]
 PolyDegree = 2
@@ -189,17 +188,16 @@ f = -div(grad(uex))
 a = (dot(sigma, tau) + div(tau)*u + div(sigma)*v)*dx
 L = -f*v*dx
 w = Function(MixedSpace)
-# LM: What are params? Do they matter, should we remove?
-solve(a == L, w, solver_parameters=params)
+solve(a == L, w)
 \end{lstlisting}
 
 
   
   
 An important strength of Firedrake is its modular structure for both users and developers.
-For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is as easy as modifying lines 4--5 in \cref{lst:mixedPoissonCode} to the appropriate identifiers, \texttt{DPC} and \texttt{SminusDiv} inside the \texttt{FunctionSpace} calls. \lm{After this work?}
+For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is now only a matter of modifying lines 4--5 in \cref{lst:mixedPoissonCode} to the appropriate identifiers, \texttt{SminusDiv} \texttt{DPC} and inside the \texttt{FunctionSpace} calls.
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
-   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within an existing data structure (FIAT) for processing \lm{FIAT is not a data structure?}.
+   For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT for processing.
    
    Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have fewer, though similar, numbers of DOFs to tensor product and serendipity elements.  However, as the degree of the elements is increased, the gap between the number of DOFs for trimmed serendipity elements and tensor product elements grows.  
    
@@ -208,7 +206,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    For the same setup, the appropriate pair of regular serendipity elements have 43 DOFs, but the pair of trimmed serendipity elements have only 25 DOFs. 
    This represents a reduction in DOFs of 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
    Such reduction increases with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.
-   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper. \lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
+   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper. %\lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
    
    
    %\akg{The rest of the intro goes into a detailed example as we discussed but I don't think this is the right place for it.  This fits more naturally into Section 3 where the notation will already have been defined and it makes sense to go into some detail.  Instead, I think the intro should have 1-2 more paragraphs highlighting the expected benefits of trimmed serendipity elements (huge reduction in DoFs in 3D, for higher order) and summarizing the major contributions.  We can discuss at our next meeting.}
@@ -416,21 +414,21 @@ and we choose their association to edges in the same fashion as before.  Then, w
   \centering
 \begin{tabular}{llll}
   \toprule
-  Element name & FEEC & UFL name (2D) & UFL name (3D) \\
+   FEEC & UFL name (2D) & UFL name (3D) \\
   \midrule
-  Tensor Product $H^1$ & $\mathcal{Q}^-_r \Lambda^0$ & \texttt{Lagrange} & \texttt{Lagrange}  \\
-  Tensor Product \hcurl& $\mathcal{Q}^-_r \Lambda^1$ & \texttt{RTCE} or \texttt{RTCF} & \texttt{NCE} \\
-  Tensor Product \hdiv& $\mathcal{Q}^-_r \Lambda^2$ & \texttt{DQ} & \texttt{NCF}  \\
-  Tensor Product $L^2$& $\mathcal{Q}^-_r \Lambda^3$ & \texttt{-} & \texttt{DQ}\\
+  $\mathcal{Q}^-_r \Lambda^0$ & \texttt{Lagrange} & \texttt{Lagrange}  \\
+   $\mathcal{Q}^-_r \Lambda^1$ & \texttt{RTCE} or \texttt{RTCF} & \texttt{NCE} \\
+   $\mathcal{Q}^-_r \Lambda^2$ & \texttt{DQ} & \texttt{NCF}  \\
+  $\mathcal{Q}^-_r \Lambda^3$ & \texttt{-} & \texttt{DQ}\\
   \midrule
-  Trimmed Serendipity $H^1$ & $\mathcal{S}^-_r \Lambda^0 $ & \texttt{S} & \texttt{S}  \\
-  Trimmed Serendipity \hdiv& $\mathcal{S}^-_r \Lambda^1$ & \texttt{SminusCurl} or \texttt{SminusDiv} & \texttt{SminusCurl}  \\
-  Trimmed Serendipity \hcurl& $\mathcal{S}^-_r \Lambda^2$ & \texttt{DPC} & \texttt{SminusDiv}\\
-  Trimmed Serendipity $L^2$& $\mathcal{S}^-_r \Lambda^3$ & \texttt{-} & \texttt{DPC}\\
+  $\mathcal{S}^-_r \Lambda^0 $ & \texttt{S} & \texttt{S}  \\
+  $\mathcal{S}^-_r \Lambda^1$ & \texttt{SminusCurl} or \texttt{SminusDiv} & \texttt{SminusCurl}  \\
+  $\mathcal{S}^-_r \Lambda^2$ & \texttt{DPC} & \texttt{SminusDiv}\\
+  $\mathcal{S}^-_r \Lambda^3$ & \texttt{-} & \texttt{DPC}\\
   \bottomrule
 \end{tabular}
-\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.
-\lm{I had a go making this table nicer. The ``Element name'' column is kind of bad though, because the $\Lambda^2$ space is not an \hdiv space in 2D. Perhaps just drop that column entirely?}\label{tab:FiredrakeNames}}
+\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.  In 2D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are the \hcurl and \hdiv conforming spaces (dependent upon oreintation of the DOFs), and the $2$-forms are the $L^2$ conforming spaces.  For 3D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are \hcurl spaces, $2$-forms are \hdiv spaces, and $3$-forms are $L^2$ spaces.}
+%\lm{I had a go making this table nicer. The ``Element name'' column is kind of bad though, because the $\Lambda^2$ space is not an \hdiv space in 2D. Perhaps just drop that column entirely?}\label{tab:FiredrakeNames}}
 \end{table}
 
 The newly supported elements, mapping FEEC spaces onto names in UFL are shown in \cref{tab:FiredrakeNames}. Modifying the code from \cref{lst:mixedPoissonCode} to utilise trimmed serendipity spaces rather than tensor product spaces is then simply a case of replacing the element names in the \texttt{FunctionSpace} definitions with appropriate trimmed space names. Concretely, the new \texttt{FunctionSpace} definitions are shown in \cref{lst:pde_using_trimmed_serendipity}, the rest of the code remains unchanged.
@@ -440,7 +438,7 @@ L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
 
 \end{lstlisting}
  
- \lm{I removed this paragraph of which files we edited, since I don't think it is enlightening. I put something in the intro to this section.}
+% \lm{I removed this paragraph of which files we edited, since I don't think it is enlightening. I put something in the intro to this section.}
  %  \josh{I think it would be appropriate to include a small table at this point, that both shows what the function spaces are called as in Firedrake vs. the mathematics expression (e.g. SminusCurl, SminusDiv, etc.) AND shows which function spaces they are designed to work with (e.g. DPC).  This will hopefully give more insight on how to use our implementation}
 
 
@@ -920,7 +918,7 @@ For testing the \hcurl elements in 3D, we use the cavity resonator problem.  Her
     E \times n &= 0 \text{ on } \partial \Omega.
 \end{align*}
 Then, we consider the weak formulation of this problem (similar to \cite{fumio1987mixed}), where $\omega$ represents the resonances (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
-\begin{equation*}
+
 %=======
 %For testing the H$($curl$)$ elements in 3D, we use the cavity resonator problem.  Here, the time-harmonic Maxwell equations are applied to a domain $\Omega = [0,1]^3$ with perfectly conducting boundary conditions, yielding an eigenvalue problem where $\lambda$ represents a quantity proportional to the frequency squared of the time-harmonic electric field (i.e.\ eigenvalues) and $E$ represents the electric field (i.e.\ eigenfunctions):
 
@@ -934,6 +932,7 @@ Then, we consider the weak formulation of this problem (similar to \cite{fumio19
 
 %\begin{equation*}
 %>>>>>>> master
+\begin{equation*}
     \int_\Omega \big(\nabla \times F\big) \cdot \big(\nabla \times E \big) \text{ d}x = \omega^2 \int_\Omega F \cdot E \text{ d}x \text{ for all } F \in H_0(\text{curl}).
     %\langle \text{curl}(F), \text{curl}(E) \rangle = \omega^2 \langle F, E \rangle \text{ for all } F \in H_0(\text{curl}).
 \end{equation*}
