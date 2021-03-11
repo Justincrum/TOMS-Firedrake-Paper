@@ -404,12 +404,14 @@ where these require using two sets of functions, one set on the edges of the ref
 
 When we then code these sets in Firedrake, we follow a few steps.  The first is to assign the proper DOFs to a reference element.  In order to do this, we have to count the DOFs for each mesh entity on the reference element (vertex, edge, face, and interior).  For example, $\mathcal{S}_2^- \Lambda^1(\square_3)$ should have no DOFs at the vertices (these only come into play for the $H^1$-conforming elements), two DOFs on each edge two DOFs on each face, and no DOFs on the interior.  This lines up with \cref{eq:HcurlRtwo}, where $E_i\Lambda^1$ supplies one DOF to each edge for each $i=0, 1$, and then $\tilde{F}_2\Lambda^1$ supplies two DOFs to each face.  An illustration of this can be seen in the second column, second row of \cref{tab:tsfamily}.
 
-With the number of DOFs assigned to each mesh entity in the reference element we can then go about building the basis functions in an ordered fashion, so that when we assign the basis functions, they are assigned to the proper mesh entity.  For example, two of the basis functions that are contained in the sum of the $E_i\Lambda^1$ sets would be $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$.  Notice that these functions have no $dy$ or $dz$ portions.  Therefore, we associate these functions to an edge such that the $y$ and $z$ values are constant, forcing $dy = dz = 0$.  If we choose either $y = -1$ or $z = -1$, then the two basis functions we're working with both become zero.  Therefore, we  require that both $y = z = 1$ for the edge that we are working with (seen as the blue edge with 2 red dots on \cref{fig:ReferenceCube}).
+With the number of DOFs assigned to each mesh entity in the reference element we can then go about building the basis functions in an ordered fashion, so that when we assign the basis functions, they are assigned to the proper mesh entity.  Note that \cref{eq:HcurlRtwo} doesn't explicitly give a way to order the basis functions.  Instead, we need to use the properties of the basis functions to determine which mesh entities they should be associated with. For example, two of the basis functions that are contained in the sum of the $E_i\Lambda^1$ sets would be $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$.  Notice that these functions have no $dy$ or $dz$ portions.  Therefore, we associate these functions to an edge such that the $y$ and $z$ values are constant, forcing $dy = dz = 0$.  If we choose either $y = -1$ or $z = -1$, then the two basis functions we're working with both become zero.  Therefore, we  require that both $y = 1$ and $z = 1$ for the edge that we are working with (seen as the blue edge labeled with an "e" that has 2 red dots on \cref{fig:ReferenceCube}).
 
 
 \begin{figure}[htbp]
 \begin{tikzpicture}
 %\filldraw [gray] (0,0,0) circle (2pt);
+\filldraw [cyan] (0,0,1) -- (1,0,1) -- (1,1,1) -- (0,1,1) -- cycle;
+
 \filldraw [gray] (0,1,0) circle (2pt);
 \filldraw [gray] (0,0,1) circle (2pt);
 \filldraw [gray] (0,1,1) circle (2pt);
@@ -421,7 +423,7 @@ With the number of DOFs assigned to each mesh entity in the reference element we
 %\draw[dotted] (0,0,0) -- (0,0,1); %x is the third component
 %\draw[dotted] (0,0,0) -- (1,0,0); %y is the first component 
 %\draw[dotted] (0,0,0) -- (0,1,0); %z is the second component
-\filldraw [cyan] (0,0,1) -- (1,0,1) -- (1,1,1) -- (0,1,1) -- cycle;
+%\filldraw [cyan] (0,0,1) -- (1,0,1) -- (1,1,1) -- (0,1,1) -- cycle;
 \draw (0,1,0) -- (1,1,0); 
 \draw (0,1,0) -- (0,1,1);
 \draw (0,1,1) -- (1,1,1);
@@ -431,20 +433,40 @@ With the number of DOFs assigned to each mesh entity in the reference element we
 \draw (1,0,0) -- (1,0,1);
 \draw (1,0,1) -- (1,1,1);
 \draw (1,0,0) -- (1,1,0);
+\draw[thick, ->] (2,1,0.5) -- (1,1,0.5);
+\draw (2.1,1,0.5) node {e};
+\draw[thick, ->] (-1,0.4,1) -- (0.5,0.4,1);
+\draw (-1.1,0.4,1) node {F};
 \filldraw [red] (1,1,0.33) circle (1pt);
 \filldraw [red] (1,1,0.66) circle (1pt);
 \filldraw [red] (0.66,0.5,1) circle (1pt);
 \filldraw [red] (0.33,0.5,1) circle (1pt);
 
+\draw[thick, ->] (3,0,0) -- (3,0,1);
+\draw[thick, ->] (3,0,0) -- (3,1,0);
+\draw[thick, ->] (3,0,0) -- (4,0,0);
+\draw (3,0,1.2) node {x};
+\draw (3,1.2,0) node {z};
+\draw (4.2,0,0) node {y};
+
+
 \end{tikzpicture}
-\caption{A reference cube where the dotted edge has the properties of $y=1$ and $z=1$ along the entire edge.  The red dots on the blue face and edge represent the DOFs on each of those two mesh entities.  \label{fig:ReferenceCube}}
+\caption{A reference cube where the dotted edge has the properties of $y=1$ and $z=1$ along the entire edge.  The red dots on the face F and edge e represent the DOFs on each of those two mesh entities.  \label{fig:ReferenceCube}}
 \end{figure}
 
 This process is what determines the ordering for the basis functions.  If, in the first step described above where we are assigning DOFs to mesh entities, we assign the first two DOFs to be on the edge of the reference element where $y = 1$ and $z = 1$, then we must define the basis functions $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ as our first two basis functions.  The next step is translating the mathematical notation of these two basis functions into notation that FIAT will understand.
 
-To get our functions in a FIAT-friendly form, we translate $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ to vector notation $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  Notice that $(y+1)$ and $(z+1)$ on the edge where $y = z = 1$ are constant, whereas $x$ will vary.  The overall conversion to FIAT notation ends with 
+To get our functions in a FIAT-friendly form, we translate $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ to vector notation $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
 \texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}
-, where \texttt{leg(j, x\_mid)} is replicating the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are replicating the values of $(y+1)$ and $(z+1)$ respectively.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
+, where \texttt{leg(j, x\_mid)} is replicating the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are replicating the values of $(y+1)$ and $(z+1)$ respectively.  The \texttt{leg()} function is shorthand for calling \texttt{legendre} to create legendre polynomials in SymPy.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
+
+This process changes only slightly if we instead had considered the the $2$-forms $\mathcal{S}^-_2 \Lambda^2(\square_3)$.  In this scenario, we would have the basis functions given by the equation
+
+\begin{equation*}
+\calS^-_2\Lambda^2(\square_3) =    \left[\bigoplus_{i=0}^{1} F_i \Lambda^2\right] \oplus \left[\tilde{I}_2 \Lambda^2\right].
+\end{equation*}
+
+\noindent For this case, we would have one of the basis functions being $y^jz^k(x+1)dydz$.  The $dydz$ represents a $2$-form, and similar to before, we know that we do not want this function to be identically zero on the face we associate it with.  Thus, out of the six faces, we know that either face where $y$ or $z$ is constant will result in $dy = 0$ or $dz = 0$.  Furthermore, if we choose the face where $x = -1$, then the function is identially zero.  Hence, we associate this function with the face were $x = 1$.  The rest of the process for defining the $2$-form basis functions is similar to the process for the $1$-form basis functions.
 %Similar to the previous example, this time we end up with edge DOFs being defined by the functions 
 %\begin{equation*}
 %    x^i(y\pm 1)(z\pm 1)dx + y^i(x\pm 1)(z\pm 1) dy + z^i(x \pm 1)(y \pm 1)dz
