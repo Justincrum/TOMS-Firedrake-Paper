@@ -384,30 +384,75 @@ On the front face of each element, dots indicate the number of DOFs associated t
    \calS^-_r\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{r-1} E_i \Lambda^1\right]\oplus\left[ \bigoplus_{i=2}^{r-1}F_i \Lambda^1\right] \oplus \left[\tilde{F}_r \Lambda^1\right]\oplus\left[ \bigoplus_{i=4}^{r-1}I_i \Lambda^1 \right] \oplus \left[\tilde{I}_r \Lambda^1\right].
    \end{equation}
   Functions here have the basic naming scheme that any set denoted with an $E$ are defined on edges, sets denoted with an $F$ are functions defined on faces, and sets denoted with $I$ are functions defined on the interior of the cubical cell in 3D.
-  \begin{example}\label{ex:UsingComputationalBasis}
-  To illustrate how \cref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
-  \begin{equation*}
-      (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
-  \end{equation*}
+  %\begin{example}\label{ex:UsingComputationalBasis}
+  %To illustrate how \cref{eq:HCurlTrimmedSerendipityBasis} is implemented, consider the components of $\calS_1^-\Lambda^1(\square_3)$.  In this scenario, $r=1$, and so we ignore the sets $F_i\Lambda^1$, $\tilde{F}_r\Lambda^1$, $I_i \Lambda^1$ and $\tilde{I}_r\Lambda^1$ (to see the exact formulation for each of these sets, see Gillette \cite{gillette2019computational}).  This means we only need to focus on the functions associated to the edge of the reference element.  These functions create a basis of $12$ functions that all have the form 
+  %\begin{equation*}
+  %    (y\pm 1)(z\pm 1)dx + (x\pm 1)(z\pm 1) dy + (x \pm 1)(y \pm 1)dz.
+  %\end{equation*}
   
-  Notice that, given a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
+  %Notice that, given a specific edge of $\square_3$, we can identify exactly one of the 12 possible basis functions to it.  For example, if we are interested in the edge such that $y=1, z=1$, we know that $dy = dz = 0$, and thus the only nonzero basis function must be nonzero in the $dx$ component. Therefore, the $y=1, z=1$ edge is associated to the basis function $(y+1)(z+1)dx$.  This is an important aspect of the basis functions that Firedrake makes use of to ensure that basis functions are associated to the proper degree of freedom on the reference element.
   
-  The next step to taking the analytic basis function from paper to code is to translate from a differential form to a vector.  We consider $dx$ as our first component of the vector, $dy$ as our second, and $dz$ as the third.  Therefore, we  think of $(y+1)(z+1)dx$ as being a vector $\big((y+1)(z+1), 0, 0\big)$.  Finally, we take the vector we've created and push that into a FIAT context \lm{I don't think I know what this means} where it is able to represent the degree of freedom on the $y=1, z=1$ edge.
-  \josh{Is this example really illustrating equation 1?  It seems like most everything is ignored because of the fact $r=1$.  More generally, it's unclear that someone reading this knows what to implement from the brief description here...could we elaborate more?  For me, it's missing the mark.}
-  \lm{I agree with this comment. I think we need to figure out what the core ``computational mathematics'' contribution is.}
-  \end{example}
+  %The next step to taking the analytic basis function from paper to code is to translate from a differential form to a vector.  We consider $dx$ as our first component of the vector, $dy$ as our second, and $dz$ as the third.  Therefore, we  think of $(y+1)(z+1)dx$ as being a vector $\big((y+1)(z+1), 0, 0\big)$.  Finally, we take the vector we've created and push that into a FIAT context \lm{I don't think I know what this means} where it is able to represent the degree of freedom on the $y=1, z=1$ edge.
+  %\josh{Is this example really illustrating equation 1?  It seems like most everything is ignored because of the fact $r=1$.  More generally, it's unclear that someone reading this knows what to implement from the brief description here...could we elaborate more?  For me, it's missing the mark.}
+  %\lm{I agree with this comment. I think we need to figure out what the core ``computational mathematics'' contribution is.}
+  %\end{example}
  
 To see how this plays out in the Firedrake implementation, consider the \hcurl~elements for trimmed serendipity at order $r=2$ in $n=3$ dimensions, indicating the space $S_2^- \Lambda^1$ in 3D. According to \cref{eq:HCurlTrimmedSerendipityBasis}, we know that the basis functions will then come from
-\begin{equation}
+\begin{equation}\label{eq:HcurlRtwo}
    \calS^-_2\Lambda^1(\square_3) =    \left[\bigoplus_{i=0}^{1} E_i \Lambda^1\right] \oplus \left[\tilde{F}_2 \Lambda^1\right]
    \end{equation}
-where these require using two sets of functions, one set on the edges of the reference element to satisfy the functions in the $E_i\Lambda^1$ sum, and one set on the faces of the reference element for the $\tilde{F}_2\Lambda^1$ functions. Similar to the previous example, this time we end up with edge DOFs being defined by the functions 
-\begin{equation*}
-    x^i(y\pm 1)(z\pm 1)dx + y^i(x\pm 1)(z\pm 1) dy + z^i(x \pm 1)(y \pm 1)dz
-\end{equation*}
-and we choose their association to edges in the same fashion as before.  Then, we also have to add in the basis functions in $\tilde{F}_2\Lambda^1$.  The general form for these functions becomes a little more complicated, but one example of them would be $(z+1)(y^2-1)dx$.  Then substituting in $i=0, 1$ into the first set of equations will yield $24$ basis functions, 2 per each edge, while the collective $\tilde{F}_2\Lambda^1$ set gives 2 more functions per face.  Finally, we take the two sets of basis functions and combine them together into a single list of basis functions for the trimmed serendipity space $\mathcal{S}_2\Lambda^1(\square_3)$.   \lm{It feels like this paragraph just recapitulates the example, is there a reason why we do it twice?}
+where these require using two sets of functions, one set on the edges of the reference element to satisfy the functions in the $E_i\Lambda^1$ sum, and one set on the faces of the reference element for the $\tilde{F}_2\Lambda^1$ functions. 
 
-\justin{Here we can put something like:  "To see the exact syntax for the FIAT classes defining the trimmed serendipity elements, see here."  and link the Zenodo github integration.}  This process allows us to define the FIAT element that Firedrake is going to use when we request \texttt{SminusCurl} function spaces.  After we have the element defined, FIAT does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.   \lm{I am not quite sure the point this paragraph is trying to make.}
+When we then code these sets in Firedrake, we follow a few steps.  The first is to assign the proper DOFs to a reference element.  In order to do this, we have to count the DOFs for each mesh entity on the reference element (vertex, edge, face, and interior).  For example, $\mathcal{S}_2^- \Lambda^1(\square_3)$ should have no DOFs at the vertices (these only come into play for the $H^1$-conforming elements), two DOFs on each edge two DOFs on each face, and no DOFs on the interior.  This lines up with \cref{eq:HcurlRtwo}, where $E_i\Lambda^1$ supplies one DOF to each edge for each $i=0, 1$, and then $\tilde{F}_2\Lambda^1$ supplies two DOFs to each face.  An illustration of this can be seen in the second column, second row of \cref{tab:tsfamily}.
+
+With the number of DOFs assigned to each mesh entity in the reference element we can then go about building the basis functions in an ordered fashion, so that when we assign the basis functions, they are assigned to the proper mesh entity.  For example, two of the basis functions that are contained in the sum of the $E_i\Lambda^1$ sets would be $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$.  Notice that these functions have no $dy$ or $dz$ portions.  Therefore, we associate these functions to an edge such that the $y$ and $z$ values are constant, forcing $dy = dz = 0$.  If we choose either $y = -1$ or $z = -1$, then the two basis functions we're working with both become zero.  Therefore, we  require that both $y = z = 1$ for the edge that we are working with (seen as the blue edge with 2 red dots on \cref{fig:ReferenceCube}).
+
+
+\begin{figure}[htbp]
+\begin{tikzpicture}
+%\filldraw [gray] (0,0,0) circle (2pt);
+\filldraw [gray] (0,1,0) circle (2pt);
+\filldraw [gray] (0,0,1) circle (2pt);
+\filldraw [gray] (0,1,1) circle (2pt);
+\filldraw [gray] (1,0,0) circle (2pt);
+\filldraw [gray] (1,1,0) circle (2pt);
+\filldraw [gray] (1,0,1) circle (2pt);
+\filldraw [gray] (1,1,1) circle (2pt);
+
+%\draw[dotted] (0,0,0) -- (0,0,1); %x is the third component
+%\draw[dotted] (0,0,0) -- (1,0,0); %y is the first component 
+%\draw[dotted] (0,0,0) -- (0,1,0); %z is the second component
+\filldraw [cyan] (0,0,1) -- (1,0,1) -- (1,1,1) -- (0,1,1) -- cycle;
+\draw (0,1,0) -- (1,1,0); 
+\draw (0,1,0) -- (0,1,1);
+\draw (0,1,1) -- (1,1,1);
+\draw[cyan,thick] (1,1,0) -- (1,1,1);
+\draw (0,0,1) -- (0,1,1);
+\draw (0,0,1) -- (1,0,1);
+\draw (1,0,0) -- (1,0,1);
+\draw (1,0,1) -- (1,1,1);
+\draw (1,0,0) -- (1,1,0);
+\filldraw [red] (1,1,0.33) circle (1pt);
+\filldraw [red] (1,1,0.66) circle (1pt);
+\filldraw [red] (0.66,0.5,1) circle (1pt);
+\filldraw [red] (0.33,0.5,1) circle (1pt);
+
+\end{tikzpicture}
+\caption{A reference cube where the dotted edge has the properties of $y=1$ and $z=1$ along the entire edge.  The red dots on the blue face and edge represent the DOFs on each of those two mesh entities.  \label{fig:ReferenceCube}}
+\end{figure}
+
+This process is what determines the ordering for the basis functions.  If, in the first step described above where we are assigning DOFs to mesh entities, we assign the first two DOFs to be on the edge of the reference element where $y = 1$ and $z = 1$, then we must define the basis functions $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ as our first two basis functions.  The next step is translating the mathematical notation of these two basis functions into notation that FIAT will understand.
+
+To get our functions in a FIAT-friendly form, we translate $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ to vector notation $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  Notice that $(y+1)$ and $(z+1)$ on the edge where $y = z = 1$ are constant, whereas $x$ will vary.  The overall conversion to FIAT notation ends with 
+\texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}
+, where \texttt{leg(j, x\_mid)} is replicating the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are replicating the values of $(y+1)$ and $(z+1)$ respectively.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
+%Similar to the previous example, this time we end up with edge DOFs being defined by the functions 
+%\begin{equation*}
+%    x^i(y\pm 1)(z\pm 1)dx + y^i(x\pm 1)(z\pm 1) dy + z^i(x \pm 1)(y \pm 1)dz
+%\end{equation*}
+%and we choose their association to edges in the same fashion as before.  Then, we also have to add in the basis functions in $\tilde{F}_2\Lambda^1$.  The general form for these functions becomes a little more complicated, but one example of them would be $(z+1)(y^2-1)dx$.  Then substituting in $i=0, 1$ into the first set of equations will yield $24$ basis functions, 2 per each edge, while the collective $\tilde{F}_2\Lambda^1$ set gives 2 more functions per face.  Finally, we take the two sets of basis functions and combine them together into a single list of basis functions for the trimmed serendipity space $\mathcal{S}_2\Lambda^1(\square_3)$.   \lm{It feels like this paragraph just recapitulates the example, is there a reason why we do it twice?}
+
+%\justin{Here we can put something like:  "To see the exact syntax for the FIAT classes defining the trimmed serendipity elements, see here."  and link the Zenodo github integration.}  This process allows us to define the FIAT element that Firedrake is going to use when we request \texttt{SminusCurl} function spaces.  After we have the element defined, FIAT does the numerical evaluation of the element and is wrapped into the FInAT element.  FInAT takes the numerical basis function tables and wraps them into an abstract syntax for table look-up.   \lm{I am not quite sure the point this paragraph is trying to make.}
 
 
 \begin{table}[htbp]
@@ -427,7 +472,7 @@ and we choose their association to edges in the same fashion as before.  Then, w
   $\mathcal{S}^-_r \Lambda^3$ & \texttt{-} & \texttt{DPC}\\
   \bottomrule
 \end{tabular}
-\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.  In 2D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are the \hcurl and \hdiv conforming spaces (dependent upon oreintation of the DOFs), and the $2$-forms are the $L^2$ conforming spaces.  For 3D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are \hcurl spaces, $2$-forms are \hdiv spaces, and $3$-forms are $L^2$ spaces.}
+\caption{A translation for going from FEEC to Firedrake usage names for tensor product and trimmed serendipity elements.  In 2D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are the \hcurl and \hdiv conforming spaces (dependent upon oreintation of the DOFs), and the $2$-forms are the $L^2$ conforming spaces.  For 3D, the $0$-forms are the $H^1$ conforming spaces, the $1$-forms are \hcurl spaces, $2$-forms are \hdiv spaces, and $3$-forms are $L^2$ spaces. \label{tab:FiredrakeNames}}
 %\lm{I had a go making this table nicer. The ``Element name'' column is kind of bad though, because the $\Lambda^2$ space is not an \hdiv space in 2D. Perhaps just drop that column entirely?}\label{tab:FiredrakeNames}}
 \end{table}
 
