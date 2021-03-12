@@ -159,7 +159,7 @@
   In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package \cite{rathgeber2016firedrake}, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
 Firedrake is a Python package that uses the FEniCS problem solving language and the Unified Form Language (UFL) \cite{Logg:2012,alnaes2014unified} to provide a flexible and high level interface to the solution of PDEs close to their mathematical formulation.
 
-An example of writing a discretized PDE and solving it in Firedrake can be found in \cref{lst:mixedPoissonCode}, where we illustrate how to solve the mixed Poisson problem. \akg{We never solve the mixed form of the PDE, we only compute approximate solutions by discretizing it}.  To do this, we first write the mixed Poisson equation on the domain $\Omega := [0, 1] \times [0,1]$ with boundary $\Gamma$ in the weak formulation, where we are solving for $\sigma \in \Sigma$ and $u \in V$, where $\Sigma$ and $V$ are appropriate finite element spaces \akg{In the mixed form, $\Sigma$ and $V$ are just functional spaces - namely \hdiv and $L^2$, not finite element spaces}, such that the following equations are satisfied:
+An example of writing a discretized PDE and computing its approximate solution in Firedrake can be found in \cref{lst:mixedPoissonCode}. To do this, we first write the mixed Poisson equation on the domain $\Omega := [0, 1] \times [0,1]$ with boundary $\Gamma$ in the weak formulation.  Then we are solving for $\sigma \in \Sigma$ and $u \in V$, where $\Sigma$ and $V$ are \hdiv and $L^2$ function spaces respectively, such that the following equations are satisfied:
 \begin{equation*}
 \begin{aligned}
   \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u) \text{d}x &= \int_\Gamma \tau \cdot n~u~\text{d}s\\
@@ -167,7 +167,7 @@ An example of writing a discretized PDE and solving it in Firedrake can be found
 \end{aligned}
 \end{equation*}
 for all $\tau \in \Sigma$, $v \in V$, and $u \vert_{\partial \Omega} = 0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
-Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  One example of that is using the tensor product elements \texttt{RTCF} and \texttt{DQ} as the \hdiv and $L^2$ elements respectively to produce a stable method.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC}).  \akg{I rephrased the last couple sentences some}  We demonstrate tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
+Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  One example of that is using the tensor product elements \texttt{RTCF} and \texttt{DQ} as the \hdiv and $L^2$ elements respectively to produce a stable method.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC}).  We demonstrate tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
   
 \begin{lstlisting}[float=htpb,caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1]
 PolyDegree = 2
@@ -342,7 +342,7 @@ On the front face of each element, dots indicate the number of DOFs associated t
 	
 	A major reason that the vector trimmed serendipity elements have only recently been considered in the mathematical literature is that their DOF per element count is complicated.
 	As evidenced by Table~\ref{tab:tsfamily}, \textit{certain} DOFs grow in predictable patterns with $r$.
-	For instance, elements in the 1-form family, $\calS_r^-\Lambda^1(\square_3)$, have exactly $r$ DOFs per edge of the cube (corresponding to ``order $r$'' approximation on edges) and elements the 2-form family, $\calS_r^-\Lambda^2(\square_3)$, have ${\displaystyle {r+1}\choose 2}$ DOFs per face (corresponding to ``order $r$'' approximation on faces).
+	For instance, elements in the 1-form family, $\calS_r^-\Lambda^1(\square_3)$, have exactly $r$ DOFs per edge of the cube (corresponding to ``order $r$'' approximation on edges) and elements in the 2-form family, $\calS_r^-\Lambda^2(\square_3)$, have ${\displaystyle {r+1}\choose 2}$ DOFs per face (corresponding to ``order $r$'' approximation on faces).
 	However, the 2-form family has the more obscure quantity of $(r^3 - 2r^2 + 3r)/2$ DOFs associated to the interior of an element (for $r>1$).
 	This growth pattern is recognized as sequence A064808 by the On-line Encyclopedia of Integer Sequences~\cite{OEIS} and is in agreement with the general formulae presented in~\cite{gillette2019trimmed}, but a natural geometry-centered interpretation remains elusive.
 	Equally unexpected patterns are evident in the growth of DOFs on faces and interiors of the $\calS_r^-\Lambda^1(\square_3)$ family.
@@ -500,11 +500,12 @@ Hence, we associate this function with the face contained in $x=1$.  The rest of
 %\lm{I had a go making this table nicer. The ``Element name'' column is kind of bad though, because the $\Lambda^2$ space is not an \hdiv space in 2D. Perhaps just drop that column entirely?}\label{tab:FiredrakeNames}}
 \end{table}
 
-The newly supported elements, mapping FEEC spaces onto names in UFL are shown in \cref{tab:FiredrakeNames}. Modifying the code from \cref{lst:mixedPoissonCode} to utilise trimmed serendipity spaces rather than tensor product spaces is then simply a case of replacing the element names in the \texttt{FunctionSpace} definitions with appropriate trimmed space names. Concretely, the new \texttt{FunctionSpace} definitions are shown in \cref{lst:pde_using_trimmed_serendipity}, the rest of the code remains unchanged.\akg{Maybe we should get the line numbers to match Listing 1, and state something to this effect?}\akg{Also: Please confirm DPC should be PolyDegree -1, both here and in Listing 1.}
-\begin{lstlisting}[float=htbp,caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=1] 
+The newly supported elements, mapping FEEC spaces onto names in UFL are shown in \cref{tab:FiredrakeNames}. Modifying the code from \cref{lst:mixedPoissonCode} to utilise trimmed serendipity spaces rather than tensor product spaces is then simply a case of replacing the element names in the \texttt{FunctionSpace} definitions with appropriate trimmed space names. Concretely, the new \texttt{FunctionSpace} definitions are shown in \cref{lst:pde_using_trimmed_serendipity}, the rest of the code remains unchanged.\akg{Also: Please confirm DPC should be PolyDegree -1, both here and in Listing 1.}
+\begin{lstlisting}[float=htbp,caption={Setting up Firedrake to use the trimmed serendipity elements in a mixed Poisson problem in 3D.}, label={lst:pde_using_trimmed_serendipity}, numbers=left, firstnumber=3]
+...
 HdivSpace = FunctionSpace(mesh, "SminusDiv", PolyDegree)
 L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
-
+...
 \end{lstlisting}
  
 % \lm{I removed this paragraph of which files we edited, since I don't think it is enlightening. I put something in the intro to this section.}
@@ -1173,7 +1174,7 @@ All major Firedrake components, as well as the code for the numerical experiment
 This work was supported by NSF Collaborative Research Awards DMS-1913094 and DMS-1912653.
     
 %<<<<<<< wence/edits
-\josh{Acknowledgements section is missing?  We need to add this for the grant.  We also need to decide where to give the point for the code}
+%\josh{Acknowledgements section is missing?  We need to add this for the grant.  We also need to decide where to give the point for the code}
   
 \end{acks}
 \bibliographystyle{ACM-Reference-Format}
