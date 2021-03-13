@@ -195,6 +195,7 @@ solve(a == L, w)
   
 An important strength of Firedrake is its modular structure for both users and developers.
 For the user, swapping to trimmed serendipity elements to solve the mixed Poisson problem is now only a matter of modifying lines 4--5 in \cref{lst:mixedPoissonCode} to the appropriate identifiers, \texttt{SminusDiv} \texttt{DPC} and inside the \texttt{FunctionSpace} calls.
+\josh{Shouldn't these be HDivSpace and L2Space?}
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
    For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} that are already associated to portions of the square or cube geometry (vertices, edges, faces, interior) and then use them within FIAT for processing.
    
@@ -203,7 +204,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    While the formulae for the dimensions of each space are somewhat involved, a simple count of DOFs in a standard case highlights the potential gains.
    To implement a standard mixed method for Darcy flow with quadratic order error decay in the velocity estimate, the divergence of the velocity and the pressure, on a single cube the pair of tensor product elements used have a total of 44 DOFs.
    For the same setup, the appropriate pair of regular serendipity elements have 43 DOFs, but the pair of trimmed serendipity elements have only 25 DOFs. 
-   This represents a reduction in DOFs of 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
+   This reduces the number of DOFs by 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
    Such reduction increases with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.
    Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper. %\lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
    
@@ -402,7 +403,7 @@ To see how this plays out in the Firedrake implementation, consider the \hcurl~e
    \end{equation}
 The space $\tilde{I}_r \Lambda^1$ is defined to be empty for $r<4$, so there are only two sets of functions to include in this case: one set associated to edges of the reference element (the $E_i\Lambda^1$ sum) and one set for the faces of the reference element (the $\tilde{F}_2\Lambda^1$ functions).
 
-We then code these in Firedrake as follows.  First, we assign the proper DOFs to a reference element.  To do this, we count the DOFs for each mesh entity on the reference element (vertex, edge, face, and interior).  For example, $\mathcal{S}_2^- \Lambda^1(\square_3)$ should have no DOFs at the vertices (these only come into play for the $H^1$-conforming elements), two DOFs on each edge, two DOFs on each face, and no DOFs on the interior.  This agrees with \cref{eq:HcurlRtwo}, where $E_i\Lambda^1$ supplies one DOF to each edge for each $i=0, 1$, and then $\tilde{F}_2\Lambda^1$ supplies two DOFs to each face.  An illustration of this can be seen in the second column, second row of \cref{tab:tsfamily}.
+We then implement these in Firedrake as follows.  First, we assign the proper DOFs to a reference element.  To do this, we count the DOFs for each mesh entity on the reference element (vertex, edge, face, and interior).  For example, $\mathcal{S}_2^- \Lambda^1(\square_3)$ should have no DOFs at the vertices (these only come into play for the $H^1$-conforming elements), two DOFs on each edge, two DOFs on each face, and no DOFs on the interior.  This agrees with \cref{eq:HcurlRtwo}, where $E_i\Lambda^1$ supplies one DOF to each edge for each $i=0, 1$, and then $\tilde{F}_2\Lambda^1$ supplies two DOFs to each face.  An illustration of this can be seen in the second column, second row of \cref{tab:tsfamily}.
 
 With the number of DOFs assigned to each mesh entity in the reference element, we can then define the basis functions.  The order of definition is important so that basis functions are matched to the proper mesh entity.  Note that \cref{eq:HcurlRtwo} doesn't explicitly give a way to order the basis functions.  Instead, we need to use the properties of the basis functions to determine the correct ordering.   This is best illustrated by an example. Two of the ``edge'' basis functions that are contained in the sum of the $E_i\Lambda^1$ sets are $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$.  Notice that these functions have no $dy$ or $dz$ portions.  Therefore, these function vanish on any edge \textit{not} parallel to the $x$ axis.  Further, the polynomial coefficients of these forms indicate that they also vanish on the planes $y=-1$ and $z=-1$.  Thus, the only edge of the cube on which these functions do \textit{not} vanish is the edge contained in the line $\{y=1\}\cap\{z=1\}$.  This edge is shown in blue and labeled with an ``e'' in \cref{fig:ReferenceCube}.
 %we associate these functions to an edge such that the $y$ and $z$ values are constant, ensuring 0 coefficients in $dy$ and $dz$ terms.  If we choose either $y = -1$ or $z = -1$, then the two basis functions we're working with both become zero.  Therefore, we  require that both $y = 1$ and $z = 1$ for the edge that we are working with (seen as the blue edge labeled with an "e" that has 2 red dots on \cref{fig:ReferenceCube}).
@@ -414,12 +415,8 @@ With the number of DOFs assigned to each mesh entity in the reference element, w
 \filldraw [cyan] (0,0,1) -- (1,0,1) -- (1,1,1) -- (0,1,1) -- cycle;
 
 \filldraw [gray] (0,1,0) circle (2pt);
-\filldraw [gray] (0,0,1) circle (2pt);
-\filldraw [gray] (0,1,1) circle (2pt);
 \filldraw [gray] (1,0,0) circle (2pt);
 \filldraw [gray] (1,1,0) circle (2pt);
-\filldraw [gray] (1,0,1) circle (2pt);
-\filldraw [gray] (1,1,1) circle (2pt);
 
 %\draw[dotted] (0,0,0) -- (0,0,1); %x is the third component
 %\draw[dotted] (0,0,0) -- (1,0,0); %y is the first component 
@@ -428,25 +425,32 @@ With the number of DOFs assigned to each mesh entity in the reference element, w
 \draw (0,1,0) -- (1,1,0); 
 \draw (0,1,0) -- (0,1,1);
 \draw (0,1,1) -- (1,1,1);
-\draw[cyan,thick] (1,1,0) -- (1,1,1);
+%Josh: thickening to make really stand out.
+\draw[cyan,line width=2] (1,1,0) -- (1,1,1);
 \draw (0,0,1) -- (0,1,1);
 \draw (0,0,1) -- (1,0,1);
 \draw (1,0,0) -- (1,0,1);
 \draw (1,0,1) -- (1,1,1);
 \draw (1,0,0) -- (1,1,0);
-\draw[thick, ->] (2,1,0.5) -- (1,1,0.5);
-\draw (2.1,1,0.5) node {e};
-\draw[thick, ->] (-1,0.4,1) -- (0.5,0.4,1);
-\draw (-1.1,0.4,1) node {F};
-\filldraw [red] (1,1,0.33) circle (1pt);
-\filldraw [red] (1,1,0.66) circle (1pt);
-\filldraw [red] (0.66,0.5,1) circle (1pt);
-\filldraw [red] (0.33,0.5,1) circle (1pt);
+\draw[thick, ->] (1.5,0.65,0.5) -- (1.05,0.95,0.5);
+\draw (1.6,0.6,0.5) node {e};
+\draw[thick, ->] (-0.6,0.7,1) -- (0.2,0.4,1);
+\draw (-0.7,0.75,1) node {F};
+\filldraw [red] (1,1,0.33) circle (1.5pt);
+\filldraw [red] (1,1,0.66) circle (1.5pt);
+\filldraw [red] (0.66,0.5,1) circle (1.5pt);
+\filldraw [red] (0.33,0.5,1) circle (1.5pt);
+
+%Josh: drawing front circles on top
+\filldraw [gray] (0,0,1) circle (2pt);
+\filldraw [gray] (0,1,1) circle (2pt);
+\filldraw [gray] (1,0,1) circle (2pt);
+\filldraw [gray] (1,1,1) circle (2pt);
 
 \draw[thick, ->] (3,0,0) -- (3,0,1);
 \draw[thick, ->] (3,0,0) -- (3,1,0);
 \draw[thick, ->] (3,0,0) -- (4,0,0);
-\draw (3,0,1.2) node {x};
+\draw (3,0,1.3) node {x};
 \draw (3,1.2,0) node {z};
 \draw (4.2,0,0) node {y};
 
