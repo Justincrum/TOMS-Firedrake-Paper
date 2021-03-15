@@ -159,7 +159,8 @@
   In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package \cite{rathgeber2016firedrake}, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
 Firedrake is a Python package that uses the FEniCS problem solving language and the Unified Form Language (UFL) \cite{Logg:2012,alnaes2014unified} to provide a flexible and high level interface to the solution of PDEs close to their mathematical formulation.
 
-An example of writing a discretized PDE and computing its approximate solution in Firedrake can be found in \cref{lst:mixedPoissonCode}. To do this, we first write the mixed Poisson equation on the domain $\Omega := [0, 1] \times [0,1]$ with boundary $\Gamma$ in the weak formulation.  Then we are solving for $\sigma \in \Sigma$ and $u \in V$, where $\Sigma$ and $V$ are \hdiv and $L^2$ function spaces respectively, such that the following equations are satisfied:
+An example of writing a discretized PDE and computing its approximate solution in Firedrake can be found in \cref{lst:mixedPoissonCode}. To do this, we first write the mixed Poisson equation on the domain $\Omega := [0, 1] \times [0,1]$ with boundary $\Gamma$ in the (continuous) weak formulation.  The problem statement is then:
+find $\sigma \in \Sigma :=~$\hdiv and $u \in V := L^2$ such that:\akg{Justin: Where did you get this formulation from? It seems like it should be fv not f nu in the second equation.  Also, doesn't the BC make the integral over Gamma = 0?}
 \begin{equation*}
 \begin{aligned}
   \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u) \text{d}x &= \int_\Gamma \tau \cdot n~u~\text{d}s\\
@@ -167,7 +168,7 @@ An example of writing a discretized PDE and computing its approximate solution i
 \end{aligned}
 \end{equation*}
 for all $\tau \in \Sigma$, $v \in V$, and $u \vert_{\partial \Omega} = 0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
-Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  One example of that is using the tensor product elements \texttt{RTCF} and \texttt{DQ} as the \hdiv and $L^2$ elements respectively to produce a stable method.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC}).  We demonstrate tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in order to create the stable pairing. 
+Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  On a mesh of squares, the typical stable pair of finite elements would be \texttt{RTCF} and \texttt{DQ} for the \hdiv and $L^2$ elements, respectively.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC} as an alternative stable pair).  We demonstrate this tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in accordance with the theory for optimal convergence rates.
   
 \begin{lstlisting}[float=htpb,caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1, xleftmargin=20pt,  xrightmargin=20pt]
 PolyDegree = 2
@@ -518,7 +519,7 @@ L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
 
   \section{Experiments}
     
-The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We used a basic projection example to debug our implementation.  Next, we present results on a primal Poisson problem (to test scalar elements), a mixed Poisson problem (to test \hdiv elements), and a cavity resonator problem (to test \hcurl elements).  Note that the cavity resonator problem was done only in 3D, as the 2D \hcurl elements are just a rotation of the 2D \hdiv) elements. 
+The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We first present a basic projection example as a means of validating our implementation.  Next, we present results on a primal Poisson problem (to test $H^1$ elements), a mixed Poisson problem (to test \hdiv elements), and a cavity resonator problem (to test \hcurl elements).  Note that the cavity resonator problem was done only in 3D, as the 2D \hcurl elements are just a rotation of the 2D \hdiv) elements. 
 
 The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  A few of the larger runs performed on a high memory node with 3TB of memory but otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by requesting a full node and executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  
 
