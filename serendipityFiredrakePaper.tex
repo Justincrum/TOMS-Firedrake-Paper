@@ -164,18 +164,18 @@ find $\sigma \in \Sigma :=~$\hdiv and $u \in V := L^2$ such that:%\akg{Justin: W
 
 \begin{equation*}
 \begin{tabular}{rllll}
-$\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $=~~ \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
-$\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $= ~~-\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
+
+$\displaystyle\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $=~~\displaystyle \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
+$\displaystyle\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $= ~~\displaystyle -\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
 \end{tabular}
 \end{equation*}
-
 %\begin{equation*}
 %\begin{aligned}
 %  \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u + \nabla \cdot \sigma 5\nu) \text{d}x &= - \int_\Omega f \nu~\text{d}x %\int_\Gamma \tau \cdot %n~u~\text{d}s\\
 %  %\int_\Omega  \nabla \cdot \sigma v \text{d}x &= - \int_\Omega f %\nu~\text{d}x
 %\end{aligned}
 %\end{equation*}
-for all $\tau \in \Sigma$, $\nu \in V$, and $u \vert_{\partial \Omega} = 0$.  We assume Neumann boundary conditions so that the integral over $\Gamma$ is $0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
+We assume Neumann boundary conditions so that the integral over $\Gamma$ is $0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
 Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  On a mesh of squares, the typical stable pair of finite elements would be \texttt{RTCF} and \texttt{DQ} for the \hdiv and $L^2$ elements, respectively.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC} as an alternative stable pair).  We demonstrate this tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in accordance with the theory for optimal convergence rates.
 
 %\akg{Here is a revised equation with the formatting I was describing.  Please check for correctness.  You can put it using integral notation instead of parentheses. Then after stating it you can say ``We assume Neumann boundary conditions so that the boundary integral over $\Gamma$ is 0'' or something like that. }
