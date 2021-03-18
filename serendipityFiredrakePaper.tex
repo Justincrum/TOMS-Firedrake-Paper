@@ -531,7 +531,7 @@ L2Space = FunctionSpace(mesh, "DPC", PolyDegree - 1)
     
 The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We first present a basic projection example as a means of validating our implementation.  Next, we present results on a primal Poisson problem (to test $H^1$ elements), a mixed Poisson problem (to test \hdiv and $L^2$ elements), and a cavity resonator problem (to test \hcurl elements).  Since the \hcurl and \hdiv elements are only a rotation of the DOFs on the edges of elements in 2D, we do not give an experiment using \hcurl elements in 2D. 
 
-The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  For memory intensive runs where the order and mesh require more DOFs, the experiments were performed on a high memory node with 3TB of memory but an otherwise identical setup.  Each job was ran by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on node parallelism by requesting a full node and executing the jobs with mpirun set up with 24 processes, with a few exceptions for smaller cases (that will be pointed out later).  Timing data was collected after first performing a dry run of code to warm the cache and then taking the minimum time over three more consecutive runs.  
+The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  For memory intensive runs where the order and mesh require more DOFs, the experiments were performed on a high memory node with 3TB of memory but an otherwise identical setup.  Each job was run by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on-node parallelism by requesting a full node and executing the jobs with \texttt{mpirun} set to use 24 processes, with a few exceptions for smaller cases that will be pointed out later.  Timing data was collected after first performing a dry run of the code to warm the cache and then taking the minimum time over three subsequent runs.  
 
 %\josh{Somewhere in this section lead in we need to describe our experimental setup, which should include (1) hardware specifications and (2) software specifications (versions of firedrake, etc.)}
 
@@ -551,11 +551,13 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
 \subsection{Projection}
   
 %<<<<<<< wence/edits
-We solve an $L^2$ projection problem to give a baseline for the elements. Given either the unit square or unit cube as our domain $\Omega$, we compute the projection of $f$ into the function space $V$ by using a discretization of
+We solve an $L^2$ projection problem to give a baseline accuracy test for the elements. Given either the unit square or unit cube as our domain $\Omega$, we compute the projection of $f$ into the function space $V$ by using a discretization of the problem: find $u\in V$ such that
 \begin{equation*}
   \int u v  \text{ d}x = \int f v \text{ d}x
 \end{equation*}
-for all $v \in V$.   Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ and the tensor product elements with $\mathcal{Q}^-_r$.  In Firedrake, the trimmed serendipity elements use the label \texttt{SminusCurl} or \texttt{SminusDiv} for 1-forms in 2D depending upon the orientation of the edge DOFs, and in 3D, they represent the 1- and 2-forms respectively.  The tensor product elements use the labels \texttt{RTCE} (or \texttt{RTCF}) and  \texttt{NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  \texttt{NCF}.  To solve the projection problem in Firedrake, we use a continuous galerkin scheme where we give a bijacobi preconditioner.  
+for all $v \in V$.   
+\akg{What is $V$?  Since the projection figure only talks about~\hcurl, I think $V=$\hcurl.  Also what is the $f$ that you use?}
+Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ and the tensor product elements with $\mathcal{Q}^-_r$.  In Firedrake, the trimmed serendipity elements use the label \texttt{SminusCurl} or \texttt{SminusDiv} for 1-forms in 2D, depending upon the orientation of the edge DOFs, and in 3D, they represent the 1- and 2-forms respectively.  The tensor product elements use the labels \texttt{RTCE} (or \texttt{RTCF}) and  \texttt{NCE} for 1-forms in 2D and 3D, while the 2-forms in 3D are  \texttt{NCF}.  To solve the projection problem in Firedrake, we use a continuous Galerkin scheme with a bi-Jacobi pre-conditioner.  
 
 
 
@@ -684,14 +686,15 @@ for all $v \in V$.   Recall that the trimmed serendipity elements are denoted wi
       \end{tikzpicture}
     \caption{3D DOFs vs error\label{fig:3dProjectionDofs}}
   \end{subfigure}
-  \caption{Results of solving projection problem using 2D and 3D $S^-$ curl elements and tensor product curl elements.  A trendline being lower implies that for a similar mesh size, the error value is lower.  The error in these plots is calculated as the $L^2$ error between a projection of the solution into the finite element space and the exact function evaluated at the DOFs. \label{Projections}} 
+  \caption{Results of solving an $L^2$ projection problem using trimmed serendipity and tensor product \hcurl elements in both 2D (top row) and 3D (bottom row).  In every case, the trimmed serendipity element trendline has the same slope as its tensor product counterpart, as expected by the theory.  In most cases, the tensor product elements perform better by these metrics, in the sense that their trendlines lie below the trimmed serendipity trendlines.  The notable exception is the quadratic case, $r=2$, where trimmed serendipity perform slightly better in terms of DOFs, in both 2D and 3D.\label{Projections}} 
 \end{figure}
 
-The goal of the projection problem was to establish that the elements behave in the way that we expect them to.  To do this, we plotted the results obtained by using trimmed serendipity elements and tensor product elements for both DOFs vs $L^2$ error and $h$ vs $L^2$ error, seen in \cref{fig:Projection}.  
+The goal of the projection problem is to establish that the elements attain the mathematically expected rates of convergence as mesh size decreases.  For this, we create a sequence of meshes \akg{describe the meshes you use...}
+We employ both trimmed serendipity elements and tensor product elements on each mesh and record the $L^2$ error in each case.  In \cref{Projections}, we report the $L^2$ error in terms of the classical measure of maximum edge length ($h$) as well as total number of degrees of freedoms (DOFs).
 
-The expectation is that $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ converge at the same rate, illustrated in the plots by parallel trendlines.  These parallel trendlines can be seen in each of the projection plots.  For $r=2$, we see the trendline for $\mathcal{S}^-_r$ below the trendline for $\mathcal{Q}^-_r$, illustrating that that the trimmed serendipity elements achieve a better accuracy for the amount of DOFs required than the tensor product elements.  
+The expectation is that $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ converge at the same rate with respect to $h$, which is confirmed in the plots by parallel trendlines.  These parallel trendlines can be seen in each of the projection plots.  For $r=2$, we see the trendline for $\mathcal{S}^-_r$ below the trendline for $\mathcal{Q}^-_r$, indicating that that the trimmed serendipity elements achieve a better accuracy for the amount of DOFs required than the tensor product elements.  
 
-In the case of $r=2,3$ the trendlines for $\mathcal{S}^-_r$ are above the trendlines for $\mathcal{Q}^-_r$.  However, considering the elements $\mathcal{Q}^-_3$ and $\mathcal{S}^-_4$, we see that $\mathcal{Q}^-_3$ requires an approximately equal number of DOFs as $\mathcal{S}^-_4$ at the same mesh refinement.  Meanwhile the $\mathcal{S}^-_4$ element yields an extra magnitude of accuracy.
+In the case of $r=2,3$ \akg{Did you mean $r>2$?} the trendlines for $\mathcal{S}^-_r$ are above the trendlines for $\mathcal{Q}^-_r$.  However, considering the elements $\mathcal{Q}^-_3$ and $\mathcal{S}^-_4$, we see that $\mathcal{Q}^-_3$ requires an approximately equal number of DOFs as $\mathcal{S}^-_4$ at the same mesh refinement.  Meanwhile the $\mathcal{S}^-_4$ element yields an extra magnitude of accuracy. \akg{This needs to be explained more - where is the extra order of magnitude accuracy?  Be specific.  I also agree with Josh's (commented out) comment that we need to highlight the positive - at the very practical case of $r=2$, there is a specific benefit.  What is the impact of this to a user?  Spell it out!}.
 
 %\josh{this paragraph is making too coarse/negative of a conclusion, isn't it?  Why are we not talking about how the lines swap as $r$ increases?}
 
@@ -703,33 +706,36 @@ In the case of $r=2,3$ the trendlines for $\mathcal{S}^-_r$ are above the trendl
 \subsection{The Poisson Problem}
 In this section we discuss results for both the primal Poisson problem and the mixed Poisson problem.  We solve the primal Poisson problem described below on a unit square domain $\Omega$ for $u \in U$:
 \begin{align*}
-    -\nabla^2 u &= f \\
-    u\vert_{\partial \Omega} &= 0
+    -\Delta u &= f \\
+    \displaystyle u\vert_{\partial \Omega} &= 0
 %<<<<<<< wence/edits
 \end{align*}
-where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 3\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution being $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$.  Converting the primal Poisson problem to a weak formulation and discretizing the follow equation, we compute $u \in V$:
+where $f(x,y) = 2\pi^2\text{sin}(\pi x)\text{sin}(\pi y) $, yielding the solution $u(x,y) = \text{sin}(\pi x)\text{sin}(\pi y)$. In 3D, we can extend this to $f(x,y,z) = 3\pi^2\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ with the solution $u(x,y,z) = \text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ on the unit cube.  The primal Poisson equation is as follows: find $u \in V:= H^1(\Omega)$ such that:
 \begin{equation*}
-    \int_\Omega \nabla u \cdot \nabla v \text{ d}x = \int_\Omega f v \text{ d}x
+    \int_\Omega \nabla u \cdot \nabla v \text{ d}x = \int_\Omega f v \text{ d}x,\qquad \text{for all $v \in V$}.
 \end{equation*}
-such that the weak form equation holds for all $v \in V$ in the test function space.
+Accordingly, the primal Poisson problem employs $H^1$ elements, using \texttt{S} for $\mathcal{S}^-_r \Lambda^0$ and \texttt{Lagrange} for $\mathcal{Q}^-_r \Lambda^0$. 
 
-The primal Poisson problem makes use of $H^1$ elements, using \texttt{S} for $\mathcal{S}^-_r \Lambda^0$ and \texttt{Lagrange} for $\mathcal{Q}^-_r \Lambda^0$. Then to test \hdiv elements, we compute a solution to a discretization of the mixed Poisson problem:
+
+The mixed Poisson problem introduces an intermediate variable, $\sigma$, which is solved for simultaneously.
+Formally, this is: find $\sigma\in$~\hdiv and $u\in L^2$ such that:
 \begin{align}
      \sigma - \nabla u &= 0 \notag \\
      \nabla \cdot \sigma &= -f \notag \\
      u\vert_{\partial \Omega} &= 0 \notag
 \end{align}
-In a similar fashion as for the primal Poisson problem, we can create the weak formulation of the mixed Poisson problem.  This results in solving the following weak form equation for $\sigma \in \Sigma$ and $u \in V$
+In a similar fashion as for the primal Poisson problem, we can create the weak formulation of the mixed Poisson problem.  This is: find $\sigma \in \Sigma:=$~\hdiv and $u \in V:=L^2$ such that:
 %<<<<<<< wence/edits
 
 \begin{equation*}
 \begin{tabular}{rllll}
-$\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $=~~ \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
-$\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $= ~~-\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
+$\displaystyle\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $\displaystyle=~~ \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
+$\displaystyle\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $\displaystyle= ~~-\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
 \end{tabular}
 \end{equation*}
-
-For both the primal Poisson and mixed Poisson problems, we use an LU preconditioner and ask MUMPS to perform a sparse LU.  For the exact set of solver parameters used, see the test codes.
+These equations are discretized and solved using a suitable \textit{pair} of finite elements -- one of \hdiv type and one of $L^2$ type.  We use $(\calQ_r^-\Lambda^{n-1},\calQ_r^-\Lambda^n)$ and $(\calS_r^-\Lambda^{n-1},\calS_r^-\Lambda^n)$ for dimensions $n=2$ and $n=3$.
+For both the primal Poisson and mixed Poisson problems, we use an LU preconditioner and ask MUMPS to perform a sparse LU.  The exact set of solver parameters used are noted in the included test codes.
+\akg{I only go through reading to here - have to go to bed now.}
 %=======
 
 %\begin{equation*}
