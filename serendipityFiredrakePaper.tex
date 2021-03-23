@@ -274,11 +274,13 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    To implement a standard mixed method for Darcy flow with quadratic order error decay in the velocity estimate, the divergence of the velocity and the pressure, on a single cube the pair of tensor product elements used have a total of 44 DOFs.
    For the same setup, the appropriate pair of regular serendipity elements have 43 DOFs, but the pair of trimmed serendipity elements have only 25 DOFs. 
    This reduces the number of DOFs by 42\% (from tensor product to trimmed serendipity), with no theoretical loss in the order of accuracy.
-   Such reduction increases with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.  
-   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper. 
-   \justin{While reducing the number of DOFs will impact the accuracy of the element, we are interested in determining if there is a way to make this choice to gain accuracy while not increasing the DOFs required to do so.  
+   
+   Further, the number of DOFs shared between adjacent faces in this context is reduced by 25\% -- from 4 per face to 3 per face -- which has a dramatic impact on the global degrees of freedom for the problem.
+   Such reductions increase with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.  
+   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.\justin{While reducing the number of DOFs will impact the accuracy of the element, we are interested in determining if there is a way to make this choice to gain accuracy while not increasing the DOFs required to do so.  
    For example, in \cref{fig:DegsDofs}, the trimmed serendipity elements at order $3$ require a similar number of DOFs as the tensor product element at order $2$.  
-   Thus we believe that a  user making a choice to use trimmed serendipity elements at an increased order may be a meaningful way to achieve a more accurate solution.}
+   Thus we believe that a  user making a choice to use trimmed serendipity elements at an increased order may be a meaningful way to achieve a more accurate solution.} %\lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
+
    
    
    %\akg{The rest of the intro goes into a detailed example as we discussed but I don't think this is the right place for it.  This fits more naturally into Section 3 where the notation will already have been defined and it makes sense to go into some detail.  Instead, I think the intro should have 1-2 more paragraphs highlighting the expected benefits of trimmed serendipity elements (huge reduction in DoFs in 3D, for higher order) and summarizing the major contributions.  We can discuss at our next meeting.}
@@ -390,9 +392,9 @@ On the front face of each element, dots indicate the number of DOFs associated t
 
 	As a step toward testing such ideas, Gillette, Kloefkorn and Sanders gave a systematic way to build the computational basis for each of these elements for dimensions $n = 2, 3$, $k=0, 1, 2, 3$-forms, and arbitrary order $r \geq 1$~\cite{gillette2019computational}.
   %\josh{referring back to the abstract/intro where we say ``complete'', it is my understanding our implementation supports $n=2,3$ and $k=0, \ldots, n-1$.  Do we implement $k = n$ or am I missing something?}
-	The main challenge in this effort was ensuring recovery of specific approximation power on vertices, edges, faces, and interiors (of cubes) according to the geometric association of degrees of freedom.  
-	This association is visualized for low orders in 3D in \cref{tab:tsfamily}, arranged equivalently to the Periodic Table of the Finite Elements.
-	While the bases presented in~\cite{gillette2019computational} ensure the required relation to degrees of freedom, neither these bases nor any other general implementation of trimmed serendipity elements has been attempted prior to this paper.
+	These ``computational bases'' are well-suited for implementation since each basis function is associated to a unique portion a mesh element - i.e.\ a specific vertex, edge, face (for cubes) or element interior.
+	The required geometric localization of DOFs is visualized for low orders in 3D in \cref{tab:tsfamily}, arranged equivalently to the Periodic Table of the Finite Elements.
+	We note that neither the particular bases defined in~\cite{gillette2019computational} nor any other general implementation of trimmed serendipity elements has been attempted prior to this paper.
 
 	
 	
