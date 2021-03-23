@@ -164,28 +164,23 @@
 An example of writing a discretized PDE and computing its approximate solution in Firedrake can be found in \cref{lst:mixedPoissonCode}. To do this, we first write the mixed Poisson equation on the domain $\Omega := [0, 1] \times [0,1]$ with boundary $\Gamma$ in the (continuous) weak formulation.  The problem statement is then:
 find $\sigma \in \Sigma :=~$\hdiv and $u \in V := L^2$ such that:%\akg{Justin: Where did you get this formulation from? It seems like it should be fv not f nu in the second equation.  Also, doesn't the BC make the integral over Gamma = 0?}
 
-\begin{equation*}
+\begin{equation}\label{eq:MixedPoisson}
 \begin{tabular}{rllll}
 
 $\displaystyle\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $=~~\displaystyle \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
 $\displaystyle\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $= ~~\displaystyle -\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
 \end{tabular}
-\end{equation*}
-%\begin{equation*}
-%\begin{aligned}
-%  \int_\Omega (\sigma \cdot \tau + \nabla \cdot \tau u + \nabla \cdot \sigma 5\nu) \text{d}x &= - \int_\Omega f \nu~\text{d}x %\int_\Gamma \tau \cdot %n~u~\text{d}s\\
-%  %\int_\Omega  \nabla \cdot \sigma v \text{d}x &= - \int_\Omega f %\nu~\text{d}x
-%\end{aligned}
-%\end{equation*}
-We assume Neumann boundary conditions so that the integral over $\Gamma$ is $0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
+\end{equation}
+
+We assume homogeneous Dirichlet boundary conditions so that the integral over $\Gamma$ is $0$. %\lm{I had a go at fixing this, but the formulation is still imprecise. What are the boundary data, what are $\Sigma$ and $V$?}
 Solving the discretized version of this requires choosing a suitable pair of finite element spaces to create a stable method.  On a mesh of squares, the typical stable pair of finite elements would be \texttt{RTCF} and \texttt{DQ} for the \hdiv and $L^2$ elements, respectively.  (Later we will use the trimmed serendipity pair \texttt{SminusDiv} and \texttt{DPC} as an alternative stable pair).  We demonstrate this tensor product pairing in \cref{lst:mixedPoissonCode}, where the order of the vector and scalar elements are offset by 1 in accordance with the theory for optimal convergence rates.
 
 %\akg{Here is a revised equation with the formatting I was describing.  Please check for correctness.  You can put it using integral notation instead of parentheses. Then after stating it you can say ``We assume Neumann boundary conditions so that the boundary integral over $\Gamma$ is 0'' or something like that. }
   
 \begin{lstlisting}[float=htpb,caption={Basic Firedrake implementation of the mixed Poisson problem showcasing where to choose the elements that are used and how to create the equations in Firedrake's notation.}, label={lst:mixedPoissonCode}, numbers=left, firstnumber=1, xleftmargin=20pt,  xrightmargin=20pt]
 polyDegree = 2
-cells = 2**5
-mesh = UnitSquareMesh(cells, cells, quadrilateral=True)
+numberOfCells = 2**5
+mesh = UnitSquareMesh(numberOfCells, numberOfCells, quadrilateral=True)
 hDivSpace = FunctionSpace(mesh, "RTCF", polyDegree)
 l2Space = FunctionSpace(mesh, "DQ", polyDegree - 1)
 mixedSpace = hDivSpace * l2Space
@@ -277,7 +272,9 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    
    Further, the number of DOFs shared between adjacent faces in this context is reduced by 25\% -- from 4 per face to 3 per face -- which has a dramatic impact on the global degrees of freedom for the problem.
    Such reductions increase with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.  
-   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.\justin{While reducing the number of DOFs will impact the accuracy of the element, we are interested in determining if there is a way to make this choice to gain accuracy while not increasing the DOFs required to do so.  
+   Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
+   
+   \justin{Finally, while reducing the number of DOFs will impact the accuracy of the element, we are interested in determining if there is a way to make this choice to gain accuracy while not increasing the DOFs required to do so.  
    For example, in \cref{fig:DegsDofs}, the trimmed serendipity elements at order $3$ require a similar number of DOFs as the tensor product element at order $2$.  
    Thus we believe that a  user making a choice to use trimmed serendipity elements at an increased order may be a meaningful way to achieve a more accurate solution.} %\lm{I removed the references to $r, k, n =$ since that notation is not yet introduced and cluttered this paragraph}
 
@@ -755,7 +752,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
   \caption{Results of solving an $L^2$ projection problem using trimmed serendipity and tensor product \hcurl elements in both 2D (top row) and 3D (bottom row).  Experiments were ran for $k$-forms for $k=0,1,2,3$ in 2D and 3D, however only the $1$-forms in 3D are displayed here.  In every case, the trimmed serendipity element trendline has the same slope as its tensor product counterpart, as expected by the theory.  In most cases, the tensor product elements perform better by these metrics, in the sense that their trendlines lie below the trimmed serendipity trendlines.  The notable exception is the quadratic case, $r=2$, where trimmed serendipity perform slightly better in terms of DOFs, in both 2D and 3D.\label{Projections}} 
 \end{figure}
 
-The goal of the projection problem is to establish that the elements attain the mathematically expected rates of convergence as mesh size decreases.  For this, we create a sequence of uniform square (cube) meshes where we refine the mesh from $N=4$ to $N=128$ squares (cubes). \akg{describe the meshes you use...}\justin{how's this?}\akg{I'm still confused... what is $N$?  Does the 2D mesh have $N^2$ squares and the 3D mesh has $N^3$ cubes?  How does $N$ relate to $h$?  State the formula - it shouldn't be complicated but maybe is different for 2D and 3D.}
+The goal of the projection problem is to establish that the elements attain the mathematically expected rates of convergence as mesh size decreases.  For this, we create a mesh on $[0,1]^n$ of uniformly sized squares or cubes, where we refine the mesh from $N=4$ squares (or cubes) in each row and column to $N=128$ squares in each row and column (or $N=64$ cubes).  This results in a mesh with $N^2$ or $N^3$ squares or cubes respectively.  For the folllowing results, we will use $h = \frac{1}{N}$ since the mesh elements are all uniformly sized. 
 We employ both trimmed serendipity elements and tensor product elements on each mesh and record the $L^2$ error in each case.  In \cref{Projections}, we report the $L^2$ error in terms of the classical measure of maximum edge length ($h$) as well as total number of degrees of freedoms (DOFs).
 
 The expectation is that $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ converge at the same rate with respect to $h$, which is confirmed in the plots by parallel trendlines.  These parallel trendlines can be seen in each of the projection plots.  For $r=2$, we see the trendline for $\mathcal{S}^-_r$ below the trendline for $\mathcal{Q}^-_r$, indicating that that the trimmed serendipity elements achieve a better accuracy for the amount of DOFs required than the tensor product elements.  
@@ -791,18 +788,40 @@ Formally, this is: find $\sigma\in$~\hdiv and $u\in L^2$ such that:
      \nabla \cdot \sigma &= -f \notag \\
      u\vert_{\partial \Omega} &= 0 \notag
 \end{align}
-In a similar fashion as for the primal Poisson problem, we can create the weak formulation of the mixed Poisson problem.  This is: find $\sigma \in \Sigma:=$~\hdiv and $u \in V:=L^2$ such that:
+In a similar fashion as for the primal Poisson problem, we can create the weak formulation of the mixed Poisson problem that we saw in \cref{eq:MixedPoisson}.  %This is: find $\sigma \in \Sigma:=$~\hdiv and $u \in V:=L^2$ such that:
 %<<<<<<< wence/edits
 
-\begin{equation*}
-\begin{tabular}{rllll}
-$\displaystyle\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & $\displaystyle=~~ \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
-$\displaystyle\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $\displaystyle= ~~-\int_\Omega fv \text{ d}x$ & $\forall~ v\in V$.
-\end{tabular}
-\end{equation*}
-These equations are discretized and solved using a suitable \textit{pair} of finite elements -- one of \hdiv type and one of $L^2$ type.  We use $(\calQ_r^-\Lambda^{n-1},\calQ_r^-\Lambda^n)$ and $(\calS_r^-\Lambda^{n-1},\calS_r^-\Lambda^n)$ for dimensions $n=2$ and $n=3$.
+%\begin{equation*}
+%\begin{tabular}{rllll}
+%$\displaystyle\int_\Omega (\sigma \cdot \tau + \nabla\cdot\tau u) \text{ d}x$ & %$\displaystyle=~~ \int_\Gamma \tau \cdot n u \text{ d}x$ & $\forall~ \tau\in\Sigma$, \\
+%$\displaystyle\int_\Omega \nabla \cdot \sigma v \text{ d}x$ & $\displaystyle= ~~-\int_\Omega fv %\text{ d}x$ & $\forall~ v\in V$.
+%\end{tabular}
+%\end{equation*}
+These equations are discretized and solved using a suitable \textit{pair} of finite elements -- one of \hdiv type and one of $L^2$ type.  We use $(\calQ_r^-\Lambda^{n-1},\calQ_r^-\Lambda^n)$ and $(\calS_r^-\Lambda^{n-1},\calS_r^-\Lambda^n)$ for dimensions $n=2$ and $n=3$.  Note that the mathematical notation here calls for $\mathcal{Q}^-_r \Lambda^{n-1}$ to be paired with $\mathcal{Q}^-_r \Lambda^n$, but the code notation will require setting the degree of the $L^2$ element one below the degree of the \hdiv element, and similar with the trimmed serendipity elements.
 For both the primal Poisson and mixed Poisson problems, we solve the system using MUMPS with a sparse direct LU factorization.
-The exact set of solver parameters used are noted in the included test codes.
+The exact set of solver parameters used for the mixed Poisson problem are shown in \cref{lst:solver_parameters}.
+
+\begin{lstlisting}[float=htbp,caption={An example of some solver parameters that we can use for the mixed Poisson problem.}, label={lst:solver_parameters}, numbers=left, firstnumber=1, xleftmargin=20pt,  xrightmargin=20pt]
+...
+params = {"snes_type": "newtonls",
+                  "snes_linesearch_type": "basic",
+                  "snes_monitor": None,
+                  "snes_converged_reason": None,
+                  "mat_type": "aij",
+                  "snes_max_it": 10,
+                  "snes_lag_jacobian": -2,
+                  "snes_lag_preconditioner": -2,
+                  "ksp_type": "preonly",
+                  "ksp_converged_reason": None,
+                  "ksp_monitor_true_residual": None,
+                  "pc_type": "lu",
+                  "snes_rtol": 1e-12,
+                  "snes_atol": 1e-20,
+                  "pc_factor_mat_solver_type": "mumps",
+                  "mat_mumps_icntl_14": "200",
+                  "mat_mumps_icntl_11": "2"}
+...
+\end{lstlisting}
 
 %=======
 
