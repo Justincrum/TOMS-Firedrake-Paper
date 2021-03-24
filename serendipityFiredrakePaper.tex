@@ -54,6 +54,7 @@
 \newcommand\josh[1]{\textbf{\textcolor[rgb]{0,.5,1}{[Josh: #1]}}}
 \newcommand\justin[1]{\textbf{\textcolor[rgb]{0,1,0.5}{[Justin: #1]}}}
 \newcommand\lm[1]{\textbf{\textcolor[rgb]{1,0,0.5}{[Lawrence: #1]}}}
+\newcommand\rck[1]{\textbf{\textcolor[rgb]{1,0.5,0.5}{[Rob: #1]}}}
 \newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calS}{\mathcal{S}}
@@ -157,7 +158,7 @@
   %(The prior sentence will need further revisions - just taking a stab at it.  The previous sentence: To remedy this, we will present an implementation in Firedrake for $H^1$-, $H($curl$)$, and $H($div$)$ conforming trimmed serendipity elements in both $n=2,3$ dimensions for arbitrary orders $r$.)
   
   In this paper, we present a complete implementation of the trimmed serendipity element family in 2D and 3D within the Firedrake finite element package \cite{rathgeber2016firedrake}, accompanied by a suite of numerical experiments demonstrating their approximation accuracy and potential benefits on benchmark partial differential equation problems.
-\justin{Firedrake is a Python package for computing the solution to PDEs by using the finite element method.  By leveraging the Unified Form Language \cite{Logg:2012,alnaes2014unified}, it is able to provide a flexible and high level interface for the solution of PDEs that is reminiscent of their mathematical formulation.  Rob -- How does this look?}
+\justin{Firedrake is a Python package for computing the solution to PDEs by using the finite element method.  By leveraging the Unified Form Language \cite{Logg:2012,alnaes2014unified}, it is able to provide a flexible and high level interface for the solution of PDEs that is reminiscent of their mathematical formulation.  Rob -- How does this look?}{\rck{Good}}
 
 %Firedrake is a Python package that uses the FEniCS problem solving language and the Unified Form Language (UFL) \cite{Logg:2012,alnaes2014unified} to provide a flexible and high level interface to the solution of PDEs close to their mathematical formulation.
 
@@ -450,7 +451,7 @@ On the front face of each element, dots indicate the number of DOFs associated t
   Firedrake uses the FIAT \cite{kirby2004algorithm,kirby2012fiat} to provide finite element basis functions on reference elements. 
   To implement a new element in FIAT, we must provide both rules to tabulate basis functions and their derivatives at reference element points and a data structure that assigns basis functions to particular reference element facets.
   %To provide a new element in FIAT is a case of implementing tabulation of (arbitrary derivatives of) its basis functions at points on the reference cell. 
-  Said element is then made available in Firedrake by providing a symbolic name (in UFL \cite{alnaes2014unified}) and a translation from symbolic name to concrete implementation in the form compiler TSFC \cite{homolya2018tsfc}. We follow the construction of \cite{gillette2019computational} which provides explicit formulae for the basis functions for each of the trimmed serendipity elements and directly implement tabulation of the basis functions rather than using a Ciarlet definition and providing a dual basis from which FIAT constructs the primal basis. To provide tabulations of derivatives, we implement the basis functions symbolically with SymPy \cite{sympy2017} and compute derivatives symbolically. \lm{Andrew/Justin: is this actually true? Is this the implementation route? Is there something deeper than typing out the equations in \cite{gillette2019computational}?}\akg{Need to revise this paragraph after getting clarification about FIAT from Rob.}
+  Said element is then made available in Firedrake by providing a symbolic name (in UFL \cite{alnaes2014unified}) and a translation from symbolic name to concrete implementation in the form compiler TSFC \cite{homolya2018tsfc}. We follow the construction of \cite{gillette2019computational} which provides explicit formulae for the basis functions for each of the trimmed serendipity elements and directly implement tabulation of the basis functions rather than using a Ciarlet definition and providing a dual basis from which FIAT constructs the primal basis. To provide tabulations of derivatives, we implement the basis functions symbolically with SymPy \cite{sympy2017} and compute derivatives symbolically. \lm{Andrew/Justin: is this actually true? Is this the implementation route? Is there something deeper than typing out the equations in \cite{gillette2019computational}?}\akg{Need to revise this paragraph after getting clarification about FIAT from Rob.}  \rck{Actually, Justin is right.  Cyrus (and Justin, following him) are bypassing CiarletElements and just providing tabulation via sympy formulae.}
   
   
 We use the decompositions from~\cite{gillette2019computational} to group the basis functions according the geometric portions of a reference mesh element (vertices, edges, faces, or cell interiors).  For instance, a basis for $\calS^-_r\Lambda^1(\square_3)$ -- the trimmed serendipity $H($curl$)$-conforming element in 3D -- can be decomposed as
