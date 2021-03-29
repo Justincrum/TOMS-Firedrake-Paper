@@ -372,7 +372,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    Such reductions increase with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.  
    Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
    
-   \justin{Finally, we are interested in different ways to compare tensor product and trimmed serendipity elements.  The first way we discuss is a direct comparison between tensor product and trimmed serendipity elements of the same order.  This will yield a comparison where the DOFs required for trimmed serendipity are lower than the DOFs required for tensor product elements, the rates of convergence are the same, but the constant for trimmed serendipity elements is worse.  The second way we do this analysis is to focus on trimmed serendipity elements of one order higher than the tensor product elements.  This forces a comparison between elements with similar DOFs, but the trimmed serendipity method has a higher rate of convergence.}  
+  Finally, we are interested in different ways to compare tensor product and trimmed serendipity elements.  The first way we discuss is a direct comparison between tensor product and trimmed serendipity elements of the same order.  This will yield a comparison where the DOFs required for trimmed serendipity are lower than the DOFs required for tensor product elements, the rates of convergence are the same, but the constant for trimmed serendipity elements is worse.  The second way we do this analysis is to focus on trimmed serendipity elements of one order higher than the tensor product elements.  This forces a comparison between elements with similar DOFs, but the trimmed serendipity method has a higher rate of convergence.
 
    
    
@@ -1286,22 +1286,14 @@ In \cref{tab:Eigenvalue}, we display the convergence rates of different eigenval
 
 Note that the convergence rates are computed by
 \[r = \frac{\text{log}\bigg(\frac{\tilde{\lambda}_{i,N} - \lambda_{i,N}}{\tilde{\lambda}_{i,N+1} - \lambda_{i,N+1}} \bigg)}{\text{log}\bigg( \frac{h_N}{h_{N+1}} \bigg)}. \]
-%<<<<<<< wence/edits
+
 \noindent  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect the rate of convergence to be double the order of the finite element used to solve the problem.  This is reflected in the table well for both $\mathcal{S}^-$ and $\mathcal{Q}^-$ elements.  The ``$-$'' entries in the table indicate the eigenvalue solver did not find that specific eigenvalue in the allowed number of iterations; we set the solver to iterate a sufficient number of times to find the first 15 eigenvalue-eigenvector pairs.
-%=======
 
-%\noindent and are indicated in the chart by using parentheses.  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect that the rate of convergence be double the order of the finite element used to solve the problem.  This is reflected in the table relatively well for both $\calS^-$ and $\calQ^-$ elements.  Any eigenvalue that has a $-$ spot is to be interpreted as the eigenvalue solver did not find that specific eigenvalue in the number of iterations it required to find the first 15 requested eigenvalue-eigenvector pairs.
-%>>>>>>> master
-
-
-\justin{Add in zenodo link here}
-The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}). \justin{The solver would give a varying amount of eigenvalues with value $1$, which we ignored.  From a computational perspective, this happens because DOFs on the boundary have their respective row and column replaced by $0$'s with a single value $1$ entry when enforcing the Dirichlet boundary conditions.  This causes all of the boundary DOFs to be represented by an eigenvalue of $1$.} 
+The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}). The solver would give a varying amount of eigenvalues with value $1$, which we ignored.  From a computational perspective, this happens because DOFs on the boundary have their respective row and column replaced by $0$'s with a single value $1$ entry when enforcing the Dirichlet boundary conditions.  This causes all of the boundary DOFs to be represented by an eigenvalue of $1$.
 
 Since both elements attain the expected convergence rate, we focus on the rest of the results in the table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that tensor product elements are able to get results that are up to an order of magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed serendipity elements results in a reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed serendipity elements have nearly half the DOFs of tensor product elements, and correspondingly, require approximately half the time per iteration to solve for the eigenvalues (outside of the case $N=4$).  At higher orders, we expect that this will be even more exaggerated.  
 
 Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two eigenvalues, $\lambda = 3$ and $\lambda = 5$. We computed the eigenvalues at different orders of the elements, from $r=2$ to $r=5$, and kept the mesh constant at $16 \times 16 \times 16$.  The timing data was then collected by choosing the largest time required for any of the multiplicities of $3$ or $5$ that the solver found. 
-
-%Instead of refining the mesh, we chose to increase the order of the elements used from order$r=2$ to $r=5$ while holding the mesh steady at a size of $16 \times 16 \times 16$.   choose the timing data based on the largest time required for any of the multiplicities that are found. 
 
 \begin{figure}[htbp]
   \centering
