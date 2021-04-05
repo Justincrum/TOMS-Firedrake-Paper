@@ -372,7 +372,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    Such reductions increase with the approximation degree, meaning the computational savings accrued by trimmed serendipity should be most dramatic at large degree.  
    Seeing how such back-of-the-envelope calculations might bear out in a practical context requires the thorough implementation provided in this paper.
    
-  Finally, we are interested in different ways to compare tensor product and trimmed serendipity elements.  The first way we discuss is a direct comparison between tensor product and trimmed serendipity elements of the same order.  This will yield a comparison where the DOFs required for trimmed serendipity are lower than the DOFs required for tensor product elements, the rates of convergence are the same, but the constant for trimmed serendipity elements is worse.  The second way we do this analysis is to focus on trimmed serendipity elements of one order higher than the tensor product elements.  This forces a comparison between elements with similar DOFs, but the trimmed serendipity method has a higher rate of convergence.
+  Finally, we are interested in different ways to compare tensor product and trimmed serendipity elements.  The first way we discuss is a direct comparison between tensor product and trimmed serendipity elements of the same order.  This will yield a comparison where the DOFs required for trimmed serendipity are lower than the DOFs required for tensor product elements, the rates of convergence are the same, but the constant for trimmed serendipity elements is worse.  The second way we do this analysis is to focus on trimmed serendipity elements of one order higher than the tensor product elements.  This compares elements with similar numbers of DOFs, but the trimmed serendipity method has a higher rate of convergence.
 
    
    
@@ -630,7 +630,7 @@ With the number of DOFs assigned to each mesh entity in the reference element, w
 
 This process is what determines the ordering for the basis functions.  If, in the first step described above where we are assigning DOFs to mesh entities, we assign the first two DOFs to be on the edge of the reference element where $y = 1$ and $z = 1$, then we must define the basis functions $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ as our first two basis functions.
 
-In FIAT, $k$-forms are defined as $k$-tuples.  To account for this, we translate $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ to vector notation $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
+In FIAT, $k$-forms are represeted as $k$-tuples.  For example, the 1-forms $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ are stored as $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
 \texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}
 , where \texttt{leg(j, x\_mid)} is replicating the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are replicating the values of $(y+1)$ and $(z+1)$, respectively.  The \texttt{leg()} function is shorthand for calling \texttt{legendre} to create legendre polynomials in SymPy.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
 
