@@ -87,7 +87,7 @@
 }
 
 \author{Cyrus Cheng}
-\email{cyrus.cheng15@imperial.ac.uk}
+\email{cyrus.cheng15@alumni.imperial.ac.uk}
 \affiliation{%
   \institution{Imperial College}
   \city{London}
@@ -630,9 +630,10 @@ With the number of DOFs assigned to each mesh entity in the reference element, w
 
 This process is what determines the ordering for the basis functions.  If, in the first step described above where we are assigning DOFs to mesh entities, we assign the first two DOFs to be on the edge of the reference element where $y = 1$ and $z = 1$, then we must define the basis functions $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ as our first two basis functions.
 
-In FIAT, $k$-forms are represeted as $k$-tuples.  For example, the 1-forms $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ are stored as $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
+%In FIAT, $k$-forms are represeted as $k$-tuples.  For example, the 1-forms $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ are stored as $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
+While the formulas above are taken from Gillette's \cite{gillette2019computational} work, these monomials have poor conditioning at higher orders. Therefore, we use Legendre functions obtained symbolically from SymPy via the \texttt{leg} function and write the differential forms in vector notation.  For our examples of $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$, we get
 \texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}
-, where \texttt{leg(j, x\_mid)} is replicating the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are replicating the values of $(y+1)$ and $(z+1)$, respectively.  The \texttt{leg()} function is shorthand for calling \texttt{legendre} to create legendre polynomials in SymPy.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
+, where \texttt{leg(j, x\_mid)} is used for the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are used for the values of $(y+1)$ and $(z+1)$, respectively.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
 
 This process changes only slightly if we instead had considered the the $2$-forms $\mathcal{S}^-_2 \Lambda^2(\square_3)$.  In this scenario, we would have the basis functions given by the equation
 
@@ -711,7 +712,7 @@ The experiments were performed on a single cluster compute node with 2x AMD EPYC
 %<<<<<<< wence/edits
 We solve an $L^2$ projection problem to give a baseline accuracy test for the elements. Given either the unit square or unit cube as our domain of integration on definite integrals, we compute the projection of $f$ into the function space $V$ by using a discretization of the problem: find $u\in V$ such that
 \begin{equation*}
-  \int u v  \text{ d}x = \int f v \text{ d}x
+  \int_\Omega u \cdot v \text{ d}x = \int_\Omega g \cdot v \text{ d}x, \text{ where } g = \nabla f
 \end{equation*}
 for all $v \in V$.  For our experiments, we choose $V$ to be \hcurl spaces for the proper dimension (see \cref{tab:FiredrakeNames}) and $f = \text{sin}(\pi x)\text{sin}(\pi y)$ or $f=\text{sin}(\pi x)\text{sin}(\pi y)\text{sin}(\pi z)$ for two or three dimensions respectively.
 %\akg{What is $V$?  Since the projection figure only talks about~\hcurl, I think $V=$\hcurl.  Also what is the $f$ that you use?}
@@ -896,7 +897,7 @@ These equations are discretized and solved using a suitable \textit{pair} of fin
 For both the primal Poisson and mixed Poisson problems, we solve the system using MUMPS with a sparse direct LU factorization.
 The exact set of solver parameters used for the mixed Poisson problem are shown in \cref{lst:solver_parameters}.
 
-\begin{lstlisting}[float=htbp,caption={An example of some solver parameters that we can use for the mixed Poisson problem.}, label={lst:solver_parameters}, numbers=left, firstnumber=1, xleftmargin=20pt,  xrightmargin=20pt]
+\begin{lstlisting}[float=htbp,caption={An example of some solver parameters that we can use for the mixed Poisson problem.  The options presented here solve the algebraic system with a simplified Newton method where the Jacobian is held constant at the first iterate.  Therefore it is factored at the beginning and triangular solves are applied to it at each subsequent iteration.  This has the effect of performing iterative refinement \cite{wilkinson1994rounding}, \cite{moler1967iterative} and yields an increased accuracy for higher order discretizations on finer meshes.}, label={lst:solver_parameters}, numbers=left, firstnumber=1, xleftmargin=20pt,  xrightmargin=20pt]
 ...
 params = {"snes_type": "newtonls",
                   "snes_linesearch_type": "basic",
@@ -958,7 +959,7 @@ params = {"snes_type": "newtonls",
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{2D primal Poisson error analysis. \label{fig:2dPrimalDofs}}
+      \caption{2D primal Poisson convergence analysis. \label{fig:2dPrimalDofs}}
   \end{subfigure}
   \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
@@ -986,7 +987,7 @@ params = {"snes_type": "newtonls",
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-    \caption{2D mixed Poisson error analysis. \label{fig:2dMixedDofsError}}
+    \caption{2D mixed Poisson convergence analysis. \label{fig:2dMixedDofsError}}
   \end{subfigure} \\[0.5\baselineskip]
   \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
@@ -1014,7 +1015,7 @@ params = {"snes_type": "newtonls",
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-    \caption{3D primal Poisson error analysis. \label{fig:3dPrimalDofsError}}
+    \caption{3D primal Poisson convergence analysis. \label{fig:3dPrimalDofsError}}
   \end{subfigure}
   \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
@@ -1042,14 +1043,14 @@ params = {"snes_type": "newtonls",
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{3D mixed Poisson error analysis. \label{fig:3dMixedDofsError}}
+      \caption{3D mixed Poisson convergence analysis. \label{fig:3dMixedDofsError}}
   \end{subfigure}
-  \caption{An error analysis of the primal and mixed Poisson problems in 2D and 3D.  Error here is calculated as the $L^2$ error between the exact solution and the approximate using the corresponding finite element space.}
+  \caption{A convergence analysis of the primal and mixed Poisson problems in 2D and 3D.  Error here is calculated as the $L^2$ error between the exact solution and the approximate using the corresponding finite element space.}
 \label{fig:PrimalMixedErrorAnalysis}
 \end{figure}
 
 
-The error analysis results for the primal Poisson and mixed Poisson problems can be seen in \cref{fig:2dPrimalDofs,fig:2dMixedDofsError,fig:3dPrimalDofsError,fig:3dMixedDofsError}.  In each of the subfigures of \cref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ have parallel trendlines, indicating that they have the same overall convergence rate.  For the primal Poisson problem in 2D and 3D, the trimmed serendipity elements perform as well or better than the tensor product elements for orders $r=2,3$.  Furthermore, comparing the elements via DOFs as in the projection problem yields another instance where we see that using $\mathcal{S}^-_{3}$ instead of $\mathcal{Q}^-_2$ will require no extra DOFs but will attain a higher accuracy.  
+The empirical convergence results for the primal Poisson and mixed Poisson problems can be seen in \cref{fig:2dPrimalDofs,fig:2dMixedDofsError,fig:3dPrimalDofsError,fig:3dMixedDofsError}.  In each of the subfigures of \cref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ have parallel trendlines, indicating that they have the same overall convergence rate.  For the primal Poisson problem in 2D and 3D, the trimmed serendipity elements perform as well or better than the tensor product elements for orders $r=2,3$.  Furthermore, comparing the elements via DOFs as in the projection problem yields another instance where we see that using $\mathcal{S}^-_{3}$ instead of $\mathcal{Q}^-_2$ will require no extra DOFs but will attain a higher accuracy.  
 
 
 %The primal Poisson problem shows that there are scenarios where using trimmed serendipity elements can be beneficial in terms of error depending on the number of DOFs.  However, in the mixed Poisson problem, we do not see this benefit in either the 2D case or the 3D case.  
@@ -1289,7 +1290,9 @@ Note that the convergence rates are computed by
 
 \noindent  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect the rate of convergence to be double the order of the finite element used to solve the problem.  This is reflected in the table well for both $\mathcal{S}^-$ and $\mathcal{Q}^-$ elements.  The ``$-$'' entries in the table indicate the eigenvalue solver did not find that specific eigenvalue in the allowed number of iterations; we set the solver to iterate a sufficient number of times to find the first 15 eigenvalue-eigenvector pairs.
 
-The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}). The solver would give a varying amount of eigenvalues with value $1$, which we ignored.  From a computational perspective, this happens because DOFs on the boundary have their respective row and column replaced by $0$'s with a single value $1$ entry when enforcing the Dirichlet boundary conditions.  This causes all of the boundary DOFs to be represented by an eigenvalue of $1$.
+The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}).
+Because Firedrake enforces strong boundary conditions by placing a 1 on the diagonal and zeroing out the rows and columns, this produces a spurious eigenvalue of 1 for each boundary node.  We do not report these eigenvalues.
+%The solver would give a varying amount of eigenvalues with value $1$, which we ignored.  From a computational perspective, this happens because DOFs on the boundary have their respective row and column replaced by $0$'s with a single value $1$ entry when enforcing the Dirichlet boundary conditions.  This causes all of the boundary DOFs to be represented by an eigenvalue of $1$.
 
 Since both elements attain the expected convergence rate, we focus on the rest of the results in the table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that tensor product elements are able to get results that are up to an order of magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed serendipity elements results in a reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed serendipity elements have nearly half the DOFs of tensor product elements, and correspondingly, require approximately half the time per iteration to solve for the eigenvalues (outside of the case $N=4$).  At higher orders, we expect that this will be even more exaggerated.  
 
