@@ -328,7 +328,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
         \addlegendentry{$Q^-\Lambda^0$}
       \end{semilogyaxis}
       \end{tikzpicture}
-      \caption{$H^1$-conforming elements\label{fig:2dProjectionH}}
+      \caption{$H^1$-conforming elements\label{fig:LagrangeDegDofs}}
     \end{subfigure}
     \begin{subfigure}[h]{0.3\textwidth}
       \begin{tikzpicture}[scale=0.5]
@@ -344,7 +344,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
         \addlegendentry{$Q^-\Lambda^1$}
       \end{semilogyaxis}
       \end{tikzpicture}
-      \caption{\hcurl-conforming elements\label{fig:2dProjection}}
+      \caption{\hcurl-conforming elements\label{fig:CurlDegDofs}}
   \end{subfigure} %\\[0.5\baselineskip]
   \begin{subfigure}[h]{0.3\textwidth}
     \begin{tikzpicture}[scale=0.5]
@@ -360,7 +360,7 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
         \addlegendentry{$Q^-\Lambda^2$}
       \end{semilogyaxis}
       \end{tikzpicture}
-      \caption{\hdiv-conforming elements\label{fig:2dProjectionH}}
+      \caption{\hdiv-conforming elements\label{fig:SminusDegDofs}}
     \end{subfigure}
   \caption{We show a comparison of the DOFs required for using a trimmed serendipity element vs a tensor product element.  In each of the plots, the left-most point represents order $r=2$, and then the order increases by $1$ at each point.  The DOFs were calculated using a $[0,1]^3$ mesh that was uniformly subdivided so that each row and column of the mesh has $N=16$ elements, yielding a total mesh size of $16^3$ cubes.  The red trendlines represent the trimmed serendipity elements while the blue trendlines represent the tensor product elements.\label{fig:DegsDofs}} 
   \Description{A DOF study for tensor product and trimmed serendipity elements.  We consider the case for all of $H^1$, \hdiv and \hcurl.}
@@ -1336,7 +1336,7 @@ Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two ei
   \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
-             ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=185, xmin=0,
+             ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=185, xmin=0.1,
              legend pos=north east, legend style={font=\tiny}]
         \addplot[red, mark=*]
         table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
