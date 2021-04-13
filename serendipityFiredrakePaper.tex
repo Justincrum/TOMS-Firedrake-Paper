@@ -60,8 +60,8 @@
 \newcommand{\calS}{\mathcal{S}}
 %\newcommand{\hcurl}{\ensuremath{{H}(\curl)}\xspace}
 %\newcommand{\hdiv}{\ensuremath{{H}(\Div)}\xspace}
-\newcommand{\hcurl}{\ensuremath{{H}(\curl )}}
-\newcommand{\hdiv}{\ensuremath{{H}(\Div )}}
+\newcommand{\hcurl}{\ensuremath{{H}(\curl ) } }
+\newcommand{\hdiv}{\ensuremath{{H}(\Div ) } }
 
 \newcommand{\cancel}[1]{}
 
@@ -312,7 +312,9 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    %While ease of use for practitioners is one reason for choosing Firedrake as a library for implementing trimmed serendipity elements, it is not the only one.    
    For developers, implementing a new element type -- such as trimmed serendipity -- is simply a matter of defining a suitable computational basis and connecting it to the intermediate interfaces in the included libraries.  We implement the basis functions from~\cite{gillette2019computational} (that are already associated to portions of the square or cube geometry) within FIAT, and then Firedrake's form compiler generates the code for the variational forms.
    
-   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain.  In 2D, the trimmed serendipity elements at low orders have fewer, though similar, numbers of DOFs to tensor product and serendipity elements.  However, as the degree of the elements is increased, the gap between the number of DOFs for trimmed serendipity elements and tensor product elements grows.  
+   Having these available in Firedrake allows users to test the theoretical limits that the trimmed serendipity elements are trying to attain. 
+   At low orders in both 2D and 3D, the trimmed serendipity elements have slightly fewer DOFs than tensor product elements.  However as the degree grows, the gap in DOFs between these two types of elements becomes more significant.
+   %In 2D, the trimmed serendipity elements at low orders have fewer, though similar, numbers of DOFs to tensor product and serendipity elements.  However, as the degree of the elements is increased, the gap between the number of DOFs for trimmed serendipity elements and tensor product elements grows.  
    
    
 \begin{figure}[htbp]
@@ -515,7 +517,7 @@ $r=3$
   
 
 	The trimmed serendipity elements are truly distinct from regular serendipity spaces for $k$ values $0<k<n$.  Here, we will only consider dimensions $n=2$ and $n=3$, where the $k$-form spaces can be identified as vector-valued finite elements.  	
-	In 2D, the vector-valued spaces $\calS_r^-\Lambda^1(\square_2)$ bear close relation to the Arbogast Correa elements~\cite{arbogast2016two}, as explained in~\cite[Prop 2.2]{gillette2019trimmed}.
+	In 2D, the vector-valued spaces $\calS_r^-\Lambda^1(\square_2)$ bear close relation to the Arbogast-Correa elements~\citep{arbogast2016two}, as explained in~\cite[Prop 2.2]{gillette2019trimmed}.
 	In 3D, the vector valued spaces $\calS_r^-\Lambda^1(\square_3)$ and $\calS_r^-\Lambda^2(\square_3)$ were also characterized by Cockburn and Fu~\cite{CF2016}, as explained in~\cite[Prop 2.3]{gillette2019trimmed}.
 
 	
@@ -645,7 +647,8 @@ With the number of DOFs assigned to each mesh entity in the reference element, w
 This process is what determines the ordering for the basis functions.  If, in the first step described above where we are assigning DOFs to mesh entities, we assign the first two DOFs to be on the edge of the reference element where $y = 1$ and $z = 1$, then we must define the basis functions $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ as our first two basis functions.
 
 %In FIAT, $k$-forms are represeted as $k$-tuples.  For example, the 1-forms $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ are stored as $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
-While the formulas above are taken from Gillette's \cite{gillette2019computational} work, these monomials have poor conditioning at higher orders. Therefore, we use Legendre functions obtained symbolically from SymPy via the \texttt{leg} function and write the differential forms in vector notation.  For our examples of $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$, we get
+While the formulas above are taken from Gillette's \cite{gillette2019computational} work, these monomials have poor conditioning at higher orders.
+Therefore, we Legendre polynomials obtained symbolically from SymPy via the \texttt{leg} function.  Then we write the differential forms in vector notation.  For our examples of $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$, we get
 \texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}
 , where \texttt{leg(j, x\_mid)} is used for the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are used for the values of $(y+1)$ and $(z+1)$, respectively.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
 
@@ -707,7 +710,7 @@ l2Space = FunctionSpace(mesh, "DPC", polyDegree - 1)
     
 The following experiments show the benefits and costs of using trimmed serendipity elements in comparison to traditional tensor product elements.  We first present a basic projection example as a means of confirming approximation properties of our elements.  Next, we present results on a primal Poisson problem (to test $H^1$ elements), a mixed Poisson problem (to test \hdiv and $L^2$ elements), and a cavity resonator problem (to test \hcurl elements).  Since the \hcurl and \hdiv elements are only a rotation of the DOFs on the edges of elements in 2D, we do not give an experiment using \hcurl elements in 2D. 
 
-The experiments were performed on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7.  For memory intensive runs where the order and mesh require more DOFs, the experiments were performed on a high memory node with 3TB of memory but an otherwise identical setup.  Each job was run by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on-node parallelism by requesting a full node and executing the jobs with \texttt{mpirun} set to use 24 processes, with a few exceptions for smaller cases that will be pointed out later.  Timing data was collected after first performing a dry run of the code to warm the cache and then taking the minimum time over three subsequent runs.  
+The experiments were performed either on a single cluster compute node with 2x AMD EPYC 7642 48-core (Rome) processors (2.4GHz) and 512GB of memory running CentOS 7 or a similar node with 3TB of memory.  The 2D experiments were all done using the 512GB node, while in 3D, the 4th order experiments were ran on the 3TB node.  Each job was run by submitting a SLURM script that requested one node in isolation to ensure no other jobs were running at the same time.  We utilized on-node parallelism by requesting a full node and executing the jobs with \texttt{mpirun} set to use 24 processes, with a few exceptions for smaller cases that will be pointed out later.  Timing data was collected after first performing a dry run of the code to warm the cache and then taking the minimum time over three subsequent runs.  
 
 %\josh{Somewhere in this section lead in we need to describe our experimental setup, which should include (1) hardware specifications and (2) software specifications (versions of firedrake, etc.)}
 
@@ -776,7 +779,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{2D edge length vs error\label{fig:2dProjectionH}}
+      \caption{error vs 2D edge length \label{fig:2dProjectionH}}
     \end{subfigure}
     \begin{subfigure}[h]{0.48\textwidth}
       \begin{tikzpicture}[scale=0.75]
@@ -804,7 +807,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-      \caption{2D DOFs vs error\label{fig:2dProjection}}
+      \caption{error vs 2D DOFs \label{fig:2dProjection}}
   \end{subfigure} \\[0.5\baselineskip]
   \begin{subfigure}[h]{0.48\textwidth}
     \begin{tikzpicture}[scale=0.75]
@@ -832,7 +835,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-    \caption{3D edge length vs error\label{fig:3dProjectionH}}
+    \caption{error vs 3D edge length\label{fig:3dProjectionH}}
   \end{subfigure}
   \begin{subfigure}[h]{0.48\textwidth}
   \begin{tikzpicture}[scale=0.75]
@@ -860,18 +863,18 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
         \addlegendentry{$Q^-_4$}
       \end{loglogaxis}
       \end{tikzpicture}
-    \caption{3D DOFs vs error\label{fig:3dProjectionDofs}}
+    \caption{error vs 3D DOFs\label{fig:3dProjectionDofs}}
   \end{subfigure}
   \caption{Results of solving an $L^2$ projection problem using trimmed serendipity and tensor product \hcurl elements in both 2D (top row) and 3D (bottom row).  Experiments were ran for $k$-forms for $k=0,1,2,3$ in 2D and 3D, however only the $1$-forms in 3D are displayed here.  In every case, the trimmed serendipity element trendline has the same slope as its tensor product counterpart, as expected by the theory.  In most cases, the tensor product elements perform better by these metrics, in the sense that their trendlines lie below the trimmed serendipity trendlines.  The notable exception is the quadratic case, $r=2$, where trimmed serendipity perform slightly better in terms of DOFs, in both 2D and 3D.\label{Projections}} 
   \Description{Experimental convergence analysis on a projection problem using tensor product and trimmed serendipity 1-form elements.}
 \end{figure}
 
-The goal of the projection problem is to establish that the elements attain the mathematically expected rates of convergence as mesh size decreases.  For this, we create a mesh on $[0,1]^n$ of uniformly sized squares or cubes, where we refine the mesh from $N=4$ squares (or cubes) in each row and column to $N=128$ squares in each row and column (or $N=64$ cubes).  This results in a mesh with $N^2$ or $N^3$ squares or cubes respectively.  For the folllowing results, we will use $h = \frac{1}{N}$ since the mesh elements are all uniformly sized. 
-We employ both trimmed serendipity elements and tensor product elements on each mesh and record the $L^2$ error in each case.  In \cref{Projections}, we report the $L^2$ error in terms of the classical measure of maximum edge length ($h$) as well as total number of degrees of freedoms (DOFs).
+The goal of the projection problem is to establish that the elements attain the mathematically expected rates of convergence as mesh size decreases, as well as comparing relative efficincies of $\mathcal{S}^-$ and $\mathcal{Q}^-$.  For this, we create a mesh on $[0,1]^n$ of uniformly sized squares or cubes, where we refine the mesh from $N=4$ squares (or cubes) in each row and column to $N=128$ squares in each row and column (or $N=64$ cubes).  This results in a mesh with $N^2$ or $N^3$ squares or cubes respectively.  For the folllowing results, we will use $h = \frac{1}{N}$ since the mesh elements are all uniformly sized. 
+We employ both trimmed serendipity elements and tensor product elements on each mesh and record the $L^2$ error in each case.  In \cref{Projections}, we report the $L^2$ error in terms of the classical measure of maximum edge length ($h$) as well as total number of  DOFs.
 
 The expectation is that $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ converge at the same rate with respect to $h$, which is confirmed in the plots by parallel trendlines.  These parallel trendlines can be seen in each of the projection plots.  For $r=2$, we see the trendline for $\mathcal{S}^-_r$ below the trendline for $\mathcal{Q}^-_r$, indicating that that the trimmed serendipity elements achieve a better accuracy for the amount of DOFs required than the tensor product elements.  
 
-For the $r=2$ case, the trimmed serendipity elements achieve a better accuracy while requiring less DOFs.  Therefore in this low order case, trimmed serendipity elements would be beneficial to use.  In the case of $r=3,4$ the trendlines for $\mathcal{S}^-_r$ are above the trendlines for $\mathcal{Q}^-_r$.  However, considering the elements $\mathcal{Q}^-_3$ and $\mathcal{S}^-_4$, we see that $\mathcal{Q}^-_3$ requires approximately $1.71 \times 10^8$ DOFs and $\mathcal{S}^-_4$ at the same mesh refinement requires $0.95 \times 10^8$ DOFs.  While $\mathcal{Q}^-_3$ attains an error of $8.96 \times 10^{-8}$, the $\mathcal{S}^-_4$ elements attain an error of $2.1 \times 10^{-9}$.  
+For the $r=2$ case, the trimmed serendipity elements achieve a better accuracy while requiring fewer DOFs.  Therefore in this low order case, trimmed serendipity elements would be beneficial to use.  In the case of $r=3,4$ the trendlines for $\mathcal{S}^-_r$ are above the trendlines for $\mathcal{Q}^-_r$.  However, considering the elements $\mathcal{Q}^-_3$ and $\mathcal{S}^-_4$, we see that $\mathcal{Q}^-_3$ requires approximately $1.71 \times 10^8$ DOFs and $\mathcal{S}^-_4$ at the same mesh refinement requires $0.95 \times 10^8$ DOFs.  While $\mathcal{Q}^-_3$ attains an error of $8.96 \times 10^{-8}$, the $\mathcal{S}^-_4$ elements attain an error of $2.1 \times 10^{-9}$.  
 %\akg{This needs to be explained more - where is the extra order of magnitude accuracy?  Be specific.  I also agree with Josh's (commented out) comment that we need to highlight the positive - at the very practical case of $r=2$, there is a specific benefit.  What is the impact of this to a user?  Spell it out!}.
 
 %\josh{this paragraph is making too coarse/negative of a conclusion, isn't it?  Why are we not talking about how the lines swap as $r$ increases?}
@@ -1069,14 +1072,14 @@ params = {"snes_type": "newtonls",
 \end{figure}
 
 
-The empirical convergence results for the primal Poisson and mixed Poisson problems can be seen in \cref{fig:2dPrimalDofs,fig:2dMixedDofsError,fig:3dPrimalDofsError,fig:3dMixedDofsError}.  In each of the subfigures of \cref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ have parallel trendlines, indicating that they have the same overall convergence rate.  For the primal Poisson problem in 2D and 3D, the trimmed serendipity elements perform as well or better than the tensor product elements for orders $r=2,3$.  Furthermore, comparing the elements via DOFs as in the projection problem yields another instance where we see that using $\mathcal{S}^-_{3}$ instead of $\mathcal{Q}^-_2$ will require no extra DOFs but will attain a higher accuracy.  
+The empirical convergence results for the primal Poisson and mixed Poisson problems can be seen in \cref{fig:2dPrimalDofs,fig:2dMixedDofsError,fig:3dPrimalDofsError,fig:3dMixedDofsError}.  In each of the subfigures of \cref{fig:PrimalMixedErrorAnalysis}, we see that independent of the performance of each element, the $\mathcal{S}^-_r$ and $\mathcal{Q}^-_r$ have parallel trendlines, indicating that they have the same overall convergence rate.  For the primal Poisson problem in 2D and 3D, the trimmed serendipity elements perform as well or better than the tensor product elements for orders $r=2,3$.  Furthermore, comparing the elements via DOFs as in the projection problem yields another instance where we see that using $\mathcal{S}^-_{3}$ instead of $\mathcal{Q}^-_2$ will attain a higher accuracy for essential the same number of DOFs.  
 
 
 %The primal Poisson problem shows that there are scenarios where using trimmed serendipity elements can be beneficial in terms of error depending on the number of DOFs.  However, in the mixed Poisson problem, we do not see this benefit in either the 2D case or the 3D case.  
 
 In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing the solutions to the primal and mixed Poisson problems using trimmed serendipity and tensor product elements.  As in the DOFs vs error graphs, in \cref{fig:3dPrimalDofsTime,fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \cref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In \cref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time. 
 
-Overall \cref{fig:3dMixedDofsTime} shows that the time scales based off DOFs regardless of the element that is used.  Further evidence of this is seen in \cref{fig:3dMixedTimeError}.  Based off the previous analysis of DOFs vs error for the mixed Poisson problem, the timing data here illustrates that attaining the extra accuracy from using $\mathcal{S}^-_3$ instead of $\mathcal{Q}^-_2$ does not invoke a larger time requirement.  
+Overall \cref{fig:3dMixedDofsTime} shows that the time scaling is dependent upon the number of DOFs regardless of the element that is used.  Further evidence of this is seen in \cref{fig:3dMixedTimeError}.  Similar to the previous analysis of DOFs vs error for the mixed Poisson problem, the timing data here illustrates that attaining the extra accuracy from using $\mathcal{S}^-_3$ instead of $\mathcal{Q}^-_2$ does not invoke a larger time requirement.  
 
 
 %Furthermore, while \cref{fig:3dMixedTimeError} indicates that in the mixed Poisson problem trimmed serendipity elements do not do better than the tensor product elements, there is still a scenario where we may find them useful.  For example, trimmed serendipity elements at order 3 can solve the problem in approximately the same time as tensor product elements at order 2, while giving an extra order of accuracy.  Similarly, we see this happening again at order 4 trimmed serendipity elements in comparison to order 3 tensor product elements.
@@ -1309,11 +1312,11 @@ Note that the convergence rates are computed by
 
 \noindent  Based off earlier eigenvalue works \cite{boffi2010finite}, we expect the rate of convergence to be double the order of the finite element used to solve the problem.  This is reflected in the table well for both $\mathcal{S}^-$ and $\mathcal{Q}^-$ elements.  The ``$-$'' entries in the table indicate the eigenvalue solver did not find that specific eigenvalue in the allowed number of iterations; we set the solver to iterate a sufficient number of times to find the first 15 eigenvalue-eigenvector pairs.
 
-The experiment was done by using SLEPc in Firedrake, computing an inverted shift to a target of $3.0$, then asking SLEPc for $15$ eigenvalue-eigenvector pairs.  SLEPc was then give a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}).
-Because Firedrake enforces strong boundary conditions by placing a 1 on the diagonal and zeroing out the rows and columns, this produces a spurious eigenvalue of 1 for each boundary node.  We do not report these eigenvalues.
+The experiment was done by using Firedrake to create the mass and stiffness matrices as petsc4py objects, then using slepc4py to do the eigenvalue analysis.  The eigenvalue analysis was done by computing an inverted shift to a target of $3.0$, then solving for $15$ eigenvalue-eigenvector pairs.  The SLEPc solve was done using the default (Krylov-Schur) solver with a tolerance level of $1\text{e}-7$, and a couple of specific mumps parameters ({\fontfamily{qcr}\selectfont icntl 14} set to {\fontfamily{qcr}\selectfont 200} and {\fontfamily{qcr}\selectfont icntl 13} set to {\fontfamily{qcr}\selectfont 1}).
+We note that the eigensolver finds a varying number of spurious eigenvalues with value $1$.  These exist because Firedrake enforces strong boundary conditions by placing a 1 on the diagonal and zeroing out the rows and columns, not due to the elements that we use or the SLEPc solver that is called.  We do not report these eigenvalues.
 %The solver would give a varying amount of eigenvalues with value $1$, which we ignored.  From a computational perspective, this happens because DOFs on the boundary have their respective row and column replaced by $0$'s with a single value $1$ entry when enforcing the Dirichlet boundary conditions.  This causes all of the boundary DOFs to be represented by an eigenvalue of $1$.
 
-Since both elements attain the expected convergence rate, we focus on the rest of the results in the table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that tensor product elements are able to get results that are up to an order of magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed serendipity elements results in a reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed serendipity elements have nearly half the DOFs of tensor product elements, and correspondingly, require approximately half the time per iteration to solve for the eigenvalues (outside of the case $N=4$).  At higher orders, we expect that this will be even more exaggerated.  
+Since both elements attain the expected convergence rate, we focus on the rest of the results in the table.  Investigating the error in the eigenvalues in the chart compared to the exact values, we see that tensor product elements are able to get results that are up to an order of magnitude better near the target eigenvalue.  On the other hand, this loss of accuracy from using trimmed serendipity elements is offset by a reduction in required time to solve for the requested eigenvalues.  At every mesh refinement level, trimmed serendipity elements have nearly half the DOFs of tensor product elements, and correspondingly, require approximately half the time per iteration to solve for the eigenvalues (outside of the case $N=4$).  At higher orders, we expect that this will be even more exaggerated.  
 
 Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two eigenvalues, $\lambda = 3$ and $\lambda = 5$. We computed the eigenvalues at different orders of the elements, from $r=2$ to $r=5$, and kept the mesh constant at $16 \times 16 \times 16$.  The timing data was then collected by choosing the largest time required for any of the multiplicities of $3$ or $5$ that the solver found. 
 
@@ -1361,13 +1364,14 @@ Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two ei
       \end{tikzpicture}
     \caption{Eigenvalue time analysis. \label{fig:EigenvalueTimeError}}
   \end{subfigure}\\
-  \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$.  Error is calculated as the $L^1$ error between the actual eigenvalue and the approximated eigenvalue.}
+  \caption{Results for solving for $\lambda = 3$ and $\lambda = 5$ using Firedrake and SLEPc by increasing the order from $2$ to $5$.  Error is calculated as the absolute value of the error between the actual eigenvalue and the approximated eigenvalue.}
 \label{fig:EigenvalueAnalysis}
 \Description{Convergence and timing analysis for the Maxwell cavity eigenvalue problem using trimmed serendipity and tensor product \hcurl elements.}
 \end{figure}
 
 The error results shown in \cref{fig:EigenvalueDofsError} for the eigenvalue problem indicate that trimmed serendipity elements yield less error in the eigenvalues for the number DOFs required to compute them than the tensor product elements.  This is a change from the mixed Poisson problem where the DOFs vs Error trendline for trimmed serendipity was generally above the trendline for tensor product elements.  %However, it is important to note that the refinement was done differently in the case of the eigenvalue problem.  In order to achieve a higher count of DOFs, we increased the order $r$ for $\calS^-_r$ and $\calQ^-_r$ rather than refining the mesh as was done in the mixed Poisson problem experiments.  
-The timing results in \ref{fig:EigenvalueTimeError} for the trimmed serendipity elements were similarly better for the eigenvalue problem in comparison to the tensor product elements.
+The timing results in \ref{fig:EigenvalueTimeError} for the trimmed serendipity elements were similarly better for the eigenvalue problem in comparison to the tensor product elements. 
+Overall, our results indicate that small eigenvalues are computed more efficiently with trimmed serendipity elements when one considers error vs total DOF count or run-time.
 %>>>>>>> master
 
 
@@ -1412,7 +1416,7 @@ Our computational findings suggest that trimmed serendipity elements could be pa
 
 \section*{Code availability}
 
-All major Firedrake components, as well as the code for the numerical experiments in the paper have been archived on Zenodo \cite{zenodo/2021}. An installation of Firedrake with components matching those used to produce the results in this paper can be obtained following the instructions at \url{https://www.firedrakeproject.org/download.html}.
+All major Firedrake components, as well as the code for the numerical experiments in the paper have been archived on Zenodo \cite{zenodo/2021}. 
 
 \begin{acks}
 This work was supported by National Science Foundation (NSF) Collaborative Research Awards DMS-1913094 and DMS-1912653 and by U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under Award Number DE-SC-0019039. 
