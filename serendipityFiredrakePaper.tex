@@ -145,12 +145,6 @@
   \city{Tucson}
   \state{AZ}
   \country{USA}}
-\affiliation{%
-  \institution{\lm{Include this affil?}Lawrence Livermore National Laboratory}
-  \department{Center for Applied Scientific Computing}
-  \city{Livermore}
-  \state{CA}
-  \country{USA}}
 \email{agillette@math.arizona.edu}
 %%
 %% By default, the full list of authors will be used in the page
@@ -1106,9 +1100,7 @@ The empirical convergence results for the primal Poisson and mixed Poisson probl
 
 %The primal Poisson problem shows that there are scenarios where using trimmed serendipity elements can be beneficial in terms of error depending on the number of DOFs.  However, in the mixed Poisson problem, we do not see this benefit in either the 2D case or the 3D case.  
 
-In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing the solutions to the primal and mixed Poisson problems using trimmed serendipity and tensor product elements.  As in the DOFs vs error graphs, in \cref{fig:3dPrimalDofsTime,fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \cref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In \cref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time. 
-
-Overall \cref{fig:3dMixedDofsTime} shows that the time scaling is dependent upon the number of DOFs regardless of the element that is used.  Further evidence of this is seen in \cref{fig:3dMixedTimeError}.  Similar to the previous analysis of DOFs vs error for the mixed Poisson problem, the timing data here illustrates that attaining the extra accuracy from using $\mathcal{S}^-_3$ instead of $\mathcal{Q}^-_2$ does not invoke a larger time requirement.  
+In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing the solutions to the primal and mixed Poisson problems using trimmed serendipity and tensor product elements.  As in the DOFs vs error graphs, in \cref{fig:3dPrimalDofsTime,fig:3dPrimalTimeError}, we see good evidence that serendipity elements are able to to produce better results at a faster rate.  Specifically, in \cref{fig:3dPrimalDofsTime}, we can see that serendipity elements are able to do a larger number of DOFs in the same amount of time.  In \cref{fig:3dPrimalTimeError} we see that for a given error level, trimmed serendipity elements require less time.  Overall \cref{fig:3dMixedDofsTime} shows that the time scaling is dependent upon the number of DOFs regardless of the element that is used.  Further evidence of this is seen in \cref{fig:3dMixedTimeError}.  Similar to the previous analysis of DOFs vs error for the mixed Poisson problem, the timing data here illustrates that attaining the extra accuracy from using $\mathcal{S}^-_3$ instead of $\mathcal{Q}^-_2$ does not invoke a larger time requirement.  
 
 
 %Furthermore, while \cref{fig:3dMixedTimeError} indicates that in the mixed Poisson problem trimmed serendipity elements do not do better than the tensor product elements, there is still a scenario where we may find them useful.  For example, trimmed serendipity elements at order 3 can solve the problem in approximately the same time as tensor product elements at order 2, while giving an extra order of accuracy.  Similarly, we see this happening again at order 4 trimmed serendipity elements in comparison to order 3 tensor product elements.
