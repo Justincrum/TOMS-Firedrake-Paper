@@ -117,7 +117,7 @@
   \country{UK}}
 \email{lawrence.mitchell@durham.ac.uk}
 
-\author{Robert Kirby}
+\author{Robert C. Kirby}
 \affiliation{%
   \institution{Baylor University}
   \department{Department of Mathematics}
@@ -672,7 +672,7 @@ This process is what determines the ordering for the basis functions.  If, in th
 
 %In FIAT, $k$-forms are represeted as $k$-tuples.  For example, the 1-forms $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$ are stored as $((y+1)(z+1), 0, 0)$ $(x(y+1)(z+1),0,0)$.  In this form, we then translate the values $(y+1)$, $(z+1)$ and $x$ in different ways.  The overall conversion to FIAT notation ends with 
 While the formulas above are taken from \citet{gillette2019computational}, these monomials have poor conditioning at higher orders.
-Therefore, we Legendre polynomials obtained symbolically from SymPy via the \texttt{leg} function.  Then we write the differential forms in vector notation.  For our examples of $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$, we get
+Therefore, we use Legendre polynomials obtained symbolically from SymPy via the \texttt{leg} function.  Then we write the differential forms in vector notation.  For our examples of $(y+1)(z+1)dx$ and $x(y+1)(z+1)dx$, we get
 \texttt{tuple([(leg(j,x\_mid)*dz[1]*dy[1],0,0)])}, where \texttt{leg(j, x\_mid)} is used for the $1$ or $x$ coefficient, and the \texttt{dy[1]} and \texttt{dz[1]} are used for the values of $(y+1)$ and $(z+1)$, respectively.  After repeating this process for each of the edges and associated basis functions, we then also do a similar process for the face functions in the set $\tilde{F}_2 \Lambda^1$.  
 
 This process changes only slightly if we instead had considered the the $2$-forms $\mathcal{S}^-_2 \Lambda^2(\square_3)$.  In this scenario, we would have the basis functions given by the equation
