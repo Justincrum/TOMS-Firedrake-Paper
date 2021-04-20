@@ -146,17 +146,9 @@
   \state{AZ}
   \country{USA}}
 \email{agillette@math.arizona.edu}
-%%
-%% By default, the full list of authors will be used in the page
-%% headers. Often, this list is too long, and will overlap
-%% other information printed in the page headers. This command allows
-%% the author to define a more concise list
-%% of authors' names for this purpose.
-%\renewcommand{\shortauthors}{Trovato and Tobin, et al.}
 
-%%
-%% The abstract is a short summary of the work to be presented in the
-%% article.
+\renewcommand{\shortauthors}{J.~Crum, C.~Cheng, D.~A.~Ham, L.~Mitchell, R.~C.~Kirby,
+  J.~A.~Levine, and A.~Gillette}
 
 \begin{abstract}
        We present an implementation of the trimmed serendipity finite element family, using the open source finite element package Firedrake.  The new elements can be used seamlessly within the software suite for problems requiring $H^1$, \hcurl~or \hdiv-conforming elements on meshes of squares or cubes.  To test how well trimmed serendipity elements perform in comparison to traditional tensor product elements, we perform a sequence of numerical experiments including the primal Poisson, mixed Poisson, and Maxwell cavity eigenvalue problems.  Overall, we find that the trimmed serendipity elements converge, as expected, at the same rate as the respective tensor product elements while being able to offer significant savings in the time or memory required to solve certain problems.
