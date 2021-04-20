@@ -11,6 +11,8 @@
   title={Common and unusual finite elements},
   author={Kirby, Robert C and Logg, Anders and Rognes, Marie E and Terrel, Andy R},
   booktitle={Automated Solution of Differential Equations by the Finite Element Method},
+  crossref = {Logg:2012},
+  doi = {10.1007/978-3-642-23099-8_3},
   pages={95--119},
   year={2012},
   publisher={Springer}
@@ -35,6 +37,7 @@
 	pages = {1650--1688},
 	publisher = {SIAM},
 	title = {A systematic construction of finite element commuting exact sequences},
+        doi = {10.1137/16M1073352},
 	volume = {55},
 	year = {2017}}
 
@@ -45,7 +48,7 @@
 	journal = {Numerische Mathematik},
 	number = {3},
 	pages = {315--341},
-	title = {Mixed finite elements in {${\bf R}^{3}$}},
+	title = {Mixed finite elements in {$\mathbb{R}^{3}$}},
         doi = {10.1007/BF01396415},
 	volume = {35},
 	year = {1980}}
@@ -57,13 +60,13 @@
 	journal = {Numerische Mathematik},
 	number = {1},
 	pages = {57--81},
-	title = {A new family of mixed finite elements in {${\bf R}^3$}},
+	title = {A new family of mixed finite elements in {$\mathbb{R}^3$}},
 	volume = {50},
         doi = {10.1007/BF01389668},
 	year = {1986}}
 
 @article{ABB2012,
-	author = {Arnold, Douglas N and Boffi, Daniele and Bonizzoni, Francesca},
+	author = {Arnold, Douglas N. and Boffi, Daniele and Bonizzoni, Francesca},
 	date-added = {2021-02-22 08:01:02 -0800},
 	date-modified = {2021-02-22 08:01:15 -0800},
 	journal = {Numerische Mathematik},
@@ -136,6 +139,7 @@
 	journal = {The SMAI Journal of Computational Mathematics},
 	pages = {1--21},
 	title = {Computational serendipity and tensor product finite element differential forms},
+        doi = {10.5802/smai-jcm.41},
 	volume = {5},
 	year = {2019}}
 
@@ -146,6 +150,7 @@
 	pages = {583--606},
 	title = {Trimmed serendipity finite element differential forms},
 	volume = {88},
+        doi = {10.1090/mcom/3354},
 	year = {2019}}
 
 @article{arnold2011serendipity,
@@ -287,16 +292,16 @@
   publisher =    {Springer},
   year =         2012,
   doi =          {10.1007/978-3-642-23099-8},
+  address = {Berlin, Heidelberg},
   isbn =         {978-3-642-23098-1},
 }
 
 @incollection{alnaes2012ufl,
 	author = {Aln{\ae}s, Martin Sandve},
-	booktitle = {Automated Solution of Differential Equations by the Finite Element Method},
 	pages = {303--338},
-	publisher = {Springer},
 	title = {{UFL}: a finite element form language},
-	year = {2012}}
+        doi = {10.1007/978-3-642-23099-8_17},
+        crossref = {Logg:2012}}
 
 @article{christiansen2016constructions,
 	author = {Christiansen, Snorre H. and Gillette, Andrew},
@@ -306,6 +311,7 @@
 	publisher = {EDP Sciences},
 	title = {Constructions of some minimal finite element systems},
 	volume = {50},
+        doi = {10.1051/m2an/2015089},
 	year = {2016}}
 
 @article{brezzi1985two,
@@ -324,6 +330,7 @@
 	number = {9},
 	pages = {212},
 	title = {Periodic table of the finite elements},
+        url = {https://sinews.siam.org/Details-Page/periodic-table-of-the-finite-elements},
 	volume = {47},
 	year = {2014}}
 
@@ -342,8 +349,10 @@
 	author = {Kirby, Robert C.},
 	booktitle = {Automated solution of differential equations by the finite element method},
 	pages = {247--255},
+        crossref = {Logg:2012},
 	publisher = {Springer},
 	title = {{FIAT}: numerical construction of finite element basis functions},
+        doi = {10.1007/978-3-642-23099-8_13},
 	year = {2012}}
 
 @article{fumio1987mixed,
@@ -354,6 +363,7 @@
 	publisher = {Elsevier},
 	title = {Mixed and penalty formulations for finite element analysis of an eigenvalue problem in electromagnetism},
 	volume = {64},
+        doi = {10.1016/0045-7825(87)90053-3},
 	year = {1987}}
 
 @incollection{raviart1977mixed,
@@ -362,7 +372,7 @@
   booktitle={Mathematical aspects of finite element methods},
   pages={292--315},
   year={1977},
-  address={Berlin},
+  address={Berlin, Heidelberg},
   publisher={Springer},
   doi={10.1007/BFb0064470}
 }
@@ -383,12 +393,13 @@
   title={Rounding errors in algebraic processes},
   author={Wilkinson, James Hardy},
   year={1994},
+  address = {Mineola, NY},
   isbn = {978-0-486-67999-0},
   publisher={Courier Corporation}
 }
 
 @misc{zenodo/Firedrake-20210419.2,
- key   = {Zenodo/Firedrake-20210419.2},
+ key   = {Zenodo},
  title = {{Software used in 'Bringing Trimmed Serendipity Methods to Computational Practice in Firedrake'}},
  year  = {2021},
  month = {apr},
@@ -408,14 +419,16 @@
   pages =        {351--362},
   doi =          {10.1145/1089014.1089019}
 }
+
 @TechReport{slepc-manual,
-  author =       {J. E. Roman and C. Campos and L. Dalcin and E.
-                  Romero and A. Tomas},
+  author =       {Jose E. Roman and Carmen Campos and Lisandro Dalcin
+                  and Eloy Romero and Andr\'es Tom\'as},
   title =        {{SLEPc} Users Manual},
   institution =  {D. Sistemes Inform\`atics i Computaci\'o,
                   Universitat Polit\`ecnica de Val\`encia},
   year =         2020,
-  number =       {DSIC-II/24/02 - Revision 3.14}
+  number =       {DSIC-II/24/02 - Revision 3.15},
+  url =          {https://slepc.upv.es/documentation/slepc.pdf}
 }
 
 @Article{Dalcin2011,
@@ -443,8 +456,10 @@
                   Zhang},
   title =        {{PETS}c Users Manual},
   institution =  {Argonne National Laboratory},
-  year =         2019,
-  number =       {ANL-95/11 - Revision 3.11}
+  year =         2021,
+  url = {https://www.mcs.anl.gov/petsc/petsc-current/docs/manual.pdf},
+  number =       {ANL-95/11 - Revision 3.15}
+  
 }
 @InProceedings{petsc-efficient,
   author =       {Satish Balay and William D. Gropp and Lois Curfman
@@ -455,11 +470,14 @@
   year =         1997,
   editor =       {E. Arge and A. M. Bruaset and H. P. Langtangen},
   pages =        {163--202},
-  publisher =    {Birkh{\"{a}}user Press}
+  publisher =    {Birkh{\"{a}}user Press},
+  address = {Boston, MA},
+  isbn = {978-1-4612-1986-6},
+  doi = {10.1007/978-1-4612-1986-6_8},
 }
 
 @article{MUMPS01,
-  author = {P.~R. Amestoy and I.~S. Duff and J.-Y. L'Excellent and J. Koster},
+  author = {Patrrick R. Amestoy and Iain S. Duff and Jean-Yves L'Excellent and Jacko Koster},
   title = {A fully asynchronous multifrontal solver using distributed dynamic scheduling},
   doi = {10.1137/S0895479899358194},
   journal = {SIAM Journal on Matrix Analysis and Applications},
@@ -469,7 +487,7 @@
   year = {2001}
 }
 @article{MUMPS02,
-  author = {P.~R. Amestoy and A. Guermouche and J.-Y. L'Excellent and S. Pralet},
+  author = {Patrick R. Amestoy and Abdou Guermouche and Jean-Yves L'Excellent and St\'ephane Pralet},
   title = {Hybrid scheduling for the parallel solution of linear systems},
   doi = {10.1016/j.parco.2005.07.004},
   journal = {Parallel Computing},
