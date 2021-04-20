@@ -74,7 +74,7 @@
 
 @article{AFW2000,
   author =       {Arnold, D. N. and Falk, R. S. and Winther, R.},
-  title =        {Multigrid in $H(\div)$ and $H(\curl)$},
+  title =        {Multigrid in \hdiv and \hcurl},
   journal =      {Numerische Mathematik},
   year =         2000,
   volume =       85,
@@ -89,6 +89,7 @@
 	journal = {Acta Numerica},
 	pages = {1--155},
 	title = {Finite element exterior calculus, homological techniques, and applications},
+        volume = {15},
 	year = {2006}}
 
 @article{AFW2010,
@@ -364,6 +365,7 @@
   title={Rounding errors in algebraic processes},
   author={Wilkinson, James Hardy},
   year={1994},
+  isbn = {978-0-486-67999-0},
   publisher={Courier Corporation}
 }
 
@@ -374,4 +376,85 @@
  month = {apr},
  doi   = {10.5281/zenodo.4701708},
  url   = {https://doi.org/10.5281/zenodo.4701708},
+}
+
+@Article{slepc-toms,
+  author =       {Vicente Hernandez and Jose E. Roman and Vicente
+                  Vidal},
+  title =        {{SLEPc}: A Scalable and Flexible Toolkit for the
+                  Solution of Eigenvalue Problems},
+  journal =      {{ACM} Trans. Math. Software},
+  year =         {2005,},
+  volume =       31,
+  number =       3,
+  pages =        {351--362},
+  doi =          {10.1145/1089014.1089019}
+}
+@TechReport{slepc-manual,
+  author =       {J. E. Roman and C. Campos and L. Dalcin and E.
+                  Romero and A. Tomas},
+  title =        {{SLEPc} Users Manual},
+  institution =  {D. Sistemes Inform\`atics i Computaci\'o,
+                  Universitat Polit\`ecnica de Val\`encia},
+  year =         2020,
+  number =       {DSIC-II/24/02 - Revision 3.14}
+}
+
+@Article{Dalcin2011,
+  author =       {Lisandro D. Dalcin and Rodrigo R. Paz and Pablo A.
+                  Kler and Alejandro Cosimo},
+  title =        {Parallel distributed computing using {P}ython},
+  journal =      {Advances in Water Resources},
+  year =         2011,
+  volume =       34,
+  number =       9,
+  pages =        {1124--1139},
+  note =         {New Computational Methods and Software Tools},
+  doi =          {10.1016/j.advwatres.2011.04.013}
+}
+
+@TechReport{petsc-user-ref,
+  author =       {Satish Balay and Shrirang Abhyankar and Mark F.
+                  Adams and Jed Brown and Peter Brune and Kris
+                  Buschelman and Lisandro Dalcin and Victor Eijkhout
+                  and William D. Gropp and Dmitry Karpeyev and Dinesh
+                  Kaushik and Matthew G. Knepley and Dave A. May and
+                  Lois Curfman McInnes and Richard Tran Mills and Todd
+                  Munson and Karl Rupp and Patrick Sanan and Barry F.
+                  Smith and Stefano Zampini and Hong Zhang and Hong
+                  Zhang},
+  title =        {{PETS}c Users Manual},
+  institution =  {Argonne National Laboratory},
+  year =         2019,
+  number =       {ANL-95/11 - Revision 3.11}
+}
+@InProceedings{petsc-efficient,
+  author =       {Satish Balay and William D. Gropp and Lois Curfman
+                  McInnes and Barry F. Smith},
+  title =        {Efficient Management of Parallelism in Object
+                  Oriented Numerical Software Libraries},
+  booktitle =    {Modern Software Tools in Scientific Computing},
+  year =         1997,
+  editor =       {E. Arge and A. M. Bruaset and H. P. Langtangen},
+  pages =        {163--202},
+  publisher =    {Birkh{\"{a}}user Press}
+}
+
+@article{MUMPS01,
+  author = {P.~R. Amestoy and I.~S. Duff and J.-Y. L'Excellent and J. Koster},
+  title = {A fully asynchronous multifrontal solver using distributed dynamic scheduling},
+  journal = {SIAM Journal on Matrix Analysis and Applications},
+  volume = {23},
+  number = {1},
+  pages = {15--41},
+  year = {2001}
+}
+@article{MUMPS02,
+  author = {P.~R. Amestoy and A. Guermouche and J.-Y. L'Excellent and S. Pralet},
+  title = {Hybrid scheduling for the parallel solution of linear systems},
+  journal = {Parallel Computing},
+  volume = {32},
+  number = {2},
+  pages = {136--156},
+  year = {2006}
 }
