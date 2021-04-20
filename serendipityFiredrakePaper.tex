@@ -337,12 +337,17 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
    
 \begin{figure}[htbp]
   \centering
-  \begin{subfigure}[h]{0.3\textwidth}
+  \begin{subfigure}[h]{0.32\textwidth}
     \begin{tikzpicture}[scale=0.5]
-      \begin{semilogyaxis}[xlabel={Degree}, ylabel={DOFs},
-             ylabel near ticks, ymax=1e6, ymin=1e4, xmax=6, xmin=1,
-             legend pos=south east, legend style={font=\tiny} ,
-             cycle list name=mycolor]
+      \begin{semilogyaxis}[
+        xlabel={Degree}, ylabel={DOFs},
+        ticklabel style={font=\LARGE},
+        xlabel style={font=\LARGE},
+        ylabel near ticks,
+        ylabel style={font=\LARGE},
+        ymax=1e6, ymin=1e4, xmax=6, xmin=1,
+        legend pos=south east, legend style={font=\LARGE} ,
+        cycle list name=mycolor]
         \addplot
         table [x=Degree,y=Dofs, col sep=comma]{csvs/SerendipityDegDofsTwo.csv};
         \addlegendentry{$S^- \Lambda^0$}
@@ -353,12 +358,17 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
       \end{tikzpicture}
       \caption{$H^1$-conforming elements\label{fig:LagrangeDegDofs}}
     \end{subfigure}
-    \begin{subfigure}[h]{0.3\textwidth}
+    \begin{subfigure}[h]{0.32\textwidth}
       \begin{tikzpicture}[scale=0.5]
-      \begin{semilogyaxis}[xlabel={Degree}, ylabel={DOFs},
-             ylabel near ticks, ymax=4e6, ymin=2e4, xmax=6, xmin=1,
-             legend pos=south east, legend style={font=\tiny} ,
-             cycle list name=mycolor]
+        \begin{semilogyaxis}[
+          xlabel={Degree}, ylabel={DOFs},
+          ticklabel style={font=\LARGE},
+          xlabel style={font=\LARGE},
+          ylabel near ticks,
+          ylabel style={font=\LARGE},
+          ymax=4e6, ymin=2e4, xmax=6, xmin=1,
+          legend pos=south east, legend style={font=\LARGE} ,
+          cycle list name=mycolor]
         \addplot
         table [x=Degree,y=Dofs, col sep=comma]{csvs/SminusCurlDegDofs.csv};
         \addlegendentry{$S^- \Lambda^1$}
@@ -369,12 +379,17 @@ For the user, swapping to trimmed serendipity elements to solve the mixed Poisso
       \end{tikzpicture}
       \caption{\hcurl-conforming elements\label{fig:CurlDegDofs}}
   \end{subfigure} %\\[0.5\baselineskip]
-  \begin{subfigure}[h]{0.3\textwidth}
+  \begin{subfigure}[h]{0.32\textwidth}
     \begin{tikzpicture}[scale=0.5]
-      \begin{semilogyaxis}[xlabel={Degree}, ylabel={DOFs},
-             ylabel near ticks, ymax=4e6, ymin=2e4, xmax=6, xmin=1,
-             legend pos=south east, legend style={font=\tiny} ,
-             cycle list name=mycolor]
+      \begin{semilogyaxis}[
+        xlabel={Degree}, ylabel={DOFs},
+        ticklabel style={font=\LARGE},
+        xlabel style={font=\LARGE},
+        ylabel near ticks,
+        ylabel style={font=\LARGE},
+        ymax=4e6, ymin=2e4, xmax=6, xmin=1,
+        legend pos=south east, legend style={font=\LARGE} ,
+        cycle list name=mycolor]
         \addplot
         table [x=Degree,y=Dofs, col sep=comma]{csvs/SminusDivDegDofs.csv};
         \addlegendentry{$S^- \Lambda^2$}
@@ -782,7 +797,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=0.3, xmin=0.5e-2,
-             legend pos=south east, legend style={font=\tiny} ,
+             legend pos=south east, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus2dO2.csv};
@@ -810,7 +825,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
       \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-11, xmax=3e6, xmin=0.5e2,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus2dO2.csv};
@@ -838,7 +853,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={h}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=2e-10, xmax=0.2, xmin=0.5e-2,
-             legend pos=south east, legend style={font=\tiny} ,
+             legend pos=south east, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=h,y=Error, col sep=comma]{csvs/ProjectionSminus3dO2.csv};
@@ -866,7 +881,7 @@ Recall that the trimmed serendipity elements are denoted with $\mathcal{S}_r^-$ 
   \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=3e-2, ymin=0.5e-9, xmax=4e8, xmin=0.25e4,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/ProjectionSminus3dO2.csv};
@@ -982,7 +997,7 @@ params = {"snes_type": "newtonls",
       \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-4, ymin=1e-16, xmax=2e6, xmin=2e3,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
         \addplot
@@ -1011,7 +1026,7 @@ params = {"snes_type": "newtonls",
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=1e-11, xmax=2e6, xmin=3e2,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus2dO2.csv};
@@ -1039,7 +1054,7 @@ params = {"snes_type": "newtonls",
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=2e8, xmin=1e3,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
@@ -1067,7 +1082,7 @@ params = {"snes_type": "newtonls",
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1.2e-2, ymin=0.8e-7, xmax=2e7, xmin=5e3,
-             legend pos=south west, legend style={font=\tiny} ,
+             legend pos=south west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
@@ -1116,7 +1131,7 @@ In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing t
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Time},
              ylabel near ticks, ymax=1.e+4, ymin=0.5e-1, xmax=2.e8, xmin=1.e+3,
-             legend pos=north west, legend style={font=\tiny} ,
+             legend pos=north west, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Dofs,y=Time, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
@@ -1144,7 +1159,7 @@ In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing t
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-11, xmax=1e4, xmin=0.5e-1,
-             legend pos=north east, legend style={font=\tiny} ,
+             legend pos=north east, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/PrimalPoissonSerendipity3dO2.csv};
@@ -1172,7 +1187,7 @@ In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing t
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={DOFs}, ylabel={Time},
              ylabel near ticks, ymax=2e4, ymin=1e-1, xmax=2e7, xmin=0.5e4,
-             legend pos=north west, legend style={font=\tiny} ,
+             legend pos=north west, legend style={font=\small} ,
              cycle list name=mycolor]
         %\addplot+[only marks, orange] table [x=Dofs,y=Time,col sep=comma]{PrimalPoissonSerendipity3dO4.csv};
         \addplot
@@ -1201,7 +1216,7 @@ In \cref{fig:PrimalMixedTimeAnalysis} we analyze the timing data for computing t
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-1, ymin=5e-8, xmax=1e5, xmin=0.5e-1,
-             legend pos=north east, legend style={font=\tiny} ,
+             legend pos=north east, legend style={font=\small} ,
              cycle list name=mycolor]
         \addplot
         table [x=Time,y=Error, col sep=comma]{csvs/MixedPoissonSminus3dO2.csv};
@@ -1348,9 +1363,9 @@ Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two ei
   \centering
   \begin{subfigure}[h]{0.48\textwidth}
   \begin{tikzpicture}[scale=0.75]
-      \begin{loglogaxis}[xlabel={Dofs}, ylabel={Error},
+      \begin{loglogaxis}[xlabel={DOFs}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=3e6, xmin=3.5e4,
-             legend pos=north east, legend style={font=\tiny}]
+             legend pos=north east, legend style={font=\small}]
         \addplot[red, mark=*]
         table [x=Dofs,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
@@ -1371,7 +1386,7 @@ Continuing the eigenvalue example, we used Firedrake and SLEPc to compute two ei
     \begin{tikzpicture}[scale=0.75]
       \begin{loglogaxis}[xlabel={Time}, ylabel={Error},
              ylabel near ticks, ymax=1e-3, ymin=1e-14, xmax=185, xmin=0.1,
-             legend pos=north east, legend style={font=\tiny}]
+             legend pos=north east, legend style={font=\small}]
         \addplot[red, mark=*]
         table [x=Time,y=Error, col sep=comma]{csvs/SminusEigenvaluesValue3.csv};
         \addlegendentry{$S^- \lambda = 3$}
